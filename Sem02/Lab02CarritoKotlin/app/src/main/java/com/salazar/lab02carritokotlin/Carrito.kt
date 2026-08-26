@@ -39,16 +39,39 @@ fun main() {
     }
     println()
 
-    val subtotal = calcularSubtotal(carrito)
-    val igv = calcularIGV(subtotal)
-    val totalSinDescuento = calcularTotal(subtotal, igv)
-    val descuento = calcularDescuento(totalSinDescuento)
-    val totalFinal = totalSinDescuento - descuento
+    // RETO ADICIONAL: BUSCAR PRODUCTO
+    println("--- BUSQUEDA DE PRODUCTO ---")
+    val productoBuscado = "Mouse Logitech"
+    val encontrado = buscarProducto(carrito, productoBuscado)
+    if (encontrado != null) {
+        println("Producto encontrado: ${encontrado.nombre} - Precio: S/ ${encontrado.precio}")
+    } else {
+        println("El producto '$productoBuscado' no existe en el carrito.")
+    }
+    println()
 
-    println(String.format(Locale.US, "%-22s: S/ %8.2f", "Subtotal", subtotal))
-    println(String.format(Locale.US, "%-22s: S/ %8.2f", "IGV (18%)", igv))
-    println(String.format(Locale.US, "%-22s: S/ %8.2f", "Descuento", descuento))
-    println(String.format(Locale.US, "%-22s: S/ %8.2f", "TOTAL A PAGAR", totalFinal))
+    imprimirTotales(carrito)
+
+    //RETO ADICIONAL: ELIMINAR PRODUCTO
+    println()
+    println("=== ELIMINANDO PRODUCTO ===")
+    val productoAEliminar = "USB Kingston 64GB"
+    val eliminado = carrito.removeIf { it.nombre.equals(productoAEliminar, ignoreCase = true) }
+
+    if (eliminado) {
+        println("Se elimino correctamente: $productoAEliminar")
+    } else {
+        println("No se pudo eliminar: $productoAEliminar")
+    }
+    println()
+
+    println("=== CARRITO ACTUALIZADO ===")
+    mostrarDetalle(carrito)
+    imprimirTotales(carrito)
+}
+
+fun buscarProducto(productos: List<Producto>, nombre: String): Producto? {
+    return productos.find { it.nombre.equals(nombre, ignoreCase = true) }
 }
 
 fun mostrarDetalle(productos: List<Producto>) {
@@ -77,10 +100,24 @@ fun calcularIGV(subtotal: Double): Double {
 fun calcularTotal(subtotal: Double, igv: Double): Double {
     return subtotal + igv
 }
+
 fun calcularDescuento(total: Double): Double {
     return when {
         total > 5000 -> total * 0.10
         total > 3000 -> total * 0.05
         else -> 0.0
     }
+}
+
+fun imprimirTotales(carrito: List<Producto>) {
+    val subtotal = calcularSubtotal(carrito)
+    val igv = calcularIGV(subtotal)
+    val totalSinDescuento = calcularTotal(subtotal, igv)
+    val descuento = calcularDescuento(totalSinDescuento)
+    val totalFinal = totalSinDescuento - descuento
+
+    println(String.format(Locale.US, "%-22s: S/ %8.2f", "Subtotal", subtotal))
+    println(String.format(Locale.US, "%-22s: S/ %8.2f", "IGV (18%)", igv))
+    println(String.format(Locale.US, "%-22s: S/ %8.2f", "Descuento", descuento))
+    println(String.format(Locale.US, "%-22s: S/ %8.2f", "TOTAL A PAGAR", totalFinal))
 }
