@@ -48,3 +48,12 @@ tasks.register<JavaExec>("ejecutarCarrito") {
         configurations.getByName("debugRuntimeClasspath")
     )
 }
+
+tasks.register<JavaExec>("ejecutarCarritoIA") {
+    dependsOn("compileDebugKotlin")
+    mainClass.set("com.salazar.lab02carritokotlin.CarritoIAKt")
+    classpath = files(
+        tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileDebugKotlin").get().destinationDirectory,
+        configurations.getByName("debugRuntimeClasspath")
+    )
+}
