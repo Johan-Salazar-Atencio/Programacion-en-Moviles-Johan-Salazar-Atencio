@@ -26,10 +26,10 @@ Este proyecto implementa la lógica de un carrito de compras desarrollado en **K
 ## Capturas de Ejecución por Commit
 
 ### Commit 2: Carga de productos y totales iniciales
-![Resultado Commit 2](resultado_commit2.png)
+<img width="886" height="507" alt="image" src="https://github.com/user-attachments/assets/090bb5d0-457b-43a6-9c2a-056d5ea37cf2" />
 
 ### Commit 3: Reporte de detalle con columnas alineadas
-![Resultado Commit 3](resultado_commit3.png)
+<img width="715" height="655" alt="image" src="https://github.com/user-attachments/assets/695df4ac-3e9d-49ed-975f-9bc0c0c22129" />
 
 ### Commit 4: Producto más caro y descuento condicional
-![Resultado Commit 4](resultado_commit4.png)
+<img width="886" height="938" alt="image" src="https://github.com/user-attachments/assets/5005c4b5-587a-457d-a0ac-67d57da0ddc3" />
