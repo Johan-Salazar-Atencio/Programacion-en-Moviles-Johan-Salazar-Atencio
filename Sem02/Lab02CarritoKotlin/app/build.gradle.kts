@@ -43,5 +43,8 @@ tasks.register<JavaExec>("ejecutarCarrito") {
     val compileTask = tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileDebugKotlin")
     dependsOn(compileTask)
     mainClass.set("com.salazar.lab02carritokotlin.CarritoKt")
-    classpath = files(compileTask.get().destinationDirectory)
+    classpath = files(
+        compileTask.get().destinationDirectory,
+        configurations.getByName("debugRuntimeClasspath")
+    )
 }
