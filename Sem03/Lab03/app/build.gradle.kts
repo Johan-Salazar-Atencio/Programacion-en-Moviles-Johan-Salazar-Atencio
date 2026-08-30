@@ -39,3 +39,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 }
+tasks.register<JavaExec>("ejecutarCuotas") {
+    val compileTask = tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileDebugKotlin")
+    dependsOn(compileTask)
+    mainClass.set("com.salazar.lab03.MainKt")
+    classpath = files(
+        compileTask.get().destinationDirectory,
+        configurations.getByName("debugRuntimeClasspath")
+    )
+    standardInput = System.`in`
+}
