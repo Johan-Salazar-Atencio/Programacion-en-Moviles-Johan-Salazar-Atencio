@@ -31,4 +31,16 @@ fun main() {
             return
         }
     }
+    // formulas
+    val montoInicial = precio * cantidad
+    val interes = montoInicial * pctInteres
+    val montoAPagar = montoInicial + interes
+    val pagoMensual = montoAPagar / cuotas
+
+    println("\n----------------------------------------------")
+    println("- MONTO INICIAL : S/ %.2f".format(montoInicial))
+    println("- MONTO A PAGAR : S/ %.2f".format(montoAPagar))
+    println("- INTERES       : S/ %.2f (%.0f%%)".format(interes, pctInteres * 100))
+    println("- PAGO MENSUAL  : S/ %.2f".format(pagoMensual))
+    println("----------------------------------------------")
 }
