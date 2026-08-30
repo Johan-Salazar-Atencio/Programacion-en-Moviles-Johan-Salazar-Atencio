@@ -1,6 +1,9 @@
 package com.salazar.lab03
 
 import java.util.Scanner
+import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 fun main() {
     val scanner = Scanner(System.`in`)
@@ -43,4 +46,33 @@ fun main() {
     println("- INTERES       : S/ %.2f (%.0f%%)".format(interes, pctInteres * 100))
     println("- PAGO MENSUAL  : S/ %.2f".format(pagoMensual))
     println("----------------------------------------------")
+
+    // Cronograma de pagos
+    println("\nN° | FECHA      | MONTO    | PMENSUAL | RESTA PAGO")
+    println("--------------------------------------------------")
+
+    var saldoPendiente = montoAPagar
+    val calendario = Calendar.getInstance()
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    for (i in 1..cuotas) {
+        if (i > 1) {
+            calendario.add(Calendar.MONTH, 1)
+        }
+        val fecha = sdf.format(calendario.time)
+        val saldoAnterior = saldoPendiente
+        saldoPendiente -= pagoMensual
+
+        if (i == cuotas || saldoPendiente < 0.001) {
+            saldoPendiente = 0.0
+        }
+
+        println(
+            String.format(
+                Locale.getDefault(),
+                "%-2d | %s | %8.2f | %8.2f | %10.2f",
+                i, fecha, saldoAnterior, pagoMensual, saldoPendiente
+            )
+        )
+    }
 }
