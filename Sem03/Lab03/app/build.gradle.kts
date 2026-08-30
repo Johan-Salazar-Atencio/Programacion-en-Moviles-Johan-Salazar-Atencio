@@ -49,3 +49,22 @@ tasks.register<JavaExec>("ejecutarCuotas") {
     )
     standardInput = System.`in`
 }
+
+// Registro de tarea para ejecutar la versión IA por consola dentro de Gradle
+tasks.register<JavaExec>("ejecutarCuotasIA") {
+    // Vincula la compilación previa del código Kotlin
+    val compileTask = tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileDebugKotlin")
+    dependsOn(compileTask)
+
+    // Asigna la clase ejecutable correspondiente a MainIA.kt
+    mainClass.set("com.salazar.lab03.MainIAKt")
+
+    // Configura la ruta del classpath compilado de Android
+    classpath = files(
+        compileTask.get().destinationDirectory,
+        configurations.getByName("debugRuntimeClasspath")
+    )
+
+    // Permite la interacción del Scanner escuchando la consola estándar
+    standardInput = System.`in`
+}
