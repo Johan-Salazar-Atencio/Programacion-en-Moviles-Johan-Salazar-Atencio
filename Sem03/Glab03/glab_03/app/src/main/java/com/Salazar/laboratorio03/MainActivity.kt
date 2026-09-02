@@ -39,7 +39,6 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Encabezado con jerarquía tipográfica
         Text(
             text = "Nuevo producto",
             style = MaterialTheme.typography.headlineSmall
@@ -49,10 +48,10 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline
         )
-
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
