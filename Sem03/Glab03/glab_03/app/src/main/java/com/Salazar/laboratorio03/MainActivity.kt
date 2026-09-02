@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,10 +47,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PantallaRegistro(modifier: Modifier = Modifier) {
-    var nombre by remember { mutableStateOf("") }
-    var precio by remember { mutableStateOf("") }
-    var cantidad by remember { mutableStateOf("") }
-    var mostrarResumen by remember { mutableStateOf(false) }
+    // Uso de rememberSaveable para sobrevivir a la rotación de pantalla
+    var nombre by rememberSaveable { mutableStateOf("") }
+    var precio by rememberSaveable { mutableStateOf("") }
+    var cantidad by rememberSaveable { mutableStateOf("") }
+    var mostrarResumen by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -99,7 +100,7 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón
+        // Botón AGREGAR PRODUCTO
         Button(
             onClick = { mostrarResumen = true },
             modifier = Modifier.fillMaxWidth()
@@ -109,7 +110,7 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Resumen
+        // Card de Resumen
         if (mostrarResumen) {
             val precioNum = precio.toDoubleOrNull() ?: 0.0
             val cantidadNum = cantidad.toIntOrNull() ?: 0
@@ -141,7 +142,7 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Mensaje de confirmación en verde
+            // Mensaje de confirmación verde
             Text(
                 text = "✓ Producto registrado correctamente",
                 color = Color(0xFF2E7D32),
@@ -150,7 +151,6 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
