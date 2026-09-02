@@ -39,6 +39,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 }
+
 tasks.register<JavaExec>("ejecutarCuotas") {
     val compileTask = tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileDebugKotlin")
     dependsOn(compileTask)
