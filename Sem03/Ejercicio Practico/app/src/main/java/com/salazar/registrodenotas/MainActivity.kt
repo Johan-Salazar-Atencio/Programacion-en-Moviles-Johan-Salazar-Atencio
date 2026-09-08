@@ -15,6 +15,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -40,6 +45,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RegistroNotasScreen(modifier: Modifier = Modifier) {
+
+    // Estados de notas
+    var nota1 by remember { mutableFloatStateOf(0f) }
+    var nota2 by remember { mutableFloatStateOf(0f) }
+    var nota3 by remember { mutableFloatStateOf(0f) }
+    var nota4 by remember { mutableFloatStateOf(0f) }
+
+    // Estados de confirmación, switch y cálculo
+    var redondear by remember { mutableStateOf(false) }
+    var confirmacion by remember { mutableStateOf(false) }
+    var calculado by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
