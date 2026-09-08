@@ -5,14 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +28,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -85,7 +94,78 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold
                 )
             }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Notas del ciclo",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "Desliza para asignar cada nota (0 a 20)",
+                    fontSize = 13.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                ItemCursoSlider("Fundamentos de Programación", "(20%)", nota1) { nota1 = it }
+                ItemCursoSlider("Programación Orientada a Objetos", "(25%)", nota2) { nota2 = it }
+                ItemCursoSlider("Programación en Móviles", "(30%)", nota3) { nota3 = it }
+                ItemCursoSlider("Base de Datos", "(25%)", nota4) { nota4 = it }
+            }
         }
+    }
+}
+
+@Composable
+fun ItemCursoSlider(
+    titulo: String,
+    pesoText: String,
+    value: Float,
+    onValueChange: (Float) -> Unit
+) {
+    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = titulo,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = Color(0xFF2C2C2C)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = pesoText,
+                    fontSize = 12.sp,
+                    color = Color(0xFF7E57C2)
+                )
+            }
+            Surface(
+                color = Color(0xFFEDE7F6),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "${value.toInt()}",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF5E4B8B)
+                )
+            }
+        }
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = 0f..20f,
+            steps = 19,
+            colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF5E4B8B),
+                activeTrackColor = Color(0xFF5E4B8B),
+                inactiveTrackColor = Color(0xFFE0E0E0)
+            )
+        )
     }
 }
 
