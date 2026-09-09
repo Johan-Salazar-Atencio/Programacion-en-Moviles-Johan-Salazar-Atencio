@@ -28,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -244,6 +245,51 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                                         color = colorEstado,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp
+                                    )
+                                }
+                            }
+
+                            // Reto: Desglose de aporte por curso
+                            Spacer(modifier = Modifier.height(16.dp))
+                            HorizontalDivider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = "Aporte por curso:",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // Filas de aporte
+                            val aportes = listOf(
+                                "Fundamentos" to (nota1 to 0.20f),
+                                "POO" to (nota2 to 0.25f),
+                                "Móviles" to (nota3 to 0.30f),
+                                "Base de Datos" to (nota4 to 0.25f)
+                            )
+
+                            aportes.forEach { (nombre, datos) ->
+                                val (nota, peso) = datos
+                                val aporte = nota * peso
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 2.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "$nombre (${(peso * 100).toInt()}%):",
+                                        fontSize = 12.sp,
+                                        color = Color(0xFF424242)
+                                    )
+                                    Text(
+                                        text = "${nota.toInt()} × ${(peso * 100).toInt()}% = ${String.format("%.2f", aporte)}",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF5E4B8B)
                                     )
                                 }
                             }
