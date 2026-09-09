@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -111,6 +116,44 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                 ItemCursoSlider("Programación Orientada a Objetos", "(25%)", nota2) { nota2 = it }
                 ItemCursoSlider("Programación en Móviles", "(30%)", nota3) { nota3 = it }
                 ItemCursoSlider("Base de Datos", "(25%)", nota4) { nota4 = it }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Switch: Para Redondear promedio
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Redondear promedio final", fontSize = 14.sp)
+                    Switch(
+                        checked = redondear,
+                        onCheckedChange = { redondear = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFF5E4B8B)
+                        )
+                    )
+                }
+
+                // Checkbox
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = confirmacion,
+                        onCheckedChange = { confirmacion = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color(0xFF5E4B8B)
+                        )
+                    )
+                    Text(text = "Confirmo que las notas son correctas", fontSize = 14.sp)
+                }
             }
         }
     }
