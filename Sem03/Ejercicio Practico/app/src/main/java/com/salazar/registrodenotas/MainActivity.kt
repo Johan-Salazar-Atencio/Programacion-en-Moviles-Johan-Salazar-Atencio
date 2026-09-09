@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Scaffold
@@ -153,6 +155,27 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                         )
                     )
                     Text(text = "Confirmo que las notas son correctas", fontSize = 14.sp)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Boton de Calcular Promedio
+                Button(
+                    onClick = { calculado = true },
+                    enabled = confirmacion,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF5E4B8B),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(
+                        text = "CALCULAR PROMEDIO",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
                 }
             }
         }
