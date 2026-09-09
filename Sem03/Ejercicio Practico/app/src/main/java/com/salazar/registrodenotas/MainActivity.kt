@@ -192,11 +192,13 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
 
                     val promedioSinRedondear = (nota1 * 0.20f) + (nota2 * 0.25f) + (nota3 * 0.30f) + (nota4 * 0.25f)
                     val promedioFinal = if (redondear) promedioSinRedondear.roundToInt().toFloat() else promedioSinRedondear
-                    val aprobado = promedioFinal >= 13.0f
 
-                    val colorEstado = if (aprobado) Color(0xFF2E7D32) else Color(0xFFC62828)
-                    val textoEstado = if (aprobado) "Aprobado" else "Desaprobado"
-                    val iconoEstado = if (aprobado) Icons.Default.Check else Icons.Default.Close
+                    val (textoEstado, colorEstado, iconoEstado) = when {
+                        promedioFinal >= 17.0f -> Triple("EXCELENTE", Color(0xFF1B5E20), Icons.Default.Check) // Verde oscuro
+                        promedioFinal >= 13.0f -> Triple("APROBADO", Color(0xFF2E7D32), Icons.Default.Check)  // Verde
+                        promedioFinal >= 10.0f -> Triple("EN RECUPERACIÓN", Color(0xFFFF8F00), Icons.Default.Close) // Ámbar
+                        else -> Triple("DESAPROBADO", Color(0xFFC62828), Icons.Default.Close) // Rojo
+                    }
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -248,6 +250,20 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Pie de página
+                Text(
+                    text = "Desarrollado por: Johan Salazar Atencio",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
             }
         }
     }
