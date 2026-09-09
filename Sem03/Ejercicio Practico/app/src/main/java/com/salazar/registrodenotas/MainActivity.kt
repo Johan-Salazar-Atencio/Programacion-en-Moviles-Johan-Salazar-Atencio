@@ -14,14 +14,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -44,6 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.salazar.registrodenotas.ui.theme.RegistroDeNotasTheme
+import kotlin.math.roundToInt
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,6 +185,68 @@ fun RegistroNotasScreen(modifier: Modifier = Modifier) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
+                }
+                // Resultados
+                if (calculado) {
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    val promedioSinRedondear = (nota1 * 0.20f) + (nota2 * 0.25f) + (nota3 * 0.30f) + (nota4 * 0.25f)
+                    val promedioFinal = if (redondear) promedioSinRedondear.roundToInt().toFloat() else promedioSinRedondear
+                    val aprobado = promedioFinal >= 13.0f
+
+                    val colorEstado = if (aprobado) Color(0xFF2E7D32) else Color(0xFFC62828)
+                    val textoEstado = if (aprobado) "Aprobado" else "Desaprobado"
+                    val iconoEstado = if (aprobado) Icons.Default.Check else Icons.Default.Close
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "RESULTADOS DEL CICLO",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = if (redondear) "${promedioFinal.toInt()}" else String.format("%.2f", promedioFinal),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 36.sp,
+                                color = Color(0xFF5E4B8B)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Surface(
+                                color = colorEstado.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(20.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = iconoEstado,
+                                        contentDescription = null,
+                                        tint = colorEstado,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = textoEstado,
+                                        color = colorEstado,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
