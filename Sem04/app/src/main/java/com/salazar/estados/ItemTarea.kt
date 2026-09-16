@@ -7,12 +7,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * MODELO DE DATOS (POO - Entidad)
+ */
 data class Tarea(
     val id: Int,
     val nombre: String,
     val completada: Boolean = false
 )
 
+/**
+ * COMPOSABLE (Ficha de Tarea Individual)
+ */
 @Composable
 fun ItemTarea(
     tarea: Tarea,
@@ -37,7 +43,7 @@ fun ItemTarea(
             ) {
                 Checkbox(
                     checked = tarea.completada,
-                    onCheckedChange = { onCambiarEstado(it) }
+                    onCheckedChange = onCambiarEstado
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
