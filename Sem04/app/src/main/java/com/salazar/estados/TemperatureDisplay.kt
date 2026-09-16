@@ -8,16 +8,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@Composable
-fun TemperatureDisplay() {
-    var temperatura by remember { mutableStateOf(20) }
+/**
+ * CLASE STATE HOLDER (Encapsulamiento en POO)
+ * Encapsula la lógica de negocio y los estados de la temperatura.
+ */
+class TemperatureStateHolder(
+    temperaturaInicial: Int = 20
+) {
+    // Estado privado (Abstracción/Encapsulamiento): solo la clase puede modificarlo directamente
+    var temperatura by mutableStateOf(temperaturaInicial)
+        private set
 
-    val colorTexto = when {
-        temperatura > 30 -> Color.Red
-        temperatura < 10 -> Color.Blue
-        else -> Color.Unspecified
+    // Propiedad calculada que aplica la lógica de presentación según el estado actual
+    val colorTexto: Color
+        get() = when {
+            temperatura > 30 -> Color.Red
+            temperatura < 10 -> Color.Blue
+            else -> Color.Unspecified
+        }
+
+    // Métodos (Comportamientos del objeto)
+    fun subir() {
+        temperatura++
     }
 
+    fun bajar() {
+        temperatura--
+    }
+
+    fun resetear() {
+        temperatura = 20
+    }
+}
+
+/**
+ * COMPOSABLE (Vista limpia)
+ * Solo consume el objeto State Holder y dibuja la UI.
+ */
+@Composable
+fun TemperatureDisplay(
+    // Inyección de dependencias simple: se instancia o pasa el objeto manipulador de estado
+    stateHolder: TemperatureStateHolder = remember { TemperatureStateHolder() }
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -25,17 +57,17 @@ fun TemperatureDisplay() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Temperatura: $temperatura°C",
+            text = "Temperatura: ${stateHolder.temperatura}°C",
             style = MaterialTheme.typography.headlineMedium,
-            color = colorTexto
+            color = stateHolder.colorTexto
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = { temperatura++ }) { Text("Subir") }
-            Button(onClick = { temperatura-- }) { Text("Bajar") }
-            Button(onClick = { temperatura = 20 }) { Text("Resetear") }
+            Button(onClick = { stateHolder.subir() }) { Text("Subir") }
+            Button(onClick = { stateHolder.bajar() }) { Text("Bajar") }
+            Button(onClick = { stateHolder.resetear() }) { Text("Resetear") }
         }
     }
 }
