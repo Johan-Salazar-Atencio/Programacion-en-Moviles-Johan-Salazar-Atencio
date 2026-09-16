@@ -34,8 +34,19 @@ Este proyecto implementa una aplicación móvil Android en **Jetpack Compose** e
 
 ### Commit 1: implementa TemperatureDisplay con manejo de estado
 
+<img width="886" height="481" alt="image" src="https://github.com/user-attachments/assets/12b471eb-b746-46da-968c-10ca76698b02" />
+
 
 ### Commit 2: agrega componente ItemTarea
 
+<img width="886" height="452" alt="image" src="https://github.com/user-attachments/assets/162a2415-687b-4c06-8b9e-5acffe80ff51" />
+
 
 ### Commit 3: agrega PantallaTareas y conecta con MainActivity
+
+<img width="886" height="455" alt="image" src="https://github.com/user-attachments/assets/e8cff01d-39aa-4054-aa4d-f574db72fb5b" />
+
+
+
+
+.
