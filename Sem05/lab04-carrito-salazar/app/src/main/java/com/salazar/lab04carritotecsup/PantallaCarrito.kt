@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ fun PantallaCarrito() {
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
 
-    // Lista observable: cuando cambie, Compose redibuja la lista [id="1"]
     val productos = remember { mutableStateListOf<Producto>() }
 
     Column(
@@ -38,14 +38,18 @@ fun PantallaCarrito() {
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(
-                value = precio, onValueChange = { precio = it }, label = { Text("Precio") },
+                value = precio,
+                onValueChange = { precio = it },
+                label = { Text("Precio") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             OutlinedTextField(
-                value = cantidad, onValueChange = { cantidad = it }, label = { Text("Cantidad") },
+                value = cantidad,
+                onValueChange = { cantidad = it },
+                label = { Text("Cantidad") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -76,7 +80,7 @@ fun PantallaCarrito() {
             }
         }
 
-        //Panel de Totales
+        // Panel de Totales
         Surface(modifier = Modifier.fillMaxWidth(), tonalElevation = 8.dp, shape = RoundedCornerShape(12.dp)) {
             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

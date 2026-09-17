@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Aquí es donde "activas" tu nueva pantalla
                     PantallaCarrito()
                 }
             }
@@ -32,9 +31,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GreetingPreview() {
-    Lab04CarritoTecsupTheme {
-    }
+fun PantallaCarritoPreview() {
+    PantallaCarrito()
 }
