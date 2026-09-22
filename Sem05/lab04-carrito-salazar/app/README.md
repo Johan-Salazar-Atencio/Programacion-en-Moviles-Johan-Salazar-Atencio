@@ -33,3 +33,6 @@ El modificador `weight(1f)` dentro de una `Column` le indica al composable que d
 ---
 
 ## Capturas de Ejecución
+
+<img width="572" height="942" alt="image" src="https://github.com/user-attachments/assets/6f8b6e05-a1fc-43c9-a952-ebe9a5ec26f8" />
+
