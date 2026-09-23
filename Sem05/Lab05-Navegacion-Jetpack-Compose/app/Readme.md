@@ -27,6 +27,7 @@ Este proyecto implementa la arquitectura de navegación entre múltiples pantall
 ### Primer Commit: Configuración de Dependencias
 Inclusión de la librería `androidx.navigation:navigation-compose` en el archivo `build.gradle.kts`.
 
+<img width="886" height="457" alt="image" src="https://github.com/user-attachments/assets/4b6ebccf-bba6-4f30-a469-1cbed54d5f08" />
 
 
 ---
@@ -34,12 +35,14 @@ Inclusión de la librería `androidx.navigation:navigation-compose` en el archiv
 ### Segundo Commit: Definición de Rutas (`Screen.kt`)
 Creación de la clase sellada `Screen` para definir las rutas `home`, `list`, `profile` y la ruta con argumento `detail/{itemId}`.
 
+<img width="886" height="753" alt="image" src="https://github.com/user-attachments/assets/43ce6059-aa32-4234-bdfa-abba77a11d77" />
 
 
 ---
 
 ### Tercer Commit: Estructura de Navegación (`AppNavigation.kt`)
 Configuración del contenedor `NavHost` definiendo el punto de inicio y las composables para cada pantalla.
+<img width="886" height="472" alt="image" src="https://github.com/user-attachments/assets/ac0ea634-c46b-4f33-a985-379bb6313818" />
 
 
 
@@ -48,6 +51,7 @@ Configuración del contenedor `NavHost` definiendo el punto de inicio y las comp
 ### Cuarto Commit: Vinculación en `MainActivity.kt`
 Integración del composable `AppNavigation()` dentro del `setContent` del punto de entrada principal.
 
+<img width="875" height="941" alt="image" src="https://github.com/user-attachments/assets/68094769-4c0e-47d4-9eae-9be566787f72" />
 
 
 ---
@@ -55,6 +59,7 @@ Integración del composable `AppNavigation()` dentro del `setContent` del punto 
 ### Quinto Commit: Implementación de `HomeScreen.kt`
 Diseño de la pantalla de inicio con botones de navegación hacia la lista y el perfil.
 
+<img width="886" height="652" alt="image" src="https://github.com/user-attachments/assets/6bc41fd9-4a52-4188-90d5-0cee5616dfea" />
 
 
 ---
@@ -62,12 +67,14 @@ Diseño de la pantalla de inicio con botones de navegación hacia la lista y el 
 ### Sexto Commit: Implementación de `ListScreen.kt`
 Creación de la pantalla de directorio con `LazyColumn` y botones para navegar al detalle pasando el ID del elemento.
 
+<img width="886" height="507" alt="image" src="https://github.com/user-attachments/assets/51ab9621-9784-4529-9bb5-24944882dc54" />
 
 
 ---
 
 ### Séptimo Commit: Implementación de `DetailScreen.kt`
 Recepción y renderizado del parámetro `itemId` recibido desde la ruta de navegación.
+<img width="886" height="472" alt="image" src="https://github.com/user-attachments/assets/76c3aace-b004-4698-a196-7baffd847873" />
 
 
 
@@ -76,6 +83,7 @@ Recepción y renderizado del parámetro `itemId` recibido desde la ruta de naveg
 ### Octavo Commit: Implementación de `ProfileScreen.kt`
 Creación de la pantalla de perfil utilizando `popUpTo` para limpiar la pila de navegación al volver al inicio.
 
+<img width="886" height="458" alt="image" src="https://github.com/user-attachments/assets/e2f9b7bf-d164-4fa5-b317-5b9cf2f12c81" />
 
 
 ---
@@ -85,8 +93,13 @@ Creación de la pantalla de perfil utilizando `popUpTo` para limpiar la pila de 
 Capturas de la aplicación funcionando con la estructura de navegación inicial:
 
 
+<img width="519" height="1165" alt="image" src="https://github.com/user-attachments/assets/c50bf4d9-d36a-4f19-b2d5-3107ca5ea7ea" />
 
+<img width="509" height="1183" alt="image" src="https://github.com/user-attachments/assets/a19eca0d-4154-4a68-b99e-5a3286ce0ea0" />
 
+<img width="488" height="1026" alt="image" src="https://github.com/user-attachments/assets/f60619ee-62e5-42a8-895f-aa86894a7101" />
+
+<img width="456" height="998" alt="image" src="https://github.com/user-attachments/assets/542fd0ab-7bf6-44e3-864a-abf02a9e4a5f" />
 
 
 
@@ -165,15 +178,21 @@ Por favor, genera y actualiza el código Kotlin de los archivos necesarios usand
 ### Capturas del Rediseño Final:
 
 #### 1. Pantalla de Inicio de Sesión (`LoginScreen`)
+<img width="414" height="879" alt="image" src="https://github.com/user-attachments/assets/d58995bc-fd7e-459b-8ee0-f0572e2adb5c" />
 
 
 #### 2. Panel Principal (`HomeScreen`)
+<img width="425" height="883" alt="image" src="https://github.com/user-attachments/assets/0c790d03-a3be-4fa0-9206-527d421116cb" />
 
 
 #### 3. Directorio de Alumnos (`ListScreen`)
+<img width="409" height="885" alt="image" src="https://github.com/user-attachments/assets/f9b3a0c2-4dab-4dda-ac32-8bec8f5ffafe" />
 
 
 #### 4. Expediente Académico (`DetailScreen`)
+<img width="403" height="888" alt="image" src="https://github.com/user-attachments/assets/ef726d41-91a0-4916-886f-168103dc69c1" />
 
 
 #### 5. Configuración de Perfil (`ProfileScreen`)
+<img width="421" height="884" alt="image" src="https://github.com/user-attachments/assets/1f37ff87-8a0c-436d-892c-47f71d3874e0" />
+
