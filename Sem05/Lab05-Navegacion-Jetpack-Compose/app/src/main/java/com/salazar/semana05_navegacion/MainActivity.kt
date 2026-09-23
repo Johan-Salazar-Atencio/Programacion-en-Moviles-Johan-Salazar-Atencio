@@ -1,5 +1,6 @@
 package com.salazar.semana05_navegacion
 
+import android.media.projection.AppContentRequest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.salazar.semana05_navegacion.navigation.AppNavigation
+import com.salazar.semana05_navegacion.navigation.Screen
 import com.salazar.semana05_navegacion.ui.theme.Semana05_navegacionTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,30 +22,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Semana05_navegacionTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            AppNavigation()
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun AppNavigationPreview() {
     Semana05_navegacionTheme {
-        Greeting("Android")
+        AppNavigation()
     }
 }
