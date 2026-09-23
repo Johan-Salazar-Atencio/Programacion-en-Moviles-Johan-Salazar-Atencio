@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.salazar.semana05_navegacion.screens.DetailScreen
 import com.salazar.semana05_navegacion.screens.HomeScreen
 import com.salazar.semana05_navegacion.screens.ListScreen
+import com.salazar.semana05_navegacion.screens.ProfileScreen
 
 @Composable
 fun AppNavigation() {
