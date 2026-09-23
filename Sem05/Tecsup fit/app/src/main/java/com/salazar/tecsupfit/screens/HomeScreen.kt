@@ -43,11 +43,13 @@ val sampleClasses = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onClassClick: (GymClass) -> Unit = {}) {
+fun HomeScreen(
+    onClassClick: (GymClass) -> Unit = {},
+    onNavigateToReservas: () -> Unit = {}
+) {
     val selectedFilter = remember { mutableStateOf("Hoy") }
     val filters = listOf("Hoy", "Esta semana")
 
-    var selectedTab by remember { mutableIntStateOf(0) }
     val navItems = listOf("Inicio", "Reservas", "Rutinas", "Perfil")
     val navIcons = listOf(
         Icons.Default.Home,
@@ -87,8 +89,12 @@ fun HomeScreen(onClassClick: (GymClass) -> Unit = {}) {
                     NavigationBarItem(
                         icon = { Icon(navIcons[index], contentDescription = item) },
                         label = { Text(item, fontSize = 12.sp) },
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
+                        selected = index == 0,
+                        onClick = {
+                            if (index == 1) {
+                                onNavigateToReservas()
+                            }
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF00695C),
                             selectedTextColor = Color(0xFF00695C),
