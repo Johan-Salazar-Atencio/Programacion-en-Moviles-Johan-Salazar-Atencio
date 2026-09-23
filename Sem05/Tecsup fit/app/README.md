@@ -23,12 +23,16 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `Screen.kt`
 - **Descripción:** Creación de la clase sellada para manejar todas las rutas y argumentos de la navegación de forma segura.
 
+<img width="886" height="394" alt="image" src="https://github.com/user-attachments/assets/02a97e34-c6f4-4f2b-88b1-4ccff1f4da77" />
+
 
 ---
 
 ### Commit 02: Configuración Inicial del NavHost (`AppNavigation.kt` y `MainActivity.kt`)
 - **Archivos modificados:** `AppNavigation.kt`, `MainActivity.kt`
 - **Descripción:** Implementación del contenedor principal de navegación `NavHost` acoplado al `NavController`.
+
+<img width="886" height="605" alt="image" src="https://github.com/user-attachments/assets/d570f05d-c5e8-450f-a93c-d13cf485c7f2" />
 
 
 ---
@@ -37,6 +41,8 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `HomeScreen.kt`
 - **Descripción:** Maquetación de la pantalla de inicio con lista de clases disponibles (`LazyColumn`), barra de filtros (`LazyRow`) y la barra de navegación inferior (`NavigationBar`).
 
+<img width="886" height="679" alt="image" src="https://github.com/user-attachments/assets/709bed9a-e08e-4e60-82fb-d339b7edcf4b" />
+
 
 ---
 
@@ -44,12 +50,15 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `AppNavigation.kt`
 - **Descripción:** Declaración de la ruta con argumento de tipo entero (`classId`) en el `NavHost` para conectar con la pantalla de detalle.
 
+<img width="886" height="395" alt="image" src="https://github.com/user-attachments/assets/3bae0a58-994c-4935-b98b-d88183a18472" />
 
 ---
 
 ### Commit 05: Implementación de la Pantalla de Detalle (`DetailScreen.kt`)
 - **Archivos modificados:** `DetailScreen.kt`
 - **Descripción:** Desarrollo de la interfaz de detalle mostrando la información específica de la clase seleccionada, horario, salón y botón para reservar.
+
+<img width="886" height="671" alt="image" src="https://github.com/user-attachments/assets/07d53385-917b-4fdb-ab8c-c8601a143cb5" />
 
 
 ---
@@ -58,12 +67,17 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `AppNavigation.kt`
 - **Descripción:** Definición de la ruta de confirmación en el `NavHost` configurada para recibir múltiples parámetros de la reserva.
 
+<img width="886" height="411" alt="image" src="https://github.com/user-attachments/assets/11a26cbd-f3c1-4f06-90f8-c3a2a25c8963" />
+
 
 ---
 
 ### Commit 07: Pantalla de Confirmación de Reserva (`ConfirmationScreen.kt`)
 - **Archivos modificados:** `ConfirmationScreen.kt`
 - **Descripción:** Diseño de la pantalla de éxito con confirmación visual de la reserva y botón para ver el historial.
+
+<img width="987" height="728" alt="image" src="https://github.com/user-attachments/assets/d6828747-1225-4673-9607-415c2019bd56" />
+
 
 
 ---
@@ -72,6 +86,7 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `ReservasScreen.kt`
 - **Descripción:** Vista del historial de clases reservadas por el usuario, mostrando estados de confirmación y detalles del evento.
 
+<img width="886" height="740" alt="image" src="https://github.com/user-attachments/assets/b6dcaac1-39ca-4727-8337-105040fa014d" />
 
 ---
 
@@ -79,6 +94,7 @@ El proyecto consta de dos partes principales:
 - **Archivos modificados:** `ProfileScreen.kt`
 - **Descripción:** Maquetación del perfil con avatar, nivel de suscripción del usuario y estadísticas de asistencia.
 
+<img width="886" height="692" alt="image" src="https://github.com/user-attachments/assets/98959f22-559e-4c51-8a0c-37810cf0aa9c" />
 
 ---
 
@@ -89,6 +105,7 @@ El proyecto consta de dos partes principales:
   > "Rediseña visualmente todas las pantallas (@HomeScreen.kt, @DetailScreen.kt, @ConfirmationScreen.kt, @ReservasScreen.kt y @ProfileScreen.kt) aplicando degradados (`Brush.verticalGradient`), elevación de tarjetas (`CardDefaults.cardElevation`), bordes redondeados y animaciones con `animateColorAsState` para los filtros."
 - **Resultado:** Interfaz moderna con paleta verde corporativa (`#00695C`), bordes suaves y animaciones de selección.
 
+<img width="886" height="686" alt="image" src="https://github.com/user-attachments/assets/c5f948cd-f9f2-4daa-affa-946d729d54d9" />
 
 ---
 
@@ -97,6 +114,7 @@ El proyecto consta de dos partes principales:
   > "Crea @RutinasScreen.kt con tarjetas de rutinas (Fuerza, HIIT) e incluye un checklist interactivo de ejercicios (`Checkbox`). Luego actualiza @AppNavigation.kt para gestionar 4 pestañas en la barra inferior (Home, Reservas, Rutinas, Perfil)."
 - **Resultado:** Creación e integración de la pestaña de rutinas de entrenamiento con lista interactiva.
 
+<img width="465" height="1003" alt="image" src="https://github.com/user-attachments/assets/c94ec45b-f934-47ad-bdc4-7e5d82d64ee1" />
 
 ---
 
@@ -104,6 +122,7 @@ El proyecto consta de dos partes principales:
 - **Prompt enviado a la IA:**
   > "Agrega un módulo interactivo de Calculadora de IMC en @ProfileScreen.kt con dos campos (`OutlinedTextField`) para Peso (kg) y Altura (cm), botón de cálculo, clasificación del resultado y recomendación personalizada de clases."
 - **Resultado:** Implementación de la calculadora de IMC funcional con sugerencia dinámica de clases.
+<img width="886" height="712" alt="image" src="https://github.com/user-attachments/assets/5faa6185-c0b6-457c-8ba5-c8c05688773f" />
 
 
 ---
