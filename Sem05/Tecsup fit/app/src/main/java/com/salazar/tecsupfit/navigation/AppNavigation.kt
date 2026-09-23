@@ -1,10 +1,14 @@
 package com.salazar.tecsupfit.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.salazar.tecsupfit.screens.DetailScreen
 import com.salazar.tecsupfit.screens.HomeScreen
+import com.salazar.tecsupfit.screens.sampleClasses
 
 @Composable
 fun AppNavigation() {
@@ -18,6 +22,20 @@ fun AppNavigation() {
             HomeScreen(
                 onClassClick = { gymClass ->
                     navController.navigate(Screen.Detail.createRoute(gymClass.id))
+                }
+            )
+        }
+        composable(
+            route = Screen.Detail.route,
+            arguments = listOf(navArgument("classId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val classId = backStackEntry.arguments?.getInt("classId") ?: 1
+            val gymClass = sampleClasses.find { it.id == classId } ?: sampleClasses.first()
+
+            DetailScreen(
+                gymClass = gymClass,
+                onBackClick = { navController.popBackStack() },
+                onReserveClick = { selectedClass ->
                 }
             )
         }
