@@ -19,10 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.salazar.tecsupfit.ui.theme.TecsupFitTheme
 
 data class GymClass(
     val id: Int,
@@ -45,7 +43,8 @@ val sampleClasses = listOf(
 @Composable
 fun HomeScreen(
     onClassClick: (GymClass) -> Unit = {},
-    onNavigateToReservas: () -> Unit = {}
+    onNavigateToReservas: () -> Unit = {},
+    onNavigateToTab: (Int) -> Unit = {}
 ) {
     val selectedFilter = remember { mutableStateOf("Hoy") }
     val filters = listOf("Hoy", "Esta semana")
@@ -91,6 +90,7 @@ fun HomeScreen(
                         label = { Text(item, fontSize = 12.sp) },
                         selected = index == 0,
                         onClick = {
+                            onNavigateToTab(index)
                             if (index == 1) {
                                 onNavigateToReservas()
                             }
@@ -192,4 +192,3 @@ fun HomeScreen(
         }
     }
 }
-

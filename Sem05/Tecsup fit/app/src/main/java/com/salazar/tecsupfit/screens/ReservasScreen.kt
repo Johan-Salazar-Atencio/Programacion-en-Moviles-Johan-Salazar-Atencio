@@ -15,10 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.salazar.tecsupfit.ui.theme.TecsupFitTheme
 
 data class Reservation(
     val id: Int,
@@ -36,7 +34,7 @@ val sampleReservations = listOf(
 @Composable
 fun ReservasScreen(
     reservations: List<Reservation> = sampleReservations,
-    onNavigateToHome: () -> Unit = {}
+    onNavigateToTab: (Int) -> Unit = {}
 ) {
     val navItems = listOf("Inicio", "Reservas", "Rutinas", "Perfil")
     val navIcons = listOf(
@@ -57,11 +55,7 @@ fun ReservasScreen(
                         icon = { Icon(navIcons[index], contentDescription = item) },
                         label = { Text(item, fontSize = 12.sp) },
                         selected = index == 1, // 1 = Reservas
-                        onClick = {
-                            if (index == 0) {
-                                onNavigateToHome()
-                            }
-                        },
+                        onClick = { onNavigateToTab(index) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF00695C),
                             selectedTextColor = Color(0xFF00695C),

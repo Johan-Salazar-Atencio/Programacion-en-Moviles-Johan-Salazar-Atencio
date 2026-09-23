@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.salazar.tecsupfit.screens.ConfirmationScreen
 import com.salazar.tecsupfit.screens.DetailScreen
 import com.salazar.tecsupfit.screens.HomeScreen
+import com.salazar.tecsupfit.screens.ProfileScreen
 import com.salazar.tecsupfit.screens.Reservation
 import com.salazar.tecsupfit.screens.ReservasScreen
 import com.salazar.tecsupfit.screens.sampleClasses
@@ -26,6 +27,20 @@ fun AppNavigation() {
         )
     }
 
+    fun navigateToTab(index: Int) {
+        when (index) {
+            0 -> navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Home.route) { inclusive = true }
+            }
+            1 -> navController.navigate("reservas") {
+                launchSingleTop = true
+            }
+            3 -> navController.navigate("perfil") {
+                launchSingleTop = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route
@@ -37,9 +52,11 @@ fun AppNavigation() {
                 },
                 onNavigateToReservas = {
                     navController.navigate("reservas")
-                }
+                },
+                onNavigateToTab = { index -> navigateToTab(index) }
             )
         }
+
         composable(
             route = Screen.Detail.route,
             arguments = listOf(navArgument("classId") { type = NavType.IntType })
@@ -91,11 +108,15 @@ fun AppNavigation() {
         composable("reservas") {
             ReservasScreen(
                 reservations = userReservations,
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
+                onNavigateToTab = { index -> navigateToTab(index) }
+            )
+        }
+
+        composable("perfil") {
+            ProfileScreen(
+                totalClasses = userReservations.size,
+                completedClasses = userReservations.count { !it.isConfirmed },
+                onNavigateToTab = { index -> navigateToTab(index) }
             )
         }
     }
