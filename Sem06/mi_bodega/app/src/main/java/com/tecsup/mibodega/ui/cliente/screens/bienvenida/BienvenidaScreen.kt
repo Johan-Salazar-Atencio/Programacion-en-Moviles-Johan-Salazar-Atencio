@@ -14,9 +14,15 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.R
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
+import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.AzulEnlace
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.FondoClaro
@@ -46,6 +53,71 @@ fun BienvenidaScreen(
     onIniciarSesion: () -> Unit,
     onTerminos: () -> Unit
 ) {
+    var mostrarDialogoLogin by remember { mutableStateOf(false) }
+    var usuarioInput by remember { mutableStateOf("") }
+    var claveInput by remember { mutableStateOf("") }
+    var mensajeErrorLogin by remember { mutableStateOf<String?>(null) }
+
+    if (mostrarDialogoLogin) {
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDialogoLogin = false
+                mensajeErrorLogin = null
+            },
+            title = { Text(text = "Iniciar sesión") },
+            text = {
+                Column {
+                    CampoTexto(
+                        etiqueta = "Usuario",
+                        valor = usuarioInput,
+                        onValorCambia = { usuarioInput = it },
+                        placeholder = "admin"
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    CampoTexto(
+                        etiqueta = "Contraseña",
+                        valor = claveInput,
+                        onValorCambia = { claveInput = it },
+                        placeholder = "1234"
+                    )
+                    if (mensajeErrorLogin != null) {
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = mensajeErrorLogin!!,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (usuarioInput == "admin" && claveInput == "1234") {
+                            mostrarDialogoLogin = false
+                            mensajeErrorLogin = null
+                            onIniciarSesion()
+                        } else {
+                            mensajeErrorLogin = "Usuario o contraseña incorrectos"
+                        }
+                    }
+                ) {
+                    Text("Ingresar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        mostrarDialogoLogin = false
+                        mensajeErrorLogin = null
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +161,7 @@ fun BienvenidaScreen(
 
         BotonSecundario(
             texto = "Iniciar sesión",
-            onClick = onIniciarSesion
+            onClick = { mostrarDialogoLogin = true }
         )
 
         Spacer(Modifier.height(20.dp))
@@ -154,4 +226,3 @@ private fun BienvenidaPreview() {
         BienvenidaScreen({}, {}, {})
     }
 }
-
