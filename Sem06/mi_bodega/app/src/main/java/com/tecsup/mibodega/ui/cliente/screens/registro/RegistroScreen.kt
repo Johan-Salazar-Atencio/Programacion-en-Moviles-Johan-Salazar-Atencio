@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -53,6 +53,11 @@ fun RegistroScreen(
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
 
+    var errorNombre by remember { mutableStateOf(false) }
+    var errorTelefono by remember { mutableStateOf(false) }
+    var errorDireccion by remember { mutableStateOf(false) }
+    var errorReferencia by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,40 +89,93 @@ fun RegistroScreen(
         CampoTexto(
             etiqueta = "Nombre completo",
             valor = nombre,
-            onValorCambia = { nombre = it },
+            onValorCambia = {
+                nombre = it
+                if (it.isNotBlank()) errorNombre = false
+            },
             placeholder = "Juan Pérez"
         )
+        if (errorNombre) {
+            Text(
+                text = "Campo obligatorio",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Teléfono",
             valor = telefono,
-            onValorCambia = { telefono = it },
+            onValorCambia = {
+                telefono = it
+                if (it.isNotBlank()) errorTelefono = false
+            },
             placeholder = "987 654 321",
             teclado = KeyboardType.Phone
         )
+        if (errorTelefono) {
+            Text(
+                text = "Campo obligatorio",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
-            onValorCambia = { direccion = it },
+            onValorCambia = {
+                direccion = it
+                if (it.isNotBlank()) errorDireccion = false
+            },
             placeholder = "Av. Los Olivos 123"
         )
+        if (errorDireccion) {
+            Text(
+                text = "Campo obligatorio",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Referencia",
             valor = referencia,
-            onValorCambia = { referencia = it },
+            onValorCambia = {
+                referencia = it
+                if (it.isNotBlank()) errorReferencia = false
+            },
             placeholder = "Frente al parque"
         )
+        if (errorReferencia) {
+            Text(
+                text = "Campo obligatorio",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
+        }
 
         Spacer(Modifier.height(28.dp))
 
         BotonPrimario(
             texto = "Crear cuenta",
-            onClick = { onCrearCuenta(nombre, telefono, direccion, referencia) }
+            onClick = {
+                errorNombre = nombre.isBlank()
+                errorTelefono = telefono.isBlank()
+                errorDireccion = direccion.isBlank()
+                errorReferencia = referencia.isBlank()
+
+                if (!errorNombre && !errorTelefono && !errorDireccion && !errorReferencia) {
+                    onCrearCuenta(nombre, telefono, direccion, referencia)
+                }
+            }
         )
 
         Spacer(Modifier.height(24.dp))
@@ -144,7 +202,7 @@ private fun EncabezadoRegistro(onVolver: () -> Unit) {
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.weight(1f, fill = false)
         )
-        Spacer(Modifier.size(48.dp)) // balancea el ancho del ícono de la izquierda
+        Spacer(Modifier.size(48.dp))
     }
     Text(
         text = "Completa tus datos para continuar",
@@ -162,4 +220,3 @@ private fun RegistroPreview() {
         RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _ -> })
     }
 }
-
