@@ -3,7 +3,10 @@ package com.salazar.lab04carritotecsup
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,7 +19,8 @@ import java.util.Locale
 @Composable
 fun TarjetaProducto(
     producto: Producto,
-    onEliminar: () -> Unit
+    onEliminar: () -> Unit,
+    onFavoritoToggle: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -75,6 +79,51 @@ fun TarjetaProducto(
                     )
                 }
 
+                // DropdownMenu desplegable
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Favoritos") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Favoritos"
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            onFavoritoToggle()
+                        }
+                    )
+                    HorizontalDivider()
+                    DropdownMenuItem(
+                        text = { Text("Compartir") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Compartir"
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                        }
+                    )
+                    HorizontalDivider()
+                    DropdownMenuItem(
+                        text = { Text("Reportar") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Warning,
+                                contentDescription = "Reportar"
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
