@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PantallaCarrito()
+                    AppNavegacion()
                 }
             }
         }
@@ -33,6 +33,6 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PantallaCarritoPreview() {
-    PantallaCarrito()
+fun PantallaNavegacionPreview() {
+    AppNavegacion()
 }

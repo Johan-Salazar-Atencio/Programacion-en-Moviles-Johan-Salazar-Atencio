@@ -68,7 +68,7 @@ fun AppDrawer(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "MR",
+                        text = "JS",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 18.sp
@@ -80,12 +80,12 @@ fun AppDrawer(
                 // Nombre y correo del usuario
                 Column {
                     Text(
-                        text = "Maria Rojas",
+                        text = "Johan Salazar",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "maria@tecsup.edu.pe",
+                        text = "johan@tecsup.edu.pe",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
