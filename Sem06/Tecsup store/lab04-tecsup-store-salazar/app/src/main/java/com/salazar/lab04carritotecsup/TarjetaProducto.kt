@@ -3,8 +3,9 @@ package com.salazar.lab04carritotecsup
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +18,8 @@ fun TarjetaProducto(
     producto: Producto,
     onEliminar: () -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -60,6 +63,18 @@ fun TarjetaProducto(
                     contentDescription = "Eliminar",
                     tint = MaterialTheme.colorScheme.error
                 )
+            }
+
+            //icono de 3 puntos
+            Box {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Más opciones",
+                        tint = Color.Gray
+                    )
+                }
+
             }
         }
     }
