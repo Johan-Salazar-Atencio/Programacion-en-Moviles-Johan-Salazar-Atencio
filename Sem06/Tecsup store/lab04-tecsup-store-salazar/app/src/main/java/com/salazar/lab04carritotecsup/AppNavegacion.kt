@@ -35,7 +35,7 @@ fun AppNavegacion() {
 
     var destinoActual by remember { mutableStateOf(DestinoDrawer.INICIO) }
 
-    // Estado persistente de listas entre cambios de pantalla
+    // Estado global persistente entre cambios de pestaña
     val productos = remember { mutableStateListOf<Producto>() }
     val favoritos = remember { mutableStateListOf<Producto>() }
 
@@ -87,6 +87,7 @@ fun AppNavegacion() {
                 when (destinoActual) {
                     DestinoDrawer.INICIO -> PantallaCarrito(
                         productos = productos,
+                        favoritos = favoritos,
                         onAgregarProducto = { producto -> productos.add(producto) },
                         onEliminarProducto = { producto ->
                             productos.remove(producto)
