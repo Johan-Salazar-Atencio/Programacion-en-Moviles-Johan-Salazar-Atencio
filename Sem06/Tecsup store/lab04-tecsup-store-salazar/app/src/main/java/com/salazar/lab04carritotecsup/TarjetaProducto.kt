@@ -20,7 +20,7 @@ import java.util.Locale
 fun TarjetaProducto(
     producto: Producto,
     onEliminar: () -> Unit,
-    onFavoritoToggle: () -> Unit = {}
+    onFavoritoToggle: (Producto) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -94,7 +94,7 @@ fun TarjetaProducto(
                         },
                         onClick = {
                             expanded = false
-                            onFavoritoToggle()
+                            onFavoritoToggle(producto)
                         }
                     )
                     HorizontalDivider()

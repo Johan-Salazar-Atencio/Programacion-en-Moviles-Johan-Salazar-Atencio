@@ -12,15 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
 @Composable
-fun PantallaCarrito() {
+fun PantallaCarrito(
+    productos: List<Producto>,
+    onAgregarProducto: (Producto) -> Unit,
+    onEliminarProducto: (Producto) -> Unit,
+    onFavoritoToggle: (Producto) -> Unit = {}
+) {
     // Estados para los inputs
     var nombre by remember { mutableStateOf("") }
     var precio by remember { mutableStateOf("") }
     var cantidad by remember { mutableStateOf("") }
-
-    val productos = remember { mutableStateListOf<Producto>() }
 
     Column(
         modifier = Modifier
@@ -58,7 +62,8 @@ fun PantallaCarrito() {
                 val precioNum = precio.toDoubleOrNull() ?: 0.0
                 val cantidadNum = cantidad.toIntOrNull() ?: 0
                 if (nombre.isNotBlank() && precioNum > 0 && cantidadNum > 0) {
-                    productos.add(Producto(1, nombre, precioNum, cantidadNum))
+                    val nuevoId = (productos.maxOfOrNull { it.id } ?: 0) + 1
+                    onAgregarProducto(Producto(nuevoId, nombre, precioNum, cantidadNum))
                     nombre = ""
                     precio = ""
                     cantidad = ""
@@ -75,25 +80,33 @@ fun PantallaCarrito() {
         } else {
             LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(productos) { p ->
-                    TarjetaProducto(producto = p, onEliminar = { productos.remove(p) })
+                    TarjetaProducto(
+                        producto = p,
+                        onEliminar = { onEliminarProducto(p) },
+                        onFavoritoToggle = onFavoritoToggle
+                    )
                 }
             }
         }
 
         // Panel de Totales
+        val subtotal = productos.sumOf { it.precio * it.cantidad }
+        val igv = subtotal * 0.18
+        val total = subtotal * 1.18
+
         Surface(modifier = Modifier.fillMaxWidth(), tonalElevation = 8.dp, shape = RoundedCornerShape(12.dp)) {
             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Productos: ${productos.size}")
-                    Text("Subtotal: S/ ${productos.sumOf { it.precio * it.cantidad }}")
+                    Text("Subtotal: S/ ${String.format(Locale.US, "%.2f", subtotal)}")
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("IGV (18%)")
-                    Text("S/ ${productos.sumOf { it.precio * it.cantidad } * 0.18}")
+                    Text("S/ ${String.format(Locale.US, "%.2f", igv)}")
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Text("TOTAL", style = MaterialTheme.typography.titleLarge)
-                    Text("S/ ${productos.sumOf { it.precio * it.cantidad } * 1.18}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
+                    Text("S/ ${String.format(Locale.US, "%.2f", total)}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
                 }
             }
         }

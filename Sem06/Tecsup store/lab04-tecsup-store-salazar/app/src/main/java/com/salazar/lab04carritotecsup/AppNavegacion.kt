@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +34,18 @@ fun AppNavegacion() {
     val scope = rememberCoroutineScope()
 
     var destinoActual by remember { mutableStateOf(DestinoDrawer.INICIO) }
+
+    // Estado persistente de listas entre cambios de pantalla
+    val productos = remember { mutableStateListOf<Producto>() }
+    val favoritos = remember { mutableStateListOf<Producto>() }
+
+    val onToggleFavorito: (Producto) -> Unit = { producto ->
+        if (favoritos.contains(producto)) {
+            favoritos.remove(producto)
+        } else {
+            favoritos.add(producto)
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -71,7 +84,22 @@ fun AppNavegacion() {
                     .padding(innerPadding)
             ) {
                 when (destinoActual) {
-                    DestinoDrawer.INICIO -> PantallaCarrito()
+                    DestinoDrawer.INICIO -> PantallaCarrito(
+                        productos = productos,
+                        onAgregarProducto = { producto -> productos.add(producto) },
+                        onEliminarProducto = { producto ->
+                            productos.remove(producto)
+                            favoritos.remove(producto)
+                        },
+                        onFavoritoToggle = onToggleFavorito
+                    )
+                    DestinoDrawer.FAVORITOS -> PantallaFavoritos(
+                        favoritos = favoritos,
+                        onEliminarFavorito = { producto ->
+                            favoritos.remove(producto)
+                        },
+                        onFavoritoToggle = onToggleFavorito
+                    )
                     else -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
