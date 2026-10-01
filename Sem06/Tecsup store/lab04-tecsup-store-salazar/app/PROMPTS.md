@@ -41,10 +41,18 @@ Este documento registra las instrucciones directas (prompts) proporcionadas al a
 
 # Commit 1
 implementa callback de favoritos, persistencia en carrito y crear PantallaFavoritos
+<img width="886" height="468" alt="image" src="https://github.com/user-attachments/assets/66ecd33d-bbe3-45ea-8390-cfc9fab568c1" />
+<img width="886" height="465" alt="image" src="https://github.com/user-attachments/assets/9a1ca0f5-a0a2-48d7-b736-eceb2e3bf204" />
+<img width="886" height="483" alt="image" src="https://github.com/user-attachments/assets/c6120619-aac7-494e-b4fe-4fc5241d956d" />
+
 
 # Commit 2
 agrega badge contador de favoritos en NavigationDrawer
+<img width="886" height="409" alt="image" src="https://github.com/user-attachments/assets/5143a3aa-a0c6-4405-91e5-14bd131a0576" />
+
 
 # Commit 3
 implementar eliminacion de favoritos, refinamiento visual de UI
+<img width="886" height="468" alt="image" src="https://github.com/user-attachments/assets/af2a5680-02d5-4322-b199-d94bf0a17592" />
+
 
