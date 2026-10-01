@@ -34,17 +34,26 @@ Se aborda la arquitectura de UI reactiva evaluando conceptos de **elevación de 
 
 #### Commit 1: Implementación de TarjetaProducto y estructura de carrito
 Se configuro los 3 puntitos en TarjetaProducto
+<img width="886" height="498" alt="image" src="https://github.com/user-attachments/assets/a11df9b0-f2db-408e-8b7a-75d59ae65b43" />
+
 
 #### Commit 2: Integración de DropdownMenu en TarjetaProducto
 Se añadió el menú contextual desplegable con opciones de Favoritos, Compartir y Reportar.
+<img width="886" height="741" alt="image" src="https://github.com/user-attachments/assets/0206aca4-34cf-4769-ba90-7023c5614861" />
 
 
 #### Commit 3: Implementación de AppDrawer
 Se construyó el menú lateral `ModalNavigationDrawer` con perfil de usuario y opciones de navegación.
+<img width="886" height="479" alt="image" src="https://github.com/user-attachments/assets/1b50c902-ccfa-4219-844f-69ba8b645b10" />
+
 
 
 #### Commit 4: Conexión de navegación en AppNavegacion y MainActivity
 Se integró el Scaffold principal unificando el Drawer, la barra superior y el renderizado condicional de vistas.
+<img width="886" height="498" alt="image" src="https://github.com/user-attachments/assets/d1cc77e9-6d69-4447-aaec-af0dc363bff3" />
+<img width="886" height="474" alt="image" src="https://github.com/user-attachments/assets/cbcb2fac-b153-4a63-a64e-789b2a1ec79f" />
+
+
 
 
 ---
@@ -53,14 +62,23 @@ Se integró el Scaffold principal unificando el Drawer, la barra superior y el r
 
 #### Commit 1 (IA): Callbacks de favoritos, persistencia de carrito y PantallaFavoritos
 Se elevó el estado de las listas a `AppNavegacion.kt`, se agregaron callbacks en la tarjeta y se creó la vista `PantallaFavoritos.kt`.
+<img width="886" height="468" alt="image" src="https://github.com/user-attachments/assets/4226d03e-4439-4f91-bdac-1a854fca1d9b" />
+<img width="886" height="465" alt="image" src="https://github.com/user-attachments/assets/92a1f70e-8096-48a7-bf68-6ef4fda117bd" />
+<img width="886" height="483" alt="image" src="https://github.com/user-attachments/assets/e840f577-8205-4184-8000-391b48d28f61" />
+
+
 
 
 #### Commit 2 (IA): Badge contador de favoritos en NavigationDrawer
 Se integró la propiedad `badge` en `AppDrawer.kt` para mostrar la cantidad actual de productos en favoritos.
+<img width="886" height="409" alt="image" src="https://github.com/user-attachments/assets/6aa3b013-f170-4f2b-b6d4-fb1737d243ef" />
+
 
 
 #### Commit 3 (IA): Eliminación de favoritos y refinamiento de interfaz Material 3
 Se implementó la desmarcación de favoritos y la mejora visual general en tarjetas, botones e inputs.
+<img width="886" height="468" alt="image" src="https://github.com/user-attachments/assets/ebc03421-a04a-4eb1-af9e-eb920e087bed" />
+
 
 
 ---
