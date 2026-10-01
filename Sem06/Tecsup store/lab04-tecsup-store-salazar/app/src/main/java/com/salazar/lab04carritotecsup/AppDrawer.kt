@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.ExitToApp
 
 enum class DestinoDrawer(val titulo: String, val icono: ImageVector) {
     INICIO("Inicio", Icons.Default.Home),
@@ -48,7 +47,8 @@ enum class DestinoDrawer(val titulo: String, val icono: ImageVector) {
 fun AppDrawer(
     destinoSeleccionado: DestinoDrawer,
     onDestinoSeleccionado: (DestinoDrawer) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cantidadFavoritos: Int = 0
 ) {
     ModalDrawerSheet(modifier = modifier) {
         Column(
@@ -101,6 +101,9 @@ fun AppDrawer(
             NavigationDrawerItem(
                 label = { Text(destino.titulo) },
                 icon = { Icon(imageVector = destino.icono, contentDescription = destino.titulo) },
+                badge = if ((destino == DestinoDrawer.FAVORITOS) && (cantidadFavoritos > 0)) {
+                    { Badge { Text(cantidadFavoritos.toString()) } }
+                } else null,
                 selected = destino == destinoSeleccionado,
                 onClick = { onDestinoSeleccionado(destino) },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)

@@ -55,7 +55,8 @@ fun AppNavegacion() {
                 onDestinoSeleccionado = { destino ->
                     destinoActual = destino
                     scope.launch { drawerState.close() }
-                }
+                },
+                cantidadFavoritos = favoritos.size
             )
         }
     ) {
