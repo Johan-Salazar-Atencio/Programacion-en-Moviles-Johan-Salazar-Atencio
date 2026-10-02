@@ -15,7 +15,9 @@ import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
+import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
+import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
 
@@ -33,6 +35,8 @@ private object Rutas {
     const val INICIO = "inicio"
     const val DETALLE = "detalle/{productoId}"
     const val CARRITO = "carrito"
+    const val DATOS_ENTREGA = "datos_entrega"
+    const val CONFIRMACION = "confirmacion"
 
     fun detalle(productoId: Int) = "detalle/$productoId"
 }
@@ -119,7 +123,34 @@ fun ClienteApp() {
                 onEliminar = { producto ->
                     carrito = carrito.filterNot { it.producto.id == producto.id }
                 },
-                onContinuarPedido = { /* TODO: navegar a DatosEntregaScreen */ }
+                onContinuarPedido = { navController.navigate(Rutas.DATOS_ENTREGA) }
+            )
+        }
+
+        composable(Rutas.DATOS_ENTREGA) {
+            val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
+            val costoEnvio = if (carrito.isNotEmpty()) 5.0 else 0.0
+            val totalCalculado = subtotal + costoEnvio
+
+            DatosEntregaScreen(
+                montoTotal = totalCalculado,
+                onVolver = { navController.popBackStack() },
+                onConfirmarPedido = { direccion, referencia, metodoPago ->
+                    carrito = emptyList() // Vaciamos el carrito al finalizar la compra
+                    navController.navigate(Rutas.CONFIRMACION) {
+                        popUpTo(Rutas.INICIO) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(Rutas.CONFIRMACION) {
+            ConfirmacionScreen(
+                onVolverInicio = {
+                    navController.navigate(Rutas.INICIO) {
+                        popUpTo(Rutas.INICIO) { inclusive = true }
+                    }
+                }
             )
         }
     }
