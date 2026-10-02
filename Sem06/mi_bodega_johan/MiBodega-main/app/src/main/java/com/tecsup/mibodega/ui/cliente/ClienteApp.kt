@@ -15,10 +15,13 @@ import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
+import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
 import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
+import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
+import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
 
 /**
@@ -37,6 +40,9 @@ private object Rutas {
     const val CARRITO = "carrito"
     const val DATOS_ENTREGA = "datos_entrega"
     const val CONFIRMACION = "confirmacion"
+    const val CATEGORIAS = "categorias"
+    const val PEDIDOS = "pedidos"
+    const val PERFIL = "perfil"
 
     fun detalle(productoId: Int) = "detalle/$productoId"
 }
@@ -81,6 +87,16 @@ fun ClienteApp() {
                 },
                 onAgregarProducto = { producto ->
                     carrito = agregarOSumarProducto(carrito, producto, 1)
+                },
+                onNavegar = { indice ->
+                    when (indice) {
+                        0 -> navController.navigate(Rutas.INICIO) {
+                            popUpTo(Rutas.INICIO) { inclusive = true }
+                        }
+                        1 -> navController.navigate(Rutas.CATEGORIAS)
+                        2 -> navController.navigate(Rutas.PEDIDOS)
+                        3 -> navController.navigate(Rutas.PERFIL)
+                    }
                 }
             )
         }
@@ -149,6 +165,51 @@ fun ClienteApp() {
                 onVolverInicio = {
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.INICIO) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Rutas.CATEGORIAS) {
+            CategoriasScreen(
+                onNavegar = { indice ->
+                    when (indice) {
+                        0 -> navController.navigate(Rutas.INICIO)
+                        1 -> navController.navigate(Rutas.CATEGORIAS) {
+                            popUpTo(Rutas.CATEGORIAS) { inclusive = true }
+                        }
+                        2 -> navController.navigate(Rutas.PEDIDOS)
+                        3 -> navController.navigate(Rutas.PERFIL)
+                    }
+                }
+            )
+        }
+
+        composable(Rutas.PEDIDOS) {
+            PedidosScreen(
+                onNavegar = { indice ->
+                    when (indice) {
+                        0 -> navController.navigate(Rutas.INICIO)
+                        1 -> navController.navigate(Rutas.CATEGORIAS)
+                        2 -> navController.navigate(Rutas.PEDIDOS) {
+                            popUpTo(Rutas.PEDIDOS) { inclusive = true }
+                        }
+                        3 -> navController.navigate(Rutas.PERFIL)
+                    }
+                }
+            )
+        }
+
+        composable(Rutas.PERFIL) {
+            PerfilScreen(
+                onNavegar = { indice ->
+                    when (indice) {
+                        0 -> navController.navigate(Rutas.INICIO)
+                        1 -> navController.navigate(Rutas.CATEGORIAS)
+                        2 -> navController.navigate(Rutas.PEDIDOS)
+                        3 -> navController.navigate(Rutas.PERFIL) {
+                            popUpTo(Rutas.PERFIL) { inclusive = true }
+                        }
                     }
                 }
             )

@@ -68,7 +68,8 @@ fun InicioScreen(
     cantidadCarrito: Int,
     onVerCarrito: () -> Unit,
     onProductoClick: (Producto) -> Unit,
-    onAgregarProducto: (Producto) -> Unit
+    onAgregarProducto: (Producto) -> Unit,
+    onNavegar: (Int) -> Unit = {}
 ) {
     var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
     var textoBusqueda by remember { mutableStateOf("") }
@@ -98,7 +99,7 @@ fun InicioScreen(
                 }
             )
         },
-        bottomBar = { BarraInferior() }
+        bottomBar = { BarraInferior(onNavegar = onNavegar) }
     ) { paddingInterno ->
         Column(
             modifier = Modifier
@@ -184,7 +185,7 @@ private fun ChipCategoria(
 }
 
 @Composable
-private fun BarraInferior() {
+private fun BarraInferior(onNavegar: (Int) -> Unit) {
     var seleccionado by remember { mutableStateOf(0) }
     val items = listOf(
         Triple("Inicio", Icons.Default.Home, 0),
@@ -196,7 +197,10 @@ private fun BarraInferior() {
         items.forEach { (etiqueta, icono, indice) ->
             NavigationBarItem(
                 selected = seleccionado == indice,
-                onClick = { seleccionado = indice },
+                onClick = {
+                    seleccionado = indice
+                    onNavegar(indice)
+                },
                 icon = { Icon(icono, contentDescription = etiqueta) },
                 label = { Text(etiqueta) },
                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
