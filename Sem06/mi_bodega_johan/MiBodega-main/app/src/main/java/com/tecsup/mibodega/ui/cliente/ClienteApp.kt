@@ -23,6 +23,7 @@ import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
 import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
+import com.tecsup.mibodega.ui.cliente.screens.terminos.TerminosScreen
 
 /**
  * "Director de orquesta" de la app cliente:
@@ -43,6 +44,7 @@ private object Rutas {
     const val CATEGORIAS = "categorias"
     const val PEDIDOS = "pedidos"
     const val PERFIL = "perfil"
+    const val TERMINOS = "terminos"
 
     fun detalle(productoId: Int) = "detalle/$productoId"
 }
@@ -62,7 +64,7 @@ fun ClienteApp() {
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
                 onIniciarSesion = { navController.navigate(Rutas.REGISTRO) },
-                onTerminos = { /* TODO: abrir términos y condiciones */ }
+                onTerminos = { navController.navigate(Rutas.TERMINOS) }
             )
         }
 
@@ -213,6 +215,10 @@ fun ClienteApp() {
                     }
                 }
             )
+        }
+
+        composable(Rutas.TERMINOS) {
+            TerminosScreen(onVolver = { navController.popBackStack() })
         }
     }
 }
