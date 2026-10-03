@@ -1,5 +1,8 @@
 package com.tecsup.mibodega.ui.cliente.screens.carrito
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +22,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material.icons.filled.RemoveShoppingCart
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,15 +44,13 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
+import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 private const val COSTO_DELIVERY = 4.00
 
 /**
- * Pantalla 5: Mi carrito (mockup "Cliente").
- * No guarda estado propio: el carrito viene de ClienteApp y cualquier
- * cambio (sumar, restar, eliminar) se avisa hacia arriba con callbacks.
+ * Pantalla 5: Mi Carrito estilizada con animaciones al eliminar items, resumen en card y tarjetas suaves.
  */
 @Composable
 fun CarritoScreen(
@@ -58,7 +62,7 @@ fun CarritoScreen(
     onContinuarPedido: () -> Unit
 ) {
     val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
-    val total = subtotal + COSTO_DELIVERY
+    val total = if (carrito.isEmpty()) 0.0 else subtotal + COSTO_DELIVERY
 
     Column(
         modifier = Modifier
@@ -67,47 +71,91 @@ fun CarritoScreen(
     ) {
         EncabezadoCarrito(onVolver = onVolver)
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(carrito, key = { it.producto.id }) { item ->
-                FilaCarrito(
-                    item = item,
-                    onIncrementar = { onIncrementar(item.producto) },
-                    onDecrementar = { onDecrementar(item.producto) },
-                    onEliminar = { onEliminar(item.producto) }
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        if (carrito.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RemoveShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(72.dp)
+                    )
+                    Text(
+                        text = "Tu carrito está vacío",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "Agrega productos desde el catálogo para continuar.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-        }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(vertical = 12.dp)
+            ) {
+                items(carrito, key = { it.producto.id }) { item ->
+                    AnimatedVisibility(
+                        visible = true,
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp)
+                        ) {
+                            FilaCarrito(
+                                item = item,
+                                onIncrementar = { onIncrementar(item.producto) },
+                                onDecrementar = { onDecrementar(item.producto) },
+                                onEliminar = { onEliminar(item.producto) }
+                            )
+                        }
+                    }
+                }
+            }
 
-        ResumenYBoton(
-            subtotal = subtotal,
-            delivery = COSTO_DELIVERY,
-            total = total,
-            onContinuarPedido = onContinuarPedido
-        )
+            ResumenYBoton(
+                subtotal = subtotal,
+                delivery = COSTO_DELIVERY,
+                total = total,
+                habilitado = carrito.isNotEmpty(),
+                onContinuarPedido = onContinuarPedido
+            )
+        }
     }
 }
-
-// Sub-composables PRIVADOS: solo los usa esta pantalla.
 
 @Composable
 private fun EncabezadoCarrito(onVolver: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onVolver) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
         }
         Text(
-            text = "Mi carrito",
+            text = "Mi Carrito",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -122,21 +170,26 @@ private fun FilaCarrito(
     onEliminar: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Placeholder de imagen: reemplázalo por Image(painterResource(...))
+        // Icono específico del producto
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .background(GrisClaro, RoundedCornerShape(10.dp)),
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(10.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Default.ShoppingBasket,
+                imageVector = item.producto.icono,
                 contentDescription = item.producto.nombre,
                 tint = VerdeBodega,
-                modifier = Modifier.size(26.dp)
+                modifier = Modifier.size(28.dp)
             )
         }
 
@@ -146,12 +199,13 @@ private fun FilaCarrito(
             Text(
                 text = item.producto.nombre,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold
             )
             Text(
                 text = "S/ %.2f".format(item.producto.precio),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = VerdeBodega,
+                fontWeight = FontWeight.SemiBold
             )
         }
 
@@ -165,7 +219,7 @@ private fun FilaCarrito(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Eliminar ${item.producto.nombre}",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = RojoPrecio
             )
         }
     }
@@ -176,35 +230,50 @@ private fun ResumenYBoton(
     subtotal: Double,
     delivery: Double,
     total: Double,
+    habilitado: Boolean,
     onContinuarPedido: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
-        FilaResumen(etiqueta = "Subtotal", valor = subtotal)
-        FilaResumen(etiqueta = "Costo de delivery", valor = delivery)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            FilaResumen(etiqueta = "Subtotal", valor = subtotal)
+            FilaResumen(etiqueta = "Costo de envío (Delivery)", valor = delivery)
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Total",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "S/ %.2f".format(total),
-                style = MaterialTheme.typography.titleMedium,
-                color = VerdeBodega
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Total a pagar",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "S/ %.2f".format(total),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = VerdeBodega
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            BotonPrimario(
+                texto = "Continuar Pedido",
+                icono = Icons.Default.ArrowForward,
+                habilitado = habilitado,
+                onClick = onContinuarPedido
             )
         }
-
-        Spacer(Modifier.height(16.dp))
-
-        BotonPrimario(
-            texto = "Continuar pedido",
-            onClick = onContinuarPedido
-        )
     }
 }
 
@@ -216,8 +285,16 @@ private fun FilaResumen(etiqueta: String, valor: Double) {
             .padding(vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = etiqueta, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(text = "S/ %.2f".format(valor), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = etiqueta,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = "S/ %.2f".format(valor),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 
@@ -225,9 +302,9 @@ private fun FilaResumen(etiqueta: String, valor: Double) {
 @Composable
 private fun CarritoPreview() {
     val carritoEjemplo = listOf(
-        ItemCarrito(listaProductosFake[4], 1), // Coca-Cola
-        ItemCarrito(listaProductosFake[0], 2), // Arroz Costeño
-        ItemCarrito(listaProductosFake[2], 1)  // Leche Gloria
+        ItemCarrito(listaProductosFake[4], 1),
+        ItemCarrito(listaProductosFake[0], 2),
+        ItemCarrito(listaProductosFake[2], 1)
     )
     BodegaTheme {
         CarritoScreen(
@@ -240,4 +317,3 @@ private fun CarritoPreview() {
         )
     }
 }
-

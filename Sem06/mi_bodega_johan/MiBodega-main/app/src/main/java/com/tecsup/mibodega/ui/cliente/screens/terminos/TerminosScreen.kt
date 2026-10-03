@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,71 +57,60 @@ fun TerminosScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp)
         ) {
+            SeccionTermino(
+                titulo = "1. Aceptación de los términos",
+                contenido = "Al utilizar la aplicación Mi Bodega, usted acepta estos términos y condiciones en su totalidad. Si no está de acuerdo con alguna parte de estos términos, le recomendamos no utilizar la aplicación."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            SeccionTermino(
+                titulo = "2. Uso de la aplicación",
+                contenido = "La aplicación Mi Bodega está destinada a facilitar la compra de productos de primera necesidad. El usuario se compromete a utilizar la aplicación de manera responsable y conforme a las leyes vigentes."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            SeccionTermino(
+                titulo = "3. Registro de cuenta",
+                contenido = "Para realizar compras, el usuario debe crear una cuenta proporcionando información veraz y actualizada. El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            SeccionTermino(
+                titulo = "4. Entrega de productos",
+                contenido = "Los tiempos de entrega son estimados y pueden variar según la disponibilidad y la zona de entrega. Mi Bodega no se responsabiliza por retrasos causados por factores externos."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            SeccionTermino(
+                titulo = "5. Modificaciones",
+                contenido = "Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de la aplicación."
+            )
+        }
+    }
+}
+
+@Composable
+private fun SeccionTermino(titulo: String, contenido: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "1. Aceptación de los términos",
+                text = titulo,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
             Text(
-                text = "Al utilizar la aplicación Mi Bodega, usted acepta estos términos y condiciones en su totalidad. Si no está de acuerdo con alguna parte de estos términos, le recomendamos no utilizar la aplicación.",
-                style = MaterialTheme.typography.bodyMedium
+                text = contenido,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "2. Uso de la aplicación",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "La aplicación Mi Bodega está destinada a facilitar la compra de productos de primera necesidad. El usuario se compromete a utilizar la aplicación de manera responsable y conforme a las leyes vigentes.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "3. Registro de cuenta",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Para realizar compras, el usuario debe crear una cuenta proporcionando información veraz y actualizada. El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "4. Entrega de productos",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Los tiempos de entrega son estimados y pueden variar según la disponibilidad y la zona de entrega. Mi Bodega no se responsabiliza por retrasos causados por factores externos.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "5. Modificaciones",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados a través de la aplicación.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(24.dp))
         }
     }
 }

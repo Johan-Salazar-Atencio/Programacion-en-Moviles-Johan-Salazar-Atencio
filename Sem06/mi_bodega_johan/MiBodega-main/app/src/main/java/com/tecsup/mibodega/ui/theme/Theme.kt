@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 private val BodegaColorScheme = lightColorScheme(
     primary = VerdeBodega,
     onPrimary = Blanco,
+    primaryContainer = VerdeSuave,
+    onPrimaryContainer = VerdeOscuro,
     secondary = AzulEnlace,
-    background = Blanco,
+    background = FondoPantalla,
     onBackground = AzulTexto,
     surface = Blanco,
     onSurface = AzulTexto,

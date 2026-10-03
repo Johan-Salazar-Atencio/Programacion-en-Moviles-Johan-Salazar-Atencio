@@ -17,13 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Botón verde principal de toda la app.
- * Se usa en: Bienvenida, Registro, Detalle, Carrito, Entrega.
+ * Botón verde principal de toda la app con elevación suave e icono vectorial.
  */
 @Composable
 fun BotonPrimario(
@@ -31,7 +31,8 @@ fun BotonPrimario(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtexto: String? = null,
-    icono: Painter? = null,
+    icono: ImageVector? = null,
+    iconoPainter: Painter? = null,
     habilitado: Boolean = true
 ) {
     Button(
@@ -39,38 +40,51 @@ fun BotonPrimario(
         enabled = habilitado,
         modifier = modifier
             .fillMaxWidth()
-            .height(if (subtexto != null) 64.dp else 52.dp),
+            .height(if (subtexto != null) 60.dp else 52.dp),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 6.dp,
+            focusedElevation = 4.dp
         )
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (icono != null) {
                 Icon(
-                    painter = icono,
+                    imageVector = icono,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(22.dp)
                 )
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.width(8.dp))
+            } else if (iconoPainter != null) {
+                Icon(
+                    painter = iconoPainter,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.width(8.dp))
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = texto,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    fontSize = if (subtexto != null) 19.sp else 17.sp
+                    fontSize = if (subtexto != null) 18.sp else 16.sp
                 )
                 if (subtexto != null) {
                     Text(
                         text = subtexto,
                         style = MaterialTheme.typography.bodySmall,
-                        fontSize = 14.sp
+                        fontSize = 13.sp
                     )
                 }
             }
         }
     }
 }
-

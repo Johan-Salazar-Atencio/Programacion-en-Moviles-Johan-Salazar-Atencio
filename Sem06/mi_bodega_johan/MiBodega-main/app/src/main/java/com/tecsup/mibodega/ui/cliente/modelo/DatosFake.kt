@@ -1,11 +1,12 @@
 package com.tecsup.mibodega.ui.cliente.modelo
 
-/**
- * Datos de ejemplo (fake) para mostrar la UI sin base de datos.
- * Cuando conecten Room o una API, este archivo se reemplaza por
- * un Repository real, pero las pantallas no cambian porque ya
- * reciben una List<Producto> como parámetro.
- */
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.WaterDrop
+
 val listaCategorias = listOf("Todos", "Bebidas", "Abarrotes", "Snacks")
 
 val listaProductosFake = listOf(
@@ -15,7 +16,8 @@ val listaProductosFake = listOf(
         descripcion = "Arroz extra, grano largo, ideal para el día a día.",
         precio = 4.50,
         categoria = "Abarrotes",
-        presentacion = "1 kg"
+        presentacion = "1 kg",
+        icono = Icons.Default.ShoppingBag
     ),
     Producto(
         id = 2,
@@ -23,7 +25,8 @@ val listaProductosFake = listOf(
         descripcion = "Aceite vegetal 1 L, alto en vitamina E.",
         precio = 8.90,
         categoria = "Abarrotes",
-        presentacion = "1 L"
+        presentacion = "1 L",
+        icono = Icons.Default.WaterDrop
     ),
     Producto(
         id = 3,
@@ -31,7 +34,8 @@ val listaProductosFake = listOf(
         descripcion = "Leche evaporada entera 1 L.",
         precio = 5.20,
         categoria = "Abarrotes",
-        presentacion = "1 L"
+        presentacion = "1 L",
+        icono = Icons.Default.Coffee
     ),
     Producto(
         id = 4,
@@ -39,7 +43,8 @@ val listaProductosFake = listOf(
         descripcion = "Galletas de chocolate rellenas 126 g.",
         precio = 3.50,
         categoria = "Snacks",
-        presentacion = "126 g"
+        presentacion = "126 g",
+        icono = Icons.Default.Fastfood
     ),
     Producto(
         id = 5,
@@ -47,7 +52,7 @@ val listaProductosFake = listOf(
         descripcion = "Bebida gaseosa sabor cola. Ideal para compartir en familia.",
         precio = 6.50,
         categoria = "Bebidas",
-        presentacion = "1.5 L"
+        presentacion = "1.5 L",
+        icono = Icons.Default.LocalBar
     )
 )
-

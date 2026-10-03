@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,10 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +38,7 @@ import com.tecsup.mibodega.ui.theme.FondoClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
- * Pantalla 1: Registro / Login (mockup "Cliente").
- * No sabe navegar sola: recibe qué hacer por parámetro (callbacks).
+ * Pantalla 1: Registro / Login.
  */
 @Composable
 fun BienvenidaScreen(
@@ -81,7 +81,7 @@ fun BienvenidaScreen(
         BotonPrimario(
             texto = "Registrarme",
             subtexto = "con mi teléfono",
-            icono = rememberVectorPainter(Icons.Default.Phone),
+            icono = Icons.Default.Phone,
             onClick = onRegistrarse
         )
 
@@ -89,6 +89,7 @@ fun BienvenidaScreen(
 
         BotonSecundario(
             texto = "Iniciar sesión",
+            icono = Icons.Default.Login,
             onClick = onIniciarSesion
         )
 
@@ -99,8 +100,6 @@ fun BienvenidaScreen(
         Spacer(Modifier.height(24.dp))
     }
 }
-
-// Sub-composables PRIVADOS: solo los usa esta pantalla, por eso no van a "componentes".
 
 @Composable
 private fun IlustracionBodega() {
@@ -123,9 +122,10 @@ private fun TituloMiBodega() {
     Text(
         text = buildAnnotatedString {
             append("Mi ")
-            withStyle(SpanStyle(color = VerdeBodega)) { append("Bodega") }
+            withStyle(SpanStyle(color = VerdeBodega, fontWeight = FontWeight.Bold)) { append("Bodega") }
         },
         style = MaterialTheme.typography.displayMedium,
+        fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onBackground
     )
 }
@@ -141,6 +141,7 @@ private fun PieTerminos(onTerminos: () -> Unit) {
         Text(
             text = "Términos y Condiciones",
             style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
             color = AzulEnlace,
             modifier = Modifier.clickable(onClick = onTerminos)
         )
@@ -154,4 +155,3 @@ private fun BienvenidaPreview() {
         BienvenidaScreen({}, {}, {})
     }
 }
-

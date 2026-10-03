@@ -1,6 +1,6 @@
 package com.tecsup.mibodega.ui.cliente.screens.detalle
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,15 +41,11 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
- * Pantalla 4: Detalle del producto (mockup "Cliente").
- * Guarda su propia cantidad seleccionada (remember) mientras el usuario
- * decide cuánto quiere; solo al tocar "Agregar al carrito" le avisa
- * a ClienteApp cuánto agregar.
+ * Pantalla 4: Detalle del producto estilizada con icono vectorial, animación de favorito y card moderna.
  */
 @Composable
 fun DetalleProductoScreen(
@@ -68,7 +67,28 @@ fun DetalleProductoScreen(
             onFavoritoClick = { esFavorito = !esFavorito }
         )
 
-        ImagenProducto()
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.3f),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = producto.icono,
+                    contentDescription = producto.nombre,
+                    tint = VerdeBodega,
+                    modifier = Modifier.size(96.dp)
+                )
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -79,14 +99,24 @@ fun DetalleProductoScreen(
 
             Text(
                 text = producto.nombre,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(Modifier.height(4.dp))
+            if (producto.presentacion.isNotBlank()) {
+                Text(
+                    text = "Presentación: ${producto.presentacion}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = "S/ %.2f".format(producto.precio),
-                style = MaterialTheme.typography.displayMedium.copy(fontSize = 26.sp),
+                style = MaterialTheme.typography.displayMedium.copy(fontSize = 28.sp),
+                fontWeight = FontWeight.Bold,
                 color = RojoPrecio
             )
 
@@ -98,7 +128,7 @@ fun DetalleProductoScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
 
             SelectorCantidad(
                 cantidad = cantidad,
@@ -110,6 +140,7 @@ fun DetalleProductoScreen(
 
             BotonPrimario(
                 texto = "Agregar al carrito",
+                icono = Icons.Default.ShoppingCart,
                 onClick = { onAgregarAlCarrito(producto, cantidad) }
             )
 
@@ -124,6 +155,11 @@ private fun EncabezadoDetalle(
     esFavorito: Boolean,
     onFavoritoClick: () -> Unit
 ) {
+    val favoritoTint by animateColorAsState(
+        targetValue = if (esFavorito) RojoPrecio else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "FavoritoTint"
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,29 +174,9 @@ private fun EncabezadoDetalle(
             Icon(
                 imageVector = if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = "Favorito",
-                tint = if (esFavorito) RojoPrecio else MaterialTheme.colorScheme.onSurfaceVariant
+                tint = favoritoTint
             )
         }
-    }
-}
-
-@Composable
-private fun ImagenProducto() {
-    // Placeholder de imagen: reemplázalo por Image(painterResource(...))
-    // cuando tengan la foto real de cada producto.
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1.4f)
-            .background(GrisClaro),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.ShoppingBasket,
-            contentDescription = null,
-            tint = VerdeBodega,
-            modifier = Modifier.size(80.dp)
-        )
     }
 }
 
@@ -175,4 +191,3 @@ private fun DetalleProductoPreview() {
         )
     }
 }
-
