@@ -29,10 +29,7 @@ import com.tecsup.mibodega.ui.cliente.screens.terminos.TerminosScreen
 /**
  * "Director de orquesta" de la app cliente:
  * - Tiene el NavHost con las rutas de cada pantalla.
- * - Tiene el estado del carrito (List<ItemCarrito>), que se reparte
- *   hacia abajo a Inicio, Detalle, Carrito y Entrega.
- * Ninguna Screen navega sola ni modifica el carrito directamente:
- * todas reciben funciones (lambdas) desde aquí (state hoisting).
+ * - Maneja el estado global reactivo del carrito y de productos favoritos.
  */
 private object Rutas {
     const val BIENVENIDA = "bienvenida"
@@ -54,9 +51,18 @@ private object Rutas {
 fun ClienteApp() {
     val navController = rememberNavController()
 
-    // El carrito vive aquí arriba, no en ninguna Screen.
+    // Estados reactivos globales
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
+    var favoritosIds by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var usuario by remember { mutableStateOf<Usuario?>(null) }
+
+    fun toggleFavorito(productoId: Int) {
+        favoritosIds = if (favoritosIds.contains(productoId)) {
+            favoritosIds - productoId
+        } else {
+            favoritosIds + productoId
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -85,6 +91,8 @@ fun ClienteApp() {
         composable(Rutas.INICIO) {
             InicioScreen(
                 cantidadCarrito = carrito.sumOf { it.cantidad },
+                favoritosIds = favoritosIds,
+                onToggleFavorito = { id -> toggleFavorito(id) },
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) },
                 onProductoClick = { producto ->
                     navController.navigate(Rutas.detalle(producto.id))
@@ -111,9 +119,12 @@ fun ClienteApp() {
         ) { backStackEntry ->
             val productoId = backStackEntry.arguments?.getInt("productoId") ?: 0
             val producto = listaProductosFake.first { it.id == productoId }
+            val esFav = favoritosIds.contains(producto.id)
 
             DetalleProductoScreen(
                 producto = producto,
+                esFavorito = esFav,
+                onToggleFavorito = { toggleFavorito(producto.id) },
                 onVolver = { navController.popBackStack() },
                 onAgregarAlCarrito = { productoSeleccionado, cantidad ->
                     carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
@@ -136,7 +147,7 @@ fun ClienteApp() {
                         when {
                             it.producto.id != producto.id -> it
                             it.cantidad > 1 -> it.copy(cantidad = it.cantidad - 1)
-                            else -> null // si llega a 0, se elimina de la lista
+                            else -> null
                         }
                     }
                 },
@@ -157,8 +168,8 @@ fun ClienteApp() {
                 direccionInicial = usuario?.direccion ?: "",
                 referenciaInicial = usuario?.referencia ?: "",
                 onVolver = { navController.popBackStack() },
-                onConfirmarPedido = { direccion, referencia, metodoPago ->
-                    carrito = emptyList() // Vaciamos el carrito al finalizar la compra
+                onConfirmarPedido = { _, _, _ ->
+                    carrito = emptyList()
                     navController.navigate(Rutas.CONFIRMACION) {
                         popUpTo(Rutas.INICIO) { inclusive = false }
                     }

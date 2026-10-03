@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,18 +36,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Tarjeta de producto estilizada con sombras suaves, bordes redondeados modernos,
- * animación de interacción e icono específico por producto.
+ * botón de favoritos reactivo e icono por producto.
  */
 @Composable
 fun ProductoCard(
     producto: Producto,
     onClick: () -> Unit,
     onAgregar: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    esFavorito: Boolean = false,
+    onToggleFavorito: (() -> Unit)? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -65,7 +70,7 @@ fun ProductoCard(
         )
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            // Contenedor del icono/imagen del producto con fondo suave
+            // Contenedor del icono/imagen del producto con botón de corazón
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,6 +87,27 @@ fun ProductoCard(
                     tint = VerdeBodega,
                     modifier = Modifier.size(42.dp)
                 )
+
+                if (onToggleFavorito != null) {
+                    IconButton(
+                        onClick = onToggleFavorito,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .size(32.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                shape = CircleShape
+                            )
+                    ) {
+                        Icon(
+                            imageVector = if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorito ${producto.nombre}",
+                            tint = if (esFavorito) RojoPrecio else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(Modifier.height(10.dp))

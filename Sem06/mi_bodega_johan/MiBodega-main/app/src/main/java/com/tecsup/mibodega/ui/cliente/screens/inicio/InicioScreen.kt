@@ -26,6 +26,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReceiptLong
@@ -64,17 +66,20 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.ProductoCard
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
+import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 3: Inicio / Productos.
- * Con búsqueda en tiempo real, chips de categorías animadas y grid de productos.
+ * Con búsqueda en tiempo real, chips de categorías animadas (incluyendo "Favoritos") y grid reactivo.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(
     productos: List<Producto> = listaProductosFake,
     cantidadCarrito: Int,
+    favoritosIds: Set<Int> = emptySet(),
+    onToggleFavorito: (Int) -> Unit = {},
     onVerCarrito: () -> Unit,
     onProductoClick: (Producto) -> Unit,
     onAgregarProducto: (Producto) -> Unit,
@@ -84,7 +89,11 @@ fun InicioScreen(
     var textoBusqueda by remember { mutableStateOf("") }
 
     val productosFiltrados = productos.filter { producto ->
-        val coincideCategoria = categoriaSeleccionada == "Todos" || producto.categoria.equals(categoriaSeleccionada, ignoreCase = true)
+        val coincideCategoria = when (categoriaSeleccionada) {
+            "Todos" -> true
+            "Favoritos" -> favoritosIds.contains(producto.id)
+            else -> producto.categoria.equals(categoriaSeleccionada, ignoreCase = true)
+        }
         val coincideBusqueda = textoBusqueda.isBlank() ||
                 producto.nombre.contains(textoBusqueda.trim(), ignoreCase = true) ||
                 producto.descripcion.contains(textoBusqueda.trim(), ignoreCase = true)
@@ -130,7 +139,7 @@ fun InicioScreen(
                 .padding(paddingInterno)
                 .padding(horizontal = 16.dp)
         ) {
-            // Campo de búsqueda en tiempo real con icono
+            // Campo de búsqueda en tiempo real
             OutlinedTextField(
                 value = textoBusqueda,
                 onValueChange = { textoBusqueda = it },
@@ -178,7 +187,7 @@ fun InicioScreen(
                 modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
             )
 
-            // Chips de categorías animados
+            // Chips de categorías (incluye filtro rápido Favoritos)
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(vertical = 8.dp)
@@ -187,6 +196,7 @@ fun InicioScreen(
                     ChipCategoria(
                         texto = categoria,
                         seleccionado = categoria == categoriaSeleccionada,
+                        esFavoritoChip = categoria == "Favoritos",
                         onClick = { categoriaSeleccionada = categoria }
                     )
                 }
@@ -208,25 +218,45 @@ fun InicioScreen(
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.SearchOff,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(56.dp)
-                            )
-                            Text(
-                                text = "No se encontraron productos",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "Intenta con otra búsqueda o categoría.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            if (categoriaSeleccionada == "Favoritos") {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = null,
+                                    tint = RojoPrecio,
+                                    modifier = Modifier.size(60.dp)
+                                )
+                                Text(
+                                    text = "Aún no tienes productos favoritos",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "Toca el corazón en cualquier producto para guardarlo aquí.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.SearchOff,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(56.dp)
+                                )
+                                Text(
+                                    text = "No se encontraron productos",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "Intenta con otra búsqueda o categoría.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 } else {
@@ -238,8 +268,11 @@ fun InicioScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(listaFiltrada, key = { it.id }) { producto ->
+                            val esFav = favoritosIds.contains(producto.id)
                             ProductoCard(
                                 producto = producto,
+                                esFavorito = esFav,
+                                onToggleFavorito = { onToggleFavorito(producto.id) },
                                 onClick = { onProductoClick(producto) },
                                 onAgregar = { onAgregarProducto(producto) }
                             )
@@ -255,10 +288,15 @@ fun InicioScreen(
 private fun ChipCategoria(
     texto: String,
     seleccionado: Boolean,
+    esFavoritoChip: Boolean = false,
     onClick: () -> Unit
 ) {
     val fondoColor by animateColorAsState(
-        targetValue = if (seleccionado) VerdeBodega else GrisClaro,
+        targetValue = when {
+            seleccionado && esFavoritoChip -> RojoPrecio
+            seleccionado -> VerdeBodega
+            else -> GrisClaro
+        },
         label = "ChipFondoColor"
     )
     val textoColor by animateColorAsState(
@@ -271,9 +309,18 @@ private fun ChipCategoria(
             .clip(RoundedCornerShape(20.dp))
             .background(fondoColor)
             .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
+        if (esFavoritoChip) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                tint = if (seleccionado) MaterialTheme.colorScheme.onPrimary else RojoPrecio,
+                modifier = Modifier.size(16.dp)
+            )
+        }
         Text(
             text = texto,
             color = textoColor,
@@ -320,6 +367,7 @@ private fun InicioPreview() {
     BodegaTheme {
         InicioScreen(
             cantidadCarrito = 3,
+            favoritosIds = setOf(1, 5),
             onVerCarrito = {},
             onProductoClick = {},
             onAgregarProducto = {}

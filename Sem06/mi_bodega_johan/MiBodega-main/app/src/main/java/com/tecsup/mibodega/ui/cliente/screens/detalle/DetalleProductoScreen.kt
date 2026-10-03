@@ -45,16 +45,17 @@ import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
- * Pantalla 4: Detalle del producto estilizada con icono vectorial, animación de favorito y card moderna.
+ * Pantalla 4: Detalle del producto con sistema de favoritos reactivo.
  */
 @Composable
 fun DetalleProductoScreen(
     producto: Producto,
+    esFavorito: Boolean = false,
+    onToggleFavorito: () -> Unit = {},
     onVolver: () -> Unit,
     onAgregarAlCarrito: (Producto, Int) -> Unit
 ) {
     var cantidad by remember { mutableStateOf(1) }
-    var esFavorito by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -64,7 +65,7 @@ fun DetalleProductoScreen(
         EncabezadoDetalle(
             onVolver = onVolver,
             esFavorito = esFavorito,
-            onFavoritoClick = { esFavorito = !esFavorito }
+            onFavoritoClick = onToggleFavorito
         )
 
         Card(
@@ -186,6 +187,8 @@ private fun DetalleProductoPreview() {
     BodegaTheme {
         DetalleProductoScreen(
             producto = listaProductosFake.first { it.nombre == "Coca-Cola Original" },
+            esFavorito = true,
+            onToggleFavorito = {},
             onVolver = {},
             onAgregarAlCarrito = { _, _ -> }
         )

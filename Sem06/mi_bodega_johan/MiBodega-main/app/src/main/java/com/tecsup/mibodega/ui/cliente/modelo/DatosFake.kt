@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.WaterDrop
 
-val listaCategorias = listOf("Todos", "Bebidas", "Abarrotes", "Snacks")
+val listaCategorias = listOf("Todos", "Favoritos", "Bebidas", "Abarrotes", "Snacks")
 
 val listaProductosFake = listOf(
     Producto(
