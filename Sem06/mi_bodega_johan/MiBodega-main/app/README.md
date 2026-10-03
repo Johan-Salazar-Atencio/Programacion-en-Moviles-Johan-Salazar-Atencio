@@ -28,25 +28,44 @@ El desarrollo se organizó en dos etapas complementarias:
 
 ---
 
-## Capturas de Pantalla
-
 ### Fase 1: Flujo Base del Cliente (Desarrollo Manual)
 
-| 1. Registro / Login | 2. Registro de Datos | 3. Inicio / Productos | 4. Detalle del Producto |
-| :---: | :---: | :---: | :---: |
-| ![Login](capturas/01_login.png) | ![Registro](capturas/02_registro.png) | ![Inicio](capturas/03_inicio.png) | ![Detalle](capturas/04_detalle.png) |
+### 1. Bienvenida / Login
+<img width="495" height="1069" alt="image" src="https://github.com/user-attachments/assets/a5077e72-8ac5-40fd-948e-14965f02ea28" />
 
-| 5. Carrito de Compras | 6. Dirección y Pago | 7. Pedido Confirmado |
-| :---: | :---: | :---: |
-| ![Carrito](capturas/05_carrito.png) | ![Checkout](capturas/06_checkout.png) | ![Confirmacion](capturas/07_confirmacion.png) |
+
+### 2. Registro de Datos
+<img width="501" height="1076" alt="image" src="https://github.com/user-attachments/assets/03d0fd8d-0a4b-4c92-b95b-d47e82db0867" />
+
+### 3. Inicio / Productos
+<img width="504" height="1070" alt="image" src="https://github.com/user-attachments/assets/fa02f0b5-c4df-44d5-a086-ffdd51c0587e" />
+
+### 4. Detalle de Producto
+<img width="496" height="1065" alt="image" src="https://github.com/user-attachments/assets/3a6c75cc-32bd-4b3f-9ed3-4e13341953bb" />
+
+
+### 5. Carrito de Compras
+<img width="510" height="1065" alt="image" src="https://github.com/user-attachments/assets/14fe9c97-f5d2-483a-aca3-f3a8c925ac7d" />
+
+### 6. Datos de Entrega
+<img width="506" height="1066" alt="image" src="https://github.com/user-attachments/assets/baec9fa7-1770-4006-92b8-245f99b6824f" />
+
+### 7. Pedido Confirmado
+<img width="494" height="1063" alt="image" src="https://github.com/user-attachments/assets/64403e1c-2117-490c-ae08-18abb9967561" />
 
 ---
 
 ### Fase 2: Mejoras Visuales e Interactivas (Asistido por IA)
 
-| 8. Rediseño con Iconos | 9. Buscador en Tiempo Real | 10. Filtro de Favoritos |
-| :---: | :---: | :---: |
-| ![Iconos](capturas/08_ia_iconos.png) | ![Buscador](capturas/09_ia_busqueda.png) | ![Favoritos](capturas/10_ia_favoritos.png) |
+### 8. Rediseño con Iconografía
+<img width="533" height="1039" alt="image" src="https://github.com/user-attachments/assets/a4626816-fe7a-4e4d-b869-99609f01c514" />
+
+### 9. Buscador en Tiempo Real
+<img width="506" height="1020" alt="image" src="https://github.com/user-attachments/assets/6281d6a7-e906-44d6-ae57-6548faa6c5bf" />
+
+### 10. Módulo de Favoritos
+<img width="570" height="1084" alt="image" src="https://github.com/user-attachments/assets/bacde3b3-0242-4484-b217-9186f9f6979b" />
+
 
 ---
 
