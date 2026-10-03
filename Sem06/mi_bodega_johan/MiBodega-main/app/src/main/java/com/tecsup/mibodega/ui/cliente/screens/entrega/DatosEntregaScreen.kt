@@ -44,11 +44,13 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun DatosEntregaScreen(
     montoTotal: Double,
+    direccionInicial: String = "",
+    referenciaInicial: String = "",
     onVolver: () -> Unit,
     onConfirmarPedido: (direccion: String, referencia: String, metodoPago: String) -> Unit
 ) {
-    var direccion by remember { mutableStateOf("") }
-    var referencia by remember { mutableStateOf("") }
+    var direccion by remember { mutableStateOf(direccionInicial) }
+    var referencia by remember { mutableStateOf(referenciaInicial) }
 
     val opcionesPago = listOf("Efectivo", "Yape / Plin", "Tarjeta de Débito/Crédito")
     var metodoPagoSeleccionado by remember { mutableStateOf(opcionesPago[0]) }

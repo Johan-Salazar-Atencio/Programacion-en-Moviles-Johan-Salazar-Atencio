@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
@@ -55,6 +56,7 @@ fun ClienteApp() {
 
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
 
     NavHost(
         navController = navController,
@@ -72,7 +74,7 @@ fun ClienteApp() {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
                 onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // TODO: guardar estos datos cuando exista el registro real
+                    usuario = Usuario(nombre, telefono, direccion, referencia)
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }
@@ -152,6 +154,8 @@ fun ClienteApp() {
 
             DatosEntregaScreen(
                 montoTotal = totalCalculado,
+                direccionInicial = usuario?.direccion ?: "",
+                referenciaInicial = usuario?.referencia ?: "",
                 onVolver = { navController.popBackStack() },
                 onConfirmarPedido = { direccion, referencia, metodoPago ->
                     carrito = emptyList() // Vaciamos el carrito al finalizar la compra
