@@ -1,7 +1,6 @@
 package com.tecsup.mibodega.ui.componentes
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,6 +78,18 @@ fun ProductoCard(
                 overflow = TextOverflow.Ellipsis
             )
 
+            if (producto.presentacion.isNotBlank()) {
+                Text(
+                    text = producto.presentacion,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(Modifier.height(4.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
@@ -86,7 +97,8 @@ fun ProductoCard(
             ) {
                 Text(
                     text = "S/ %.2f".format(producto.precio),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
                     color = VerdeBodega
                 )
                 IconButton(
