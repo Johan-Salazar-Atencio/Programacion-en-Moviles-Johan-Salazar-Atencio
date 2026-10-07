@@ -35,7 +35,7 @@ import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
-const val USUARIO_FIJO = "admin"
+const val USUARIO_FIJO = "Johan"
 const val PASSWORD_FIJO = "1234"
 
 @Composable
@@ -95,7 +95,7 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Credenciales fijas: admin / 1234",
+                text = "Credenciales fijas: Johan / 1234",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 4.dp)
@@ -112,7 +112,7 @@ fun LoginScreen(
                 errorUsuario = false
                 mensajeErrorGlobal = null
             },
-            placeholder = "admin",
+            placeholder = "Johan",
             esError = errorUsuario,
             mensajeError = if (errorUsuario && usuarioInput.isBlank()) "El usuario no puede estar vacío" else null
         )
