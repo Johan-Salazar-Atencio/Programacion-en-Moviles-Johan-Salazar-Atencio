@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -53,6 +53,11 @@ fun RegistroScreen(
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
 
+    var errorNombre by remember { mutableStateOf(false) }
+    var errorTelefono by remember { mutableStateOf(false) }
+    var errorDireccion by remember { mutableStateOf(false) }
+    var errorReferencia by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,40 +89,74 @@ fun RegistroScreen(
         CampoTexto(
             etiqueta = "Nombre completo",
             valor = nombre,
-            onValorCambia = { nombre = it },
-            placeholder = "Johan Salazar"
+            onValorCambia = {
+                nombre = it
+                errorNombre = false
+            },
+            placeholder = "Johan Salazar",
+            esError = errorNombre,
+            mensajeError = if (errorNombre) "El nombre es obligatorio" else null
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Teléfono",
             valor = telefono,
-            onValorCambia = { telefono = it },
+            onValorCambia = {
+                telefono = it
+                errorTelefono = false
+            },
             placeholder = "987 654 321",
-            teclado = KeyboardType.Phone
+            teclado = KeyboardType.Phone,
+            esError = errorTelefono,
+            mensajeError = if (errorTelefono) "El teléfono es obligatorio" else null
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
-            onValorCambia = { direccion = it },
-            placeholder = "Av. Los Olivos 123"
+            onValorCambia = {
+                direccion = it
+                errorDireccion = false
+            },
+            placeholder = "Av. Los Olivos 123",
+            esError = errorDireccion,
+            mensajeError = if (errorDireccion) "La dirección es obligatoria" else null
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Referencia",
             valor = referencia,
-            onValorCambia = { referencia = it },
-            placeholder = "Frente al parque"
+            onValorCambia = {
+                referencia = it
+                errorReferencia = false
+            },
+            placeholder = "Frente al parque",
+            esError = errorReferencia,
+            mensajeError = if (errorReferencia) "La referencia es obligatoria" else null
         )
 
         Spacer(Modifier.height(28.dp))
 
         BotonPrimario(
             texto = "Crear cuenta",
-            onClick = { onCrearCuenta(nombre, telefono, direccion, referencia) }
+            onClick = {
+                val esNombreVacio = nombre.isBlank()
+                val esTelefonoVacio = telefono.isBlank()
+                val esDireccionVacia = direccion.isBlank()
+                val esReferenciaVacia = referencia.isBlank()
+
+                errorNombre = esNombreVacio
+                errorTelefono = esTelefonoVacio
+                errorDireccion = esDireccionVacia
+                errorReferencia = esReferenciaVacia
+
+                if (!esNombreVacio && !esTelefonoVacio && !esDireccionVacia && !esReferenciaVacia) {
+                    onCrearCuenta(nombre, telefono, direccion, referencia)
+                }
+            }
         )
 
         Spacer(Modifier.height(24.dp))
@@ -162,4 +201,3 @@ private fun RegistroPreview() {
         RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _ -> })
     }
 }
-

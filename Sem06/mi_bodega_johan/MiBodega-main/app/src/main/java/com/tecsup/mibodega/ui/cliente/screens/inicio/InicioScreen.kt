@@ -6,17 +6,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -26,6 +30,8 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,33 +58,45 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.ProductoCard
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
+import com.tecsup.mibodega.ui.theme.RojoPrecio
 import com.tecsup.mibodega.ui.theme.VerdeBodega
+
+enum class TipoOrden {
+    NINGUNO,
+    MENOR_A_MAYOR,
+    MAYOR_A_MENOR
+}
 
 /**
  * Pantalla 3: Inicio / Productos (mockup "Cliente").
- * La más completa: Scaffold (topBar + bottomBar), LazyRow de categorías
- * y LazyVerticalGrid de productos.
- *
- * @param productos lista completa (fake por ahora, luego vendrá de un ViewModel)
- * @param cantidadCarrito para el badge del carrito en la topBar
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(
     productos: List<Producto> = listaProductosFake,
     cantidadCarrito: Int,
+    favoritosIds: Set<Int> = emptySet(),
     onVerCarrito: () -> Unit,
+    onVerFavoritos: () -> Unit = {},
     onProductoClick: (Producto) -> Unit,
     onAgregarProducto: (Producto) -> Unit,
+    onToggleFavorito: (Int) -> Unit = {},
     onNavegar: (Int) -> Unit = {}
 ) {
     var categoriaSeleccionada by remember { mutableStateOf(listaCategorias.first()) }
     var textoBusqueda by remember { mutableStateOf("") }
+    var ordenSeleccionado by remember { mutableStateOf(TipoOrden.NINGUNO) }
 
     val productosFiltrados = productos.filter { producto ->
         val coincideCategoria = categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
         val coincideBusqueda = producto.nombre.contains(textoBusqueda, ignoreCase = true)
         coincideCategoria && coincideBusqueda
+    }.let { lista ->
+        when (ordenSeleccionado) {
+            TipoOrden.MENOR_A_MAYOR -> lista.sortedBy { it.precio }
+            TipoOrden.MAYOR_A_MENOR -> lista.sortedByDescending { it.precio }
+            TipoOrden.NINGUNO -> lista
+        }
     }
 
     Scaffold(
@@ -85,6 +104,21 @@ fun InicioScreen(
             TopAppBar(
                 title = { Text("Mi Bodega", fontWeight = FontWeight.Bold) },
                 actions = {
+                    IconButton(onClick = onVerFavoritos) {
+                        BadgedBox(
+                            badge = {
+                                if (favoritosIds.isNotEmpty()) {
+                                    Badge { Text("${favoritosIds.size}") }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Favorite,
+                                contentDescription = "Mis Favoritos",
+                                tint = RojoPrecio
+                            )
+                        }
+                    }
                     IconButton(onClick = onVerCarrito) {
                         BadgedBox(
                             badge = {
@@ -125,15 +159,9 @@ fun InicioScreen(
                 )
             )
 
-            Text(
-                text = "Productos destacados",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
-            )
-
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
+                contentPadding = PaddingValues(vertical = 12.dp)
             ) {
                 items(listaCategorias) { categoria ->
                     ChipCategoria(
@@ -144,18 +172,55 @@ fun InicioScreen(
                 }
             }
 
+            // Opciones de Ordenamiento por Precio
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Precio:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                FilterChip(
+                    selected = ordenSeleccionado == TipoOrden.MENOR_A_MAYOR,
+                    onClick = {
+                        ordenSeleccionado = if (ordenSeleccionado == TipoOrden.MENOR_A_MAYOR) TipoOrden.NINGUNO else TipoOrden.MENOR_A_MAYOR
+                    },
+                    label = { Text("Menor a Mayor") },
+                    leadingIcon = { Icon(Icons.Default.ArrowUpward, contentDescription = null) },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = VerdeBodega.copy(alpha = 0.2f))
+                )
+
+                FilterChip(
+                    selected = ordenSeleccionado == TipoOrden.MAYOR_A_MENOR,
+                    onClick = {
+                        ordenSeleccionado = if (ordenSeleccionado == TipoOrden.MAYOR_A_MENOR) TipoOrden.NINGUNO else TipoOrden.MAYOR_A_MENOR
+                    },
+                    label = { Text("Mayor a Menor") },
+                    leadingIcon = { Icon(Icons.Default.ArrowDownward, contentDescription = null) },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = VerdeBodega.copy(alpha = 0.2f))
+                )
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 12.dp),
+                contentPadding = PaddingValues(bottom = 12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(productosFiltrados) { producto ->
+                items(productosFiltrados, key = { it.id }) { producto ->
                     ProductoCard(
                         producto = producto,
                         onClick = { onProductoClick(producto) },
-                        onAgregar = { onAgregarProducto(producto) }
+                        onAgregar = { onAgregarProducto(producto) },
+                        esFavorito = favoritosIds.contains(producto.id),
+                        onToggleFavorito = { onToggleFavorito(producto.id) }
                     )
                 }
             }

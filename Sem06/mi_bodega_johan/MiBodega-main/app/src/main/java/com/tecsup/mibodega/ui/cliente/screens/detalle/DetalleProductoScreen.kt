@@ -1,5 +1,6 @@
 package com.tecsup.mibodega.ui.cliente.screens.detalle
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,18 +46,16 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla 4: Detalle del producto (mockup "Cliente").
- * Guarda su propia cantidad seleccionada (remember) mientras el usuario
- * decide cuánto quiere; solo al tocar "Agregar al carrito" le avisa
- * a ClienteApp cuánto agregar.
  */
 @Composable
 fun DetalleProductoScreen(
     producto: Producto,
+    esFavorito: Boolean = false,
+    onToggleFavorito: () -> Unit = {},
     onVolver: () -> Unit,
     onAgregarAlCarrito: (Producto, Int) -> Unit
 ) {
     var cantidad by remember { mutableStateOf(1) }
-    var esFavorito by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -65,10 +65,10 @@ fun DetalleProductoScreen(
         EncabezadoDetalle(
             onVolver = onVolver,
             esFavorito = esFavorito,
-            onFavoritoClick = { esFavorito = !esFavorito }
+            onFavoritoClick = onToggleFavorito
         )
 
-        ImagenProducto()
+        ImagenProducto(producto.imagen)
 
         Column(
             modifier = Modifier
@@ -145,9 +145,7 @@ private fun EncabezadoDetalle(
 }
 
 @Composable
-private fun ImagenProducto() {
-    // Placeholder de imagen: reemplázalo por Image(painterResource(...))
-    // cuando tengan la foto real de cada producto.
+private fun ImagenProducto(imagen: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,12 +153,21 @@ private fun ImagenProducto() {
             .background(GrisClaro),
         contentAlignment = Alignment.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.ShoppingBasket,
-            contentDescription = null,
-            tint = VerdeBodega,
-            modifier = Modifier.size(80.dp)
-        )
+        if (imagen != 0) {
+            Image(
+                painter = painterResource(id = imagen),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.ShoppingBasket,
+                contentDescription = null,
+                tint = VerdeBodega,
+                modifier = Modifier.size(80.dp)
+            )
+        }
     }
 }
 
@@ -175,4 +182,3 @@ private fun DetalleProductoPreview() {
         )
     }
 }
-

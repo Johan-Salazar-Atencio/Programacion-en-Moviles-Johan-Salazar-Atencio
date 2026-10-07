@@ -40,17 +40,28 @@ import com.tecsup.mibodega.ui.componentes.CampoTexto
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
-//Pantalla 06 Datos de entega dodne se ve metodos de pago
+const val COSTO_DELIVERY_SOPORTADO = 5.00
+
 @Composable
 fun DatosEntregaScreen(
-    montoTotal: Double,
+    subtotal: Double,
     direccionInicial: String = "",
     referenciaInicial: String = "",
     onVolver: () -> Unit,
-    onConfirmarPedido: (direccion: String, referencia: String, metodoPago: String) -> Unit
+    onConfirmarPedido: (direccion: String, referencia: String, metodoPago: String, tipoEntrega: String, total: Double) -> Unit
 ) {
+    val opcionesEntrega = listOf("Delivery a domicilio (S/ 5.00)", "Recojo en tienda (Gratis)")
+    var opcionEntregaSeleccionada by remember { mutableStateOf(opcionesEntrega[0]) }
+
+    val esDelivery = opcionEntregaSeleccionada.contains("Delivery")
+    val costoEnvio = if (esDelivery) COSTO_DELIVERY_SOPORTADO else 0.00
+    val montoTotalCalculado = subtotal + costoEnvio
+
     var direccion by remember { mutableStateOf(direccionInicial) }
     var referencia by remember { mutableStateOf(referenciaInicial) }
+
+    var errorDireccion by remember { mutableStateOf(false) }
+    var errorReferencia by remember { mutableStateOf(false) }
 
     val opcionesPago = listOf("Efectivo", "Yape / Plin", "Tarjeta de Débito/Crédito")
     var metodoPagoSeleccionado by remember { mutableStateOf(opcionesPago[0]) }
@@ -80,29 +91,107 @@ fun DatosEntregaScreen(
 
         Spacer(Modifier.height(16.dp))
 
+        // Selección de Método de Entrega
         Text(
-            text = "Dirección de Envío",
+            text = "Tipo de Entrega",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
-        CampoTexto(
-            etiqueta = "Dirección exacta",
-            valor = direccion,
-            onValorCambia = { direccion = it },
-            placeholder = "Ej. Av. Primavera 123, Dpto 402"
-        )
+        Column(Modifier.selectableGroup()) {
+            opcionesEntrega.forEach { opcion ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .selectable(
+                            selected = (opcion == opcionEntregaSeleccionada),
+                            onClick = {
+                                opcionEntregaSeleccionada = opcion
+                                errorDireccion = false
+                                errorReferencia = false
+                            },
+                            role = Role.RadioButton
+                        )
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (opcion == opcionEntregaSeleccionada),
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(selectedColor = VerdeBodega)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = opcion,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
 
-        CampoTexto(
-            etiqueta = "Referencia de ubicación",
-            valor = referencia,
-            onValorCambia = { referencia = it },
-            placeholder = "Ej. Frente al parque, puerta verde"
-        )
+        if (esDelivery) {
+            Text(
+                text = "Dirección de Envío",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            CampoTexto(
+                etiqueta = "Dirección exacta",
+                valor = direccion,
+                onValorCambia = {
+                    direccion = it
+                    errorDireccion = false
+                },
+                placeholder = "Ej. Av. Primavera 123, Dpto 402",
+                esError = errorDireccion,
+                mensajeError = if (errorDireccion) "La dirección es obligatoria para Delivery" else null
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            CampoTexto(
+                etiqueta = "Referencia de ubicación",
+                valor = referencia,
+                onValorCambia = {
+                    referencia = it
+                    errorReferencia = false
+                },
+                placeholder = "Ej. Frente al parque, puerta verde",
+                esError = errorReferencia,
+                mensajeError = if (errorReferencia) "La referencia es obligatoria para Delivery" else null
+            )
+        } else {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Punto de Recojo:",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = "Bodega Principal - Av. Los Olivos 123, Lima",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Horario: Lunes a Sábado de 8:00 am a 8:00 pm",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
 
         Spacer(Modifier.height(24.dp))
 
@@ -148,23 +237,43 @@ fun DatosEntregaScreen(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Total a pagar:",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "S/ %.2f".format(montoTotal),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = VerdeBodega,
-                    fontWeight = FontWeight.Bold
-                )
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Subtotal:", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "S/ %.2f".format(subtotal), style = MaterialTheme.typography.bodyMedium)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Costo de Envío:", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = if (costoEnvio == 0.0) "GRATIS" else "S/ %.2f".format(costoEnvio),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = VerdeBodega
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Total a pagar:",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "S/ %.2f".format(montoTotalCalculado),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = VerdeBodega,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
 
@@ -172,9 +281,33 @@ fun DatosEntregaScreen(
 
         BotonPrimario(
             texto = "Confirmar Pedido",
-            habilitado = direccion.isNotBlank(),
+            habilitado = true,
             onClick = {
-                onConfirmarPedido(direccion, referencia, metodoPagoSeleccionado)
+                if (esDelivery) {
+                    val esDireccionVacia = direccion.isBlank()
+                    val esReferenciaVacia = referencia.isBlank()
+
+                    errorDireccion = esDireccionVacia
+                    errorReferencia = esReferenciaVacia
+
+                    if (!esDireccionVacia && !esReferenciaVacia) {
+                        onConfirmarPedido(
+                            direccion,
+                            referencia,
+                            metodoPagoSeleccionado,
+                            "Delivery",
+                            montoTotalCalculado
+                        )
+                    }
+                } else {
+                    onConfirmarPedido(
+                        "Bodega Principal - Av. Los Olivos 123",
+                        "Recojo en tienda",
+                        metodoPagoSeleccionado,
+                        "Recojo en tienda",
+                        montoTotalCalculado
+                    )
+                }
             }
         )
 
@@ -187,9 +320,9 @@ fun DatosEntregaScreen(
 private fun DatosEntregaPreview() {
     BodegaTheme {
         DatosEntregaScreen(
-            montoTotal = 28.10,
+            subtotal = 24.10,
             onVolver = {},
-            onConfirmarPedido = { _, _, _ -> }
+            onConfirmarPedido = { _, _, _, _, _ -> }
         )
     }
 }
