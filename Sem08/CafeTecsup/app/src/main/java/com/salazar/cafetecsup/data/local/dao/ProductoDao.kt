@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductoDao {
-    @Query("SELECT * FROM productos ORDER BY nombre")
+    @Query("SELECT * FROM productos ORDER BY nombre ASC")
     fun observarTodos(): Flow<List<Producto>>
-    @Query("SELECT COUNT(*) FROM productos")
-    suspend fun contar(): Int
+    @Query("SELECT * FROM productos WHERE id = :id LIMIT 1")
+    fun observarUno(id: Int): Flow<Producto?>
+    @Query("SELECT * FROM productos WHERE id = :id LIMIT 1")
+    suspend fun obtenerPorId(id: Int): Producto?
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertar(p: Producto): Long
+    suspend fun insertar(producto: Producto)
     @Update
-    suspend fun actualizar(p: Producto)
+    suspend fun actualizar(producto: Producto)
     @Delete
-    suspend fun eliminar(p: Producto)
-    @Query("UPDATE productos SET disponible = :d WHERE id = :id")
-    suspend fun cambiarDisponibilidad(id: Int, d: Boolean)
+    suspend fun eliminar(producto: Producto)
 }

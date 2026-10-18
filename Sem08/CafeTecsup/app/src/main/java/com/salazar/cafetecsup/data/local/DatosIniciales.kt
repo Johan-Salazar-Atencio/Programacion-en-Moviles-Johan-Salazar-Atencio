@@ -2,6 +2,7 @@ package com.salazar.cafetecsup.data.local
 
 import com.salazar.cafetecsup.data.local.entity.Producto
 import com.salazar.cafetecsup.data.local.entity.Usuario
+import com.salazar.cafetecsup.model.Rol
 
 
 object DatosIniciales {
