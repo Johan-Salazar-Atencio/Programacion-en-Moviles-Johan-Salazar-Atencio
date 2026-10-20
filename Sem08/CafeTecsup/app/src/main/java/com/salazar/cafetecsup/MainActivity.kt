@@ -7,17 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.salazar.cafetecsup.data.local.CafeDatabase
 import com.salazar.cafetecsup.data.prefs.PreferenciasStore
 import com.salazar.cafetecsup.data.repository.CafeRepositoryRoom
 import com.salazar.cafetecsup.ui.navigation.NavCafe
 import com.salazar.cafetecsup.ui.theme.CafetecsupTheme
-import com.salazar.cafetecsup.viewmodel.SesionViewModel
 import com.salazar.cafetecsup.viewmodel.MenuViewModel
+import com.salazar.cafetecsup.viewmodel.PedidosClienteViewModel
+import com.salazar.cafetecsup.viewmodel.SesionViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
         val sesionViewModel = SesionViewModel(repository, prefs)
         val menuViewModel = MenuViewModel(repository)
+        val pedidosClienteViewModel = PedidosClienteViewModel(repository)
 
         enableEdgeToEdge()
         setContent {
@@ -40,20 +39,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavCafe(viewModel = sesionViewModel, menuViewModel = menuViewModel)
+                    NavCafe(
+                        viewModel = sesionViewModel,
+                        menuViewModel = menuViewModel,
+                        pedidosViewModel = pedidosClienteViewModel
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(text = "Hello $name!", modifier = modifier)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CafetecsupTheme { Greeting("Android") }
 }

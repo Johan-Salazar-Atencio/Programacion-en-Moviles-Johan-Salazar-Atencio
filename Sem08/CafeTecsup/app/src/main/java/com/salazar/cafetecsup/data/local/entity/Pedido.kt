@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.salazar.cafetecsup.model.EstadoPedido
 
 @Entity(
     tableName = "pedidos",
@@ -15,13 +14,16 @@ import com.salazar.cafetecsup.model.EstadoPedido
             childColumns = ["clienteId"]
         )
     ],
-    indices = [Index(value = ["clienteId"])]
+    indices = [Index("clienteId")]
 )
 data class Pedido(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val clienteId: Int,
+    val estado: String,
+    val horaRecojo: String,
+    val pago: String,
+    val nota: String = "",
     val total: Double,
-    val estado: String = EstadoPedido.RECIBIDO.name,
     val fecha: Long = System.currentTimeMillis()
 )

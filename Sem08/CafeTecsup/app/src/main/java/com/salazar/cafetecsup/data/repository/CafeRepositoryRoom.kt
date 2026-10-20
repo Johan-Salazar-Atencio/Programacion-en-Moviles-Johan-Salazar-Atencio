@@ -56,6 +56,9 @@ class CafeRepositoryRoom(
             clienteId = clienteId,
             total = total,
             estado = EstadoPedido.RECIBIDO.name,
+            horaRecojo = horaRecojo,
+            pago = pago,
+            nota = nota,
             fecha = System.currentTimeMillis()
         )
 

@@ -8,14 +8,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.salazar.cafetecsup.ui.cliente.DetalleProductoScreen
-import com.salazar.cafetecsup.ui.cliente.LoginScreen
-import com.salazar.cafetecsup.ui.cliente.MenuScreen
+import com.salazar.cafetecsup.ui.cliente.*
 import com.salazar.cafetecsup.viewmodel.MenuViewModel
+import com.salazar.cafetecsup.viewmodel.PedidosClienteViewModel
 import com.salazar.cafetecsup.viewmodel.SesionViewModel
 
 @Composable
-fun NavCafe(viewModel: SesionViewModel, menuViewModel: MenuViewModel) {
+fun NavCafe(
+    viewModel: SesionViewModel,
+    menuViewModel: MenuViewModel,
+    pedidosViewModel: PedidosClienteViewModel
+) {
     val navController = rememberNavController()
     val perfilActivo by viewModel.perfilActivo.collectAsState()
 
@@ -43,6 +46,12 @@ fun NavCafe(viewModel: SesionViewModel, menuViewModel: MenuViewModel) {
                 vm = menuViewModel,
                 onProducto = { productoId ->
                     navController.navigate("detalle/$productoId")
+                },
+                onIrAConfirmar = {
+                    navController.navigate("confirmar_pedido")
+                },
+                onIrAPedidos = {
+                    navController.navigate("mis_pedidos")
                 }
             )
         }
@@ -56,6 +65,43 @@ fun NavCafe(viewModel: SesionViewModel, menuViewModel: MenuViewModel) {
                 productoId = productoId,
                 vm = menuViewModel,
                 onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("confirmar_pedido") {
+            ConfirmarPedidoScreen(
+                menuVm = menuViewModel,
+                pedidosVm = pedidosViewModel,
+                onVolverMenu = { navController.navigate("menu_cliente") { popUpTo("menu_cliente") { inclusive = true } } },
+                onPedidoConfirmado = { nuevoId ->
+                    navController.navigate("seguimiento/$nuevoId") {
+                        popUpTo("menu_cliente")
+                    }
+                },
+                onNavegarPedidos = { navController.navigate("mis_pedidos") }
+            )
+        }
+
+        composable(
+            route = "seguimiento/{pedidoId}",
+            arguments = listOf(navArgument("pedidoId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val pedidoId = backStackEntry.arguments?.getInt("pedidoId") ?: 0
+            SeguimientoScreen(
+                pedidoId = pedidoId,
+                pedidosVm = pedidosViewModel,
+                onVolverMenu = { navController.navigate("menu_cliente") },
+                onNavegarPedidos = { navController.navigate("mis_pedidos") }
+            )
+        }
+
+        composable("mis_pedidos") {
+            MisPedidosScreen(
+                pedidosVm = pedidosViewModel,
+                onVolverMenu = { navController.navigate("menu_cliente") },
+                onVerSeguimiento = { pedidoId ->
+                    navController.navigate("seguimiento/$pedidoId")
+                }
             )
         }
 

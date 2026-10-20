@@ -25,7 +25,9 @@ import com.salazar.cafetecsup.viewmodel.MenuViewModel
 @Composable
 fun MenuScreen(
     vm: MenuViewModel,
-    onProducto: (Int) -> Unit
+    onProducto: (Int) -> Unit,
+    onIrAConfirmar: () -> Unit = {},
+    onIrAPedidos: () -> Unit = {}
 ) {
     val productos by vm.productos.collectAsState()
     val carrito by vm.carrito.collectAsState()
@@ -80,7 +82,7 @@ fun MenuScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { /* Conexión en paso de Pedidos */ },
+                    onClick = { onIrAPedidos() },
                     icon = { Text("📋", fontSize = 18.sp) },
                     label = { Text("Pedidos", color = Color(0xFF9CA3AF)) }
                 )
@@ -125,7 +127,8 @@ fun MenuScreen(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF3F4F6)),
+                        .background(Color(0xFFF3F4F6))
+                        .clickable { onIrAConfirmar() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "🛍️", fontSize = 20.sp)
