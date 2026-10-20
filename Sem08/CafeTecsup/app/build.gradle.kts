@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.salazar.cafetecsup"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.salazar.cafetecsup"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -53,6 +53,7 @@ dependencies {
     // Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     ksp("androidx.room:room-compiler:2.6.1")
 
