@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,11 +17,11 @@ import com.salazar.cafetecsup.data.repository.CafeRepositoryRoom
 import com.salazar.cafetecsup.ui.navigation.NavCafe
 import com.salazar.cafetecsup.ui.theme.CafetecsupTheme
 import com.salazar.cafetecsup.viewmodel.SesionViewModel
+import com.salazar.cafetecsup.viewmodel.MenuViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val database = androidx.room.Room.databaseBuilder(
             applicationContext,
             CafeDatabase::class.java,
@@ -33,6 +31,7 @@ class MainActivity : ComponentActivity() {
         val prefs = PreferenciasStore(this)
 
         val sesionViewModel = SesionViewModel(repository, prefs)
+        val menuViewModel = MenuViewModel(repository)
 
         enableEdgeToEdge()
         setContent {
@@ -41,24 +40,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavCafe(viewModel = sesionViewModel)
+                    NavCafe(viewModel = sesionViewModel, menuViewModel = menuViewModel)
                 }
             }
         }
     }
 }
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+    Text(text = "Hello $name!", modifier = modifier)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    CafetecsupTheme {
-        Greeting("Android")
-    }
+    CafetecsupTheme { Greeting("Android") }
 }

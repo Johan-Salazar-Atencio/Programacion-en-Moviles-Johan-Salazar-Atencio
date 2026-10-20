@@ -1,9 +1,9 @@
 package com.salazar.cafetecsup.model
 
-enum class EstadoPedido {
-    RECIBIDO,
-    PREPARANDO,
-    LISTO,
-    ENTREGADO,
-    CANCELADO
-}
+import com.salazar.cafetecsup.data.local.entity.Producto
+
+data class ItemCarrito(
+    val producto: Producto,
+    var cantidad: Int,
+    val nota: String = ""
+)
