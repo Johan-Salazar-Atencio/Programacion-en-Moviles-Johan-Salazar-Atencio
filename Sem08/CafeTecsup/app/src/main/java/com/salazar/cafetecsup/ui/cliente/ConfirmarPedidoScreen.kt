@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -100,7 +99,7 @@ fun ConfirmarPedidoScreen(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 1. Tarjeta de resumen de ítems
+                // 1. Tarjeta de resumen de ítems (muestra notas individuales)
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -144,6 +143,14 @@ fun ConfirmarPedidoScreen(
                                             fontSize = 13.sp,
                                             color = Color(0xFF6B7280)
                                         )
+                                        if (item.nota.isNotBlank()) {
+                                            Text(
+                                                text = "Nota: ${item.nota}",
+                                                fontSize = 12.sp,
+                                                color = Color(0xFFD97706),
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
                                     }
 
                                     Text(
@@ -276,12 +283,19 @@ fun ConfirmarPedidoScreen(
             // Botón Confirmar
             Button(
                 onClick = {
+                    //notas agregadas a cada ítem del carrito
+                    val notaCombinada = carrito
+                        .filter { it.nota.isNotBlank() }
+                        .joinToString("; ") { item ->
+                            if (carrito.size > 1) "${item.producto.nombre}: ${item.nota}" else item.nota
+                        }
+
                     pedidosVm.confirmar(
                         usuarioId = 1,
                         items = carrito,
                         horaRecojo = horaSeleccionada,
                         pago = metodoPagoSeleccionado,
-                        nota = ""
+                        nota = notaCombinada
                     ) { nuevoId ->
                         menuVm.vaciar()
                         onPedidoConfirmado(nuevoId)

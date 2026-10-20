@@ -14,6 +14,8 @@ import com.salazar.cafetecsup.data.repository.CafeRepositoryRoom
 import com.salazar.cafetecsup.ui.navigation.NavCafe
 import com.salazar.cafetecsup.ui.theme.CafetecsupTheme
 import com.salazar.cafetecsup.viewmodel.MenuViewModel
+import com.salazar.cafetecsup.viewmodel.PanelAdminViewModel
+import com.salazar.cafetecsup.viewmodel.PedidosAdminViewModel
 import com.salazar.cafetecsup.viewmodel.PedidosClienteViewModel
 import com.salazar.cafetecsup.viewmodel.SesionViewModel
 
@@ -31,6 +33,8 @@ class MainActivity : ComponentActivity() {
         val sesionViewModel = SesionViewModel(repository, prefs)
         val menuViewModel = MenuViewModel(repository)
         val pedidosClienteViewModel = PedidosClienteViewModel(repository)
+        val panelAdminViewModel = PanelAdminViewModel(repository)
+        val pedidosAdminViewModel = PedidosAdminViewModel(repository)
 
         enableEdgeToEdge()
         setContent {
@@ -42,7 +46,9 @@ class MainActivity : ComponentActivity() {
                     NavCafe(
                         viewModel = sesionViewModel,
                         menuViewModel = menuViewModel,
-                        pedidosViewModel = pedidosClienteViewModel
+                        pedidosViewModel = pedidosClienteViewModel,
+                        panelAdminViewModel = panelAdminViewModel,
+                        pedidosAdminViewModel = pedidosAdminViewModel
                     )
                 }
             }

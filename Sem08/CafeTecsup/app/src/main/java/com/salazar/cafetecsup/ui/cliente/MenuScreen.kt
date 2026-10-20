@@ -27,14 +27,14 @@ fun MenuScreen(
     vm: MenuViewModel,
     onProducto: (Int) -> Unit,
     onIrAConfirmar: () -> Unit = {},
-    onIrAPedidos: () -> Unit = {}
+    onIrAPedidos: () -> Unit = {},
+    onCerrarSesion: () -> Unit = {}
 ) {
     val productos by vm.productos.collectAsState()
     val carrito by vm.carrito.collectAsState()
     val totalItems = carrito.sumOf { it.cantidad }
 
     var textoBusqueda by remember { mutableStateOf("") }
-
     var categoriaSeleccionada by remember { mutableStateOf("Todo") }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
 
@@ -73,7 +73,7 @@ fun MenuScreen(
             ) {
                 NavigationBarItem(
                     selected = true,
-                    onClick = { /* Pantalla actual */ },
+                    onClick = { },
                     icon = { Text("🏠", fontSize = 18.sp) },
                     label = { Text("Menú", color = Color(0xFFEA580C), fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
@@ -88,7 +88,7 @@ fun MenuScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { /* Conexión en paso de Perfil */ },
+                    onClick = { onCerrarSesion() },
                     icon = { Text("👤", fontSize = 18.sp) },
                     label = { Text("Perfil", color = Color(0xFF9CA3AF)) }
                 )

@@ -55,6 +55,13 @@ class SesionViewModel(
         }
     }
 
+    fun cerrarSesion() {
+        viewModelScope.launch {
+            _usuarioActual.value = null
+            prefs.guardarPerfil("NINGUNO")
+        }
+    }
+
     fun limpiarError() {
         _error.value = ""
     }
