@@ -10,13 +10,58 @@ import kotlin.math.abs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class MenuViewModel(private val repository: CafeRepository) : ViewModel() {
     val productos: StateFlow<List<Producto>> = repository.observarProductos()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     private val _carrito = MutableStateFlow<List<ItemCarrito>>(emptyList())
     val carrito: StateFlow<List<ItemCarrito>> = _carrito
+
+    private val _categoriaSeleccionada = MutableStateFlow("Todo")
+    val categoriaSeleccionada: StateFlow<String> = _categoriaSeleccionada
+
+    private val _queryBusqueda = MutableStateFlow("")
+    val queryBusqueda: StateFlow<String> = _queryBusqueda
+
+    val productosFiltrados: StateFlow<List<Producto>> =
+        combine(productos, categoriaSeleccionada, queryBusqueda) { prods, categoria, query ->
+            val base = if (categoria == "Todo") {
+                prods
+            } else {
+                prods.filter { p ->
+                    when (categoria) {
+                        "Desayunos" -> p.categoria.contains("desayuno", ignoreCase = true) ||
+                                p.nombre.contains("empanada", ignoreCase = true) ||
+                                p.nombre.contains("sándwich", ignoreCase = true) ||
+                                p.nombre.contains("sandwich", ignoreCase = true)
+
+                        "Almuerzos" -> p.categoria.contains("almuerzo", ignoreCase = true) ||
+                                p.nombre.contains("menú", ignoreCase = true) ||
+                                p.nombre.contains("menu", ignoreCase = true)
+
+                        "Bebidas" -> p.categoria.contains("bebida", ignoreCase = true) ||
+                                p.nombre.contains("café", ignoreCase = true) ||
+                                p.nombre.contains("cafe", ignoreCase = true) ||
+                                p.nombre.contains("chicha", ignoreCase = true) ||
+                                p.nombre.contains("jugo", ignoreCase = true)
+
+                        else -> true
+                    }
+                }
+            }
+            if (query.isBlank()) base else base.filter { it.nombre.contains(query, ignoreCase = true) }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun onCategoriaChanged(nuevaCategoria: String) {
+        _categoriaSeleccionada.value = nuevaCategoria
+    }
+
+    fun onBusquedaChanged(nuevaQuery: String) {
+        _queryBusqueda.value = nuevaQuery
+    }
 
     fun agregar(producto: Producto, cantidad: Int, nota: String) {
         val listaActual = _carrito.value.toMutableList()

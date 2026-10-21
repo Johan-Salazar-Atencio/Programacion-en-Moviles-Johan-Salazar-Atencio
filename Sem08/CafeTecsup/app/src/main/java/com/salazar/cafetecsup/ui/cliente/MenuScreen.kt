@@ -32,12 +32,12 @@ fun MenuScreen(
 ) {
     val colorScheme = MaterialTheme.colorScheme
 
-    val productos by vm.productos.collectAsState()
+    val productosFiltrados by vm.productosFiltrados.collectAsState()
     val carrito by vm.carrito.collectAsState()
+    val textoBusqueda by vm.queryBusqueda.collectAsState()
+    val categoriaSeleccionada by vm.categoriaSeleccionada.collectAsState()
     val totalItems = carrito.sumOf { it.cantidad }
 
-    var textoBusqueda by remember { mutableStateOf("") }
-    var categoriaSeleccionada by remember { mutableStateOf("Todo") }
     var mostrarComboDialog by remember { mutableStateOf(false) }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
 
@@ -50,34 +50,6 @@ fun MenuScreen(
                 mostrarComboDialog = false
             }
         )
-    }
-
-    val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
-        val base = if (categoriaSeleccionada == "Todo") {
-            productos
-        } else {
-            productos.filter { p ->
-                when (categoriaSeleccionada) {
-                    "Desayunos" -> p.categoria.contains("desayuno", ignoreCase = true) ||
-                            p.nombre.contains("empanada", ignoreCase = true) ||
-                            p.nombre.contains("sándwich", ignoreCase = true) ||
-                            p.nombre.contains("sandwich", ignoreCase = true)
-
-                    "Almuerzos" -> p.categoria.contains("almuerzo", ignoreCase = true) ||
-                            p.nombre.contains("menú", ignoreCase = true) ||
-                            p.nombre.contains("menu", ignoreCase = true)
-
-                    "Bebidas" -> p.categoria.contains("bebida", ignoreCase = true) ||
-                            p.nombre.contains("café", ignoreCase = true) ||
-                            p.nombre.contains("cafe", ignoreCase = true) ||
-                            p.nombre.contains("chicha", ignoreCase = true) ||
-                            p.nombre.contains("jugo", ignoreCase = true)
-
-                    else -> true
-                }
-            }
-        }
-        if (textoBusqueda.isBlank()) base else base.filter { it.nombre.contains(textoBusqueda, ignoreCase = true) }
     }
 
     Scaffold(
@@ -206,8 +178,18 @@ fun MenuScreen(
 
             OutlinedTextField(
                 value = textoBusqueda,
-                onValueChange = { textoBusqueda = it },
+                onValueChange = { vm.onBusquedaChanged(it) },
                 placeholder = { Text("Buscar en el menú...", color = colorScheme.onSurfaceVariant) },
+                leadingIcon = { Text("🔍", fontSize = 18.sp) },
+                trailingIcon = {
+                    if (textoBusqueda.isNotEmpty()) {
+                        Text(
+                            text = "❌",
+                            fontSize = 16.sp,
+                            modifier = Modifier.clickable { vm.onBusquedaChanged("") }
+                        )
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -231,7 +213,7 @@ fun MenuScreen(
                     Surface(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { categoriaSeleccionada = cat },
+                            .clickable { vm.onCategoriaChanged(cat) },
                         color = if (esSeleccionado) colorScheme.secondary else colorScheme.surfaceVariant
                     ) {
                         Text(
@@ -264,7 +246,11 @@ fun MenuScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No hay productos en esta categoría",
+                        text = if (textoBusqueda.isNotBlank()) {
+                            "No se encontraron productos para '$textoBusqueda'"
+                        } else {
+                            "No hay productos en esta categoría"
+                        },
                         color = colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
