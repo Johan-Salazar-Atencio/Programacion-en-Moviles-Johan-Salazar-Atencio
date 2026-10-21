@@ -38,7 +38,19 @@ fun MenuScreen(
 
     var textoBusqueda by remember { mutableStateOf("") }
     var categoriaSeleccionada by remember { mutableStateOf("Todo") }
+    var mostrarComboDialog by remember { mutableStateOf(false) }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
+
+    if (mostrarComboDialog) {
+        ComboPresupuestoDialog(
+            generarCombo = { monto -> vm.generarComboPorPresupuesto(monto) },
+            onDismiss = { mostrarComboDialog = false },
+            onAgregarCombo = { combo ->
+                vm.agregarCombo(combo)
+                mostrarComboDialog = false
+            }
+        )
+    }
 
     val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
         val base = if (categoriaSeleccionada == "Todo") {
@@ -152,6 +164,41 @@ fun MenuScreen(
                             )
                         }
                     }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { mostrarComboDialog = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = colorScheme.secondary),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "🎲 Modo Sorpréndeme",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = colorScheme.onSecondary
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Armá tu combo según tu presupuesto",
+                            fontSize = 12.sp,
+                            color = colorScheme.onSecondary.copy(alpha = 0.85f)
+                        )
+                    }
+                    Text("›", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = colorScheme.onSecondary)
                 }
             }
 
