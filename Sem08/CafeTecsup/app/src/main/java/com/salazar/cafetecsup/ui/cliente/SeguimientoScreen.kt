@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,8 +20,10 @@ fun SeguimientoScreen(
     pedidoId: Int,
     pedidosVm: PedidosClienteViewModel,
     onVolverMenu: () -> Unit,
-    onNavegarPedidos: () -> Unit
+    onNavegarPedidos: () -> Unit,
+    onIrAPerfil: () -> Unit = {}
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val pedidoConDetalle by pedidosVm.obtenerPedido(pedidoId).collectAsState()
     val estadoActual = pedidoConDetalle?.pedido?.estado ?: "RECIBIDO"
 
@@ -43,27 +44,27 @@ fun SeguimientoScreen(
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 NavigationBarItem(
                     selected = false,
                     onClick = { onVolverMenu() },
                     icon = { Text("🏠", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Menú", color = colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = true,
                     onClick = { onNavegarPedidos() },
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFFEA580C), fontWeight = FontWeight.Bold) },
-                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color(0xFFFFEDD5))
+                    label = { Text("Pedidos", color = colorScheme.secondary, fontWeight = FontWeight.Bold) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = colorScheme.secondary.copy(alpha = 0.15f))
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = onIrAPerfil,
                     icon = { Text("👤", fontSize = 18.sp) },
-                    label = { Text("Perfil", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Perfil", color = colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -71,7 +72,7 @@ fun SeguimientoScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(colorScheme.background)
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
@@ -83,6 +84,7 @@ fun SeguimientoScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
                     modifier = Modifier
                         .clickable { onNavegarPedidos() }
                         .padding(end = 16.dp)
@@ -91,7 +93,7 @@ fun SeguimientoScreen(
                     text = "Seguimiento",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF111827)
+                    color = colorScheme.onBackground
                 )
             }
 
@@ -100,7 +102,7 @@ fun SeguimientoScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFEA580C))
+                colors = CardDefaults.cardColors(containerColor = colorScheme.secondary)
             ) {
                 Row(
                     modifier = Modifier
@@ -114,18 +116,18 @@ fun SeguimientoScreen(
                             text = "Pedido #${String.format("%04d", pedidoId)}",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = colorScheme.onSecondary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Recojo a las ${pedidoConDetalle?.pedido?.horaRecojo ?: "10:30"}",
                             fontSize = 13.sp,
-                            color = Color(0xFFFFEDD5)
+                            color = colorScheme.onSecondary.copy(alpha = 0.85f)
                         )
                         Text(
                             text = "Tiempo estimado: 10 min",
                             fontSize = 13.sp,
-                            color = Color(0xFFFFEDD5)
+                            color = colorScheme.onSecondary.copy(alpha = 0.85f)
                         )
                     }
                     Text("🕒", fontSize = 32.sp)
@@ -149,12 +151,12 @@ fun SeguimientoScreen(
                                     .size(28.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (alcanzado) Color(0xFF10B981) else Color(0xFFE5E7EB)
+                                        if (alcanzado) colorScheme.primary else colorScheme.outline
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (alcanzado) {
-                                    Text("✓", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("✓", color = colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                 }
                             }
                             if (index < pasos.size - 1) {
@@ -163,7 +165,7 @@ fun SeguimientoScreen(
                                         .width(2.dp)
                                         .height(44.dp)
                                         .background(
-                                            if (pasoAlcanzado(pasos[index + 1].first)) Color(0xFF10B981) else Color(0xFFE5E7EB)
+                                            if (pasoAlcanzado(pasos[index + 1].first)) colorScheme.primary else colorScheme.outline
                                         )
                                 )
                             }
@@ -176,12 +178,12 @@ fun SeguimientoScreen(
                                 text = titulo,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
-                                color = if (alcanzado) Color(0xFF111827) else Color(0xFF9CA3AF)
+                                color = if (alcanzado) colorScheme.onBackground else colorScheme.onSurfaceVariant
                             )
                             Text(
                                 text = desc,
                                 fontSize = 13.sp,
-                                color = Color(0xFF6B7280)
+                                color = colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -194,7 +196,7 @@ fun SeguimientoScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    colors = CardDefaults.cardColors(containerColor = colorScheme.surface)
                 ) {
                     Row(
                         modifier = Modifier
@@ -207,13 +209,13 @@ fun SeguimientoScreen(
                         Text(
                             text = itemsText.ifBlank { "Productos del pedido" },
                             fontSize = 13.sp,
-                            color = Color(0xFF4B5563),
+                            color = colorScheme.onSurfaceVariant,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = "Total S/ ${String.format("%.2f", pd.pedido.total)}",
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFEA580C),
+                            color = colorScheme.secondary,
                             fontSize = 15.sp
                         )
                     }

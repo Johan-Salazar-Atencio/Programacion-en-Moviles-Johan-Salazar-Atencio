@@ -22,8 +22,10 @@ import com.salazar.cafetecsup.viewmodel.PedidosClienteViewModel
 fun MisPedidosScreen(
     pedidosVm: PedidosClienteViewModel,
     onVolverMenu: () -> Unit,
-    onVerSeguimiento: (Int) -> Unit
+    onVerSeguimiento: (Int) -> Unit,
+    onIrAPerfil: () -> Unit = {}
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val todosLosPedidos by pedidosVm.todosLosPedidos.collectAsState()
     var tabSeleccionada by remember { mutableStateOf(0) }
 
@@ -40,27 +42,27 @@ fun MisPedidosScreen(
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 NavigationBarItem(
                     selected = false,
                     onClick = { onVolverMenu() },
                     icon = { Text("🏠", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Menú", color = colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = true,
                     onClick = { },
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFFEA580C), fontWeight = FontWeight.Bold) },
-                    colors = NavigationBarItemDefaults.colors(indicatorColor = Color(0xFFFFEDD5))
+                    label = { Text("Pedidos", color = colorScheme.secondary, fontWeight = FontWeight.Bold) },
+                    colors = NavigationBarItemDefaults.colors(indicatorColor = colorScheme.secondary.copy(alpha = 0.15f))
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = onIrAPerfil,
                     icon = { Text("👤", fontSize = 18.sp) },
-                    label = { Text("Perfil", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Perfil", color = colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -68,7 +70,7 @@ fun MisPedidosScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -82,6 +84,7 @@ fun MisPedidosScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
                     modifier = Modifier
                         .clickable { onVolverMenu() }
                         .padding(end = 16.dp)
@@ -90,7 +93,7 @@ fun MisPedidosScreen(
                     text = "Mis pedidos",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF111827)
+                    color = colorScheme.onBackground
                 )
             }
 
@@ -100,7 +103,7 @@ fun MisPedidosScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(25.dp)),
-                color = Color(0xFFF3F4F6)
+                color = colorScheme.surfaceVariant
             ) {
                 Row(modifier = Modifier.padding(4.dp)) {
                     Surface(
@@ -108,13 +111,13 @@ fun MisPedidosScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { tabSeleccionada = 0 },
-                        color = if (tabSeleccionada == 0) Color.White else Color.Transparent
+                        color = if (tabSeleccionada == 0) colorScheme.surface else Color.Transparent
                     ) {
                         Box(modifier = Modifier.padding(vertical = 10.dp), contentAlignment = Alignment.Center) {
                             Text(
                                 text = "Activos",
                                 fontWeight = if (tabSeleccionada == 0) FontWeight.Bold else FontWeight.Normal,
-                                color = if (tabSeleccionada == 0) Color(0xFFEA580C) else Color(0xFF6B7280)
+                                color = if (tabSeleccionada == 0) colorScheme.secondary else colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -124,13 +127,13 @@ fun MisPedidosScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { tabSeleccionada = 1 },
-                        color = if (tabSeleccionada == 1) Color.White else Color.Transparent
+                        color = if (tabSeleccionada == 1) colorScheme.surface else Color.Transparent
                     ) {
                         Box(modifier = Modifier.padding(vertical = 10.dp), contentAlignment = Alignment.Center) {
                             Text(
                                 text = "Historial",
                                 fontWeight = if (tabSeleccionada == 1) FontWeight.Bold else FontWeight.Normal,
-                                color = if (tabSeleccionada == 1) Color(0xFFEA580C) else Color(0xFF6B7280)
+                                color = if (tabSeleccionada == 1) colorScheme.secondary else colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -148,7 +151,7 @@ fun MisPedidosScreen(
                 ) {
                     Text(
                         text = if (tabSeleccionada == 0) "No tienes pedidos activos" else "No tienes historial de pedidos",
-                        color = Color(0xFF9CA3AF),
+                        color = colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
                 }
@@ -174,6 +177,7 @@ fun TarjetaPedido(
     pedidoConDetalle: PedidoConDetalle,
     onClick: () -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val pedido = pedidoConDetalle.pedido
 
     Card(
@@ -181,7 +185,7 @@ fun TarjetaPedido(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -194,16 +198,16 @@ fun TarjetaPedido(
                     text = "Pedido #${String.format("%04d", pedido.id)}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color(0xFF111827)
+                    color = colorScheme.onSurface
                 )
-                Text("›", fontSize = 20.sp, color = Color(0xFF9CA3AF))
+                Text("›", fontSize = 20.sp, color = colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Hoy ${pedido.horaRecojo}",
                 fontSize = 12.sp,
-                color = Color(0xFF9CA3AF)
+                color = colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -218,7 +222,7 @@ fun TarjetaPedido(
                     text = "S/ ${String.format("%.2f", pedido.total)}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color(0xFFEA580C)
+                    color = colorScheme.secondary
                 )
             }
         }
@@ -227,13 +231,14 @@ fun TarjetaPedido(
 
 @Composable
 fun EstadoChip(estado: String) {
+    val colorScheme = MaterialTheme.colorScheme
     val (fondo, textoColor) = when (estado) {
         "RECIBIDO" -> Pair(Color(0xFFFEF3C7), Color(0xFFD97706))
         "PREPARANDO" -> Pair(Color(0xFFFDE68A), Color(0xFFB45309))
         "LISTO" -> Pair(Color(0xFFD1FAE5), Color(0xFF059669))
-        "ENTREGADO" -> Pair(Color(0xFFE5E7EB), Color(0xFF4B5563))
-        "CANCELADO" -> Pair(Color(0xFFFEE2E2), Color(0xFFDC2626))
-        else -> Pair(Color(0xFFF3F4F6), Color(0xFF6B7280))
+        "ENTREGADO" -> Pair(colorScheme.surfaceVariant, colorScheme.onSurfaceVariant)
+        "CANCELADO" -> Pair(colorScheme.error.copy(alpha = 0.15f), colorScheme.error)
+        else -> Pair(colorScheme.surfaceVariant, colorScheme.onSurfaceVariant)
     }
 
     Surface(

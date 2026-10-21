@@ -65,6 +65,9 @@ fun NavCafe(
                 onIrAPedidos = {
                     navController.navigate("mis_pedidos")
                 },
+                onIrAPerfil = {
+                    navController.navigate("perfil_cliente")
+                },
                 onCerrarSesion = {
                     viewModel.cerrarSesion()
                     navController.navigate("login") {
@@ -90,13 +93,15 @@ fun NavCafe(
             ConfirmarPedidoScreen(
                 menuVm = menuViewModel,
                 pedidosVm = pedidosViewModel,
+                viewModel = viewModel,
                 onVolverMenu = { navController.navigate("menu_cliente") { popUpTo("menu_cliente") { inclusive = true } } },
                 onPedidoConfirmado = { nuevoId ->
                     navController.navigate("seguimiento/$nuevoId") {
                         popUpTo("menu_cliente")
                     }
                 },
-                onNavegarPedidos = { navController.navigate("mis_pedidos") }
+                onNavegarPedidos = { navController.navigate("mis_pedidos") },
+                onIrAPerfil = { navController.navigate("perfil_cliente") }
             )
         }
 
@@ -109,7 +114,8 @@ fun NavCafe(
                 pedidoId = pedidoId,
                 pedidosVm = pedidosViewModel,
                 onVolverMenu = { navController.navigate("menu_cliente") },
-                onNavegarPedidos = { navController.navigate("mis_pedidos") }
+                onNavegarPedidos = { navController.navigate("mis_pedidos") },
+                onIrAPerfil = { navController.navigate("perfil_cliente") }
             )
         }
 
@@ -119,6 +125,27 @@ fun NavCafe(
                 onVolverMenu = { navController.navigate("menu_cliente") },
                 onVerSeguimiento = { pedidoId ->
                     navController.navigate("seguimiento/$pedidoId")
+                },
+                onIrAPerfil = { navController.navigate("perfil_cliente") }
+            )
+        }
+
+        composable("perfil_cliente") {
+            PerfilClienteScreen(
+                viewModel = viewModel,
+                onVolverMenu = { navController.navigate("menu_cliente") { popUpTo("menu_cliente") { inclusive = true } } },
+                onNavegarPedidos = { navController.navigate("mis_pedidos") },
+                onCambiarAAdmin = {
+                    viewModel.cambiarAAdmin()
+                    navController.navigate("panel_admin") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onCerrarSesion = {
+                    viewModel.cerrarSesion()
+                    navController.navigate("login") {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
@@ -171,7 +198,7 @@ fun NavCafe(
                 onNavegarMenu = { navController.navigate("menu_admin") },
                 onCambiarACliente = {
                     navController.navigate("menu_cliente") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 },
                 onCerrarSesion = {

@@ -46,7 +46,7 @@ fun DetallePedidoAdminScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -54,6 +54,7 @@ fun DetallePedidoAdminScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .clickable { onVolver() }
                         .padding(end = 16.dp)
@@ -62,7 +63,7 @@ fun DetallePedidoAdminScreen(
                     text = "Detalle del pedido",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF111827)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -71,6 +72,7 @@ fun DetallePedidoAdminScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
@@ -80,17 +82,17 @@ fun DetallePedidoAdminScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFFAFAFA))
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 1. Cabecera Pedido #0046 + Estado Chip
+                // 1. Cabecera Pedido
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -103,7 +105,7 @@ fun DetallePedidoAdminScreen(
                                     text = "Pedido #${String.format("%04d", pedido.id)}",
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF111827)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 EstadoChip(estado = pedido.estado)
                             }
@@ -111,7 +113,7 @@ fun DetallePedidoAdminScreen(
                             Text(
                                 text = "Hoy · Recojo ${pedido.horaRecojo}",
                                 fontSize = 13.sp,
-                                color = Color(0xFF6B7280)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -122,23 +124,23 @@ fun DetallePedidoAdminScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = "Cliente",
                                 fontSize = 12.sp,
-                                color = Color(0xFF9CA3AF)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 text = "Estudiante (ID #${pedido.clienteId})",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF111827)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
 
-                            Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFF3F4F6))
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.surfaceVariant)
 
                             detalles.forEach { d ->
                                 Row(
@@ -151,29 +153,31 @@ fun DetallePedidoAdminScreen(
                                         text = d.nombreProducto,
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier.weight(1f)
                                     )
                                     Text(
                                         text = "x${d.cantidad}",
                                         fontSize = 14.sp,
-                                        color = Color(0xFF6B7280),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(horizontal = 16.dp)
                                     )
                                     Text(
                                         text = "S/ ${String.format("%.2f", d.precioUnitario * d.cantidad)}",
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp
+                                        fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
 
-                            Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFF3F4F6))
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.surfaceVariant)
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Total", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text("Total", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                                 Text(
                                     "S/ ${String.format("%.2f", pedido.total)}",
                                     fontWeight = FontWeight.Bold,
@@ -216,7 +220,7 @@ fun DetallePedidoAdminScreen(
                             text = "Cambiar estado",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            color = Color(0xFF111827)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -237,7 +241,7 @@ fun DetallePedidoAdminScreen(
                                         .weight(1f)
                                         .clickable { vm.cambiarEstadoDirecto(pedido.id, est) },
                                     shape = RoundedCornerShape(20.dp),
-                                    color = if (esSel) Color(0xFF4F46E5) else Color(0xFFF3F4F6)
+                                    color = if (esSel) Color(0xFF4F46E5) else MaterialTheme.colorScheme.surfaceVariant
                                 ) {
                                     Box(
                                         modifier = Modifier.padding(vertical = 8.dp),
@@ -253,7 +257,7 @@ fun DetallePedidoAdminScreen(
                                             },
                                             fontSize = 11.sp,
                                             fontWeight = if (esSel) FontWeight.Bold else FontWeight.Normal,
-                                            color = if (esSel) Color.White else Color(0xFF4B5563)
+                                            color = if (esSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 }
@@ -271,7 +275,7 @@ fun DetallePedidoAdminScreen(
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F46E5))
                             ) {
-                                Text(siguienteTexto, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                                Text(siguienteTexto, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))

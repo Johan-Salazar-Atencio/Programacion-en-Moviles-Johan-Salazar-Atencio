@@ -58,7 +58,7 @@ fun FormularioProductoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(16.dp)
@@ -73,13 +73,14 @@ fun FormularioProductoScreen(
                 text = "‹",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.clickable { onVolver() }.padding(end = 16.dp)
             )
             Text(
                 text = if (esEdicion) "Editar producto" else "Nuevo producto",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF111827)
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -103,7 +104,7 @@ fun FormularioProductoScreen(
                     modifier = Modifier
                         .size(60.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White),
+                        .background(MaterialTheme.colorScheme.surface),
                     contentAlignment = Alignment.Center
                 ) {
                     if (iconoUri.startsWith("content://") || iconoUri.startsWith("file://")) {
@@ -115,14 +116,12 @@ fun FormularioProductoScreen(
                         )
                     } else {
                         val imgRes = obtenerImagenProducto(nombre.ifBlank { "café" }, iconoUri)
-                        if (imgRes is Int) {
-                            Image(
-                                painter = painterResource(id = imgRes),
-                                contentDescription = "Imagen del producto",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
+                        Image(
+                            painter = painterResource(id = imgRes),
+                            contentDescription = "Imagen del producto",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
                     }
                 }
 
@@ -164,7 +163,7 @@ fun FormularioProductoScreen(
         }
 
         // Campo Nombre
-        Text("Nombre del producto", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF374151))
+        Text("Nombre del producto", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = nombre,
@@ -178,7 +177,7 @@ fun FormularioProductoScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Campo Categoría
-        Text("Categoría", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF374151))
+        Text("Categoría", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = categoria,
@@ -192,7 +191,7 @@ fun FormularioProductoScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Campo Precio
-        Text("Precio (S/)", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF374151))
+        Text("Precio (S/)", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = precioTexto,
@@ -206,7 +205,7 @@ fun FormularioProductoScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Campo Descripción
-        Text("Descripción", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF374151))
+        Text("Descripción", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = descripcion,
@@ -226,13 +225,13 @@ fun FormularioProductoScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Disponible en el menú", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                Text("Los estudiantes podrán pedirlo", fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text("Disponible en el menú", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
+                Text("Los estudiantes podrán pedirlo", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Switch(
                 checked = disponible,
                 onCheckedChange = { disponible = it },
-                colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = Color(0xFF4F46E5))
+                colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.onPrimary, checkedTrackColor = Color(0xFF4F46E5))
             )
         }
 
@@ -263,7 +262,7 @@ fun FormularioProductoScreen(
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F46E5))
         ) {
-            Text("Guardar producto", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+            Text("Guardar producto", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
 
         Spacer(modifier = Modifier.height(8.dp))

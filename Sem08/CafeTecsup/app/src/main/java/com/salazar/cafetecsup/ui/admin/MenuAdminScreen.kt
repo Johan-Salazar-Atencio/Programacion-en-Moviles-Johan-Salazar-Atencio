@@ -58,7 +58,7 @@ fun MenuAdminScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                 ) {
-                    Text("Eliminar", color = Color.White)
+                    Text("Eliminar", color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             dismissButton = {
@@ -74,25 +74,25 @@ fun MenuAdminScreen(
             FloatingActionButton(
                 onClick = onAgregarProducto,
                 containerColor = Color(0xFF4F46E5),
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text("➕", fontSize = 22.sp)
             }
         },
         bottomBar = {
-            NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 8.dp) {
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavegarPanel,
                     icon = { Text("📊", fontSize = 18.sp) },
-                    label = { Text("Panel", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Panel", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavegarPedidos,
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Pedidos", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = true,
@@ -105,7 +105,7 @@ fun MenuAdminScreen(
                     selected = false,
                     onClick = onNavegarAjustes,
                     icon = { Text("⚙️", fontSize = 18.sp) },
-                    label = { Text("Ajustes", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Ajustes", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -113,7 +113,7 @@ fun MenuAdminScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -127,9 +127,10 @@ fun MenuAdminScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.clickable { onNavegarPanel() }.padding(end = 16.dp)
                 )
-                Text("Gestión del menú", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF111827))
+                Text("Gestión del menú", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -141,12 +142,12 @@ fun MenuAdminScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { categoriaSel = cat },
-                        color = if (esSel) Color(0xFF4F46E5) else Color(0xFFF3F4F6)
+                        color = if (esSel) Color(0xFF4F46E5) else MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Text(
                             text = cat,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            color = if (esSel) Color.White else Color(0xFF4B5563),
+                            color = if (esSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = if (esSel) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
@@ -158,7 +159,7 @@ fun MenuAdminScreen(
 
             if (productosFiltrados.isEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay productos en esta categoría", color = Color(0xFF9CA3AF), fontSize = 14.sp)
+                    Text("No hay productos en esta categoría", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             } else {
                 LazyColumn(
@@ -189,7 +190,7 @@ fun ItemProductoAdmin(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -225,8 +226,8 @@ fun ItemProductoAdmin(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(producto.nombre, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color(0xFF111827))
-                Text("${producto.categoria} · S/ ${String.format("%.2f", producto.precio)}", fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text(producto.nombre, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
+                Text("${producto.categoria} · S/ ${String.format("%.2f", producto.precio)}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                 Spacer(modifier = Modifier.height(6.dp))
 

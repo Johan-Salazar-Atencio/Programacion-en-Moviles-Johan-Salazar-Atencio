@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +25,8 @@ fun DetalleProductoScreen(
     vm: MenuViewModel,
     onVolver: () -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     val productos by vm.productos.collectAsState()
     val producto = productos.find { it.id == productoId } ?: return
 
@@ -35,7 +36,7 @@ fun DetalleProductoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(16.dp)
@@ -48,6 +49,7 @@ fun DetalleProductoScreen(
                 text = "‹",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
+                color = colorScheme.onBackground,
                 modifier = Modifier
                     .clickable { onVolver() }
                     .padding(end = 16.dp)
@@ -56,7 +58,7 @@ fun DetalleProductoScreen(
                 text = "Detalle del producto",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF111827)
+                color = colorScheme.onBackground
             )
         }
 
@@ -67,7 +69,7 @@ fun DetalleProductoScreen(
                 .fillMaxWidth()
                 .height(220.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color(0xFFFEF3C7)),
+                .background(colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -89,13 +91,13 @@ fun DetalleProductoScreen(
                 text = producto.nombre,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF111827)
+                color = colorScheme.onBackground
             )
             Text(
                 text = "S/ ${String.format("%.2f", producto.precio)}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFEA580C)
+                color = colorScheme.secondary
             )
         }
 
@@ -103,24 +105,24 @@ fun DetalleProductoScreen(
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(
-                color = Color(0xFFD1FAE5),
+                color = colorScheme.primary.copy(alpha = 0.15f),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = "Disponible",
-                    color = Color(0xFF059669),
+                    color = colorScheme.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                 )
             }
             Surface(
-                color = Color(0xFFF3F4F6),
+                color = colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = "⏱ 10 - 15 min",
-                    color = Color(0xFF4B5563),
+                    color = colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                 )
@@ -132,7 +134,7 @@ fun DetalleProductoScreen(
         Text(
             text = producto.descripcion.ifBlank { "Preparado al instante con insumos frescos de la cafetería." },
             fontSize = 14.sp,
-            color = Color(0xFF6B7280)
+            color = colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -145,7 +147,8 @@ fun DetalleProductoScreen(
             Text(
                 text = "Cantidad",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onBackground
             )
 
             Row(
@@ -153,35 +156,36 @@ fun DetalleProductoScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFF3F4F6))
+                    .background(colorScheme.surfaceVariant)
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFFDE68A))
+                        .background(colorScheme.outline)
                         .clickable { if (cantidad > 1) cantidad-- },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("-", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = colorScheme.onSurface)
                 }
 
                 Text(
                     text = "$cantidad",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onSurface
                 )
 
                 Box(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFEA580C))
+                        .background(colorScheme.secondary)
                         .clickable { cantidad++ },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = colorScheme.onSecondary)
                 }
             }
         }
@@ -192,18 +196,22 @@ fun DetalleProductoScreen(
             text = "Nota para la cocina",
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF374151)
+            color = colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
             value = nota,
             onValueChange = { nota = it },
-            placeholder = { Text("Sin ají, por favor", color = Color(0xFF9CA3AF)) },
+            placeholder = { Text("Sin ají, por favor", color = colorScheme.onSurfaceVariant) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFEA580C),
-                unfocusedBorderColor = Color(0xFFE5E7EB)
+                focusedContainerColor = colorScheme.surfaceVariant,
+                unfocusedContainerColor = colorScheme.surfaceVariant,
+                focusedBorderColor = colorScheme.secondary,
+                unfocusedBorderColor = colorScheme.outline,
+                focusedTextColor = colorScheme.onSurface,
+                unfocusedTextColor = colorScheme.onSurface
             ),
             singleLine = true
         )
@@ -216,12 +224,12 @@ fun DetalleProductoScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Total", fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text("Total", fontSize = 12.sp, color = colorScheme.onSurfaceVariant)
                 Text(
                     text = "S/ ${String.format("%.2f", producto.precio * cantidad)}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFEA580C)
+                    color = colorScheme.secondary
                 )
             }
 
@@ -235,13 +243,16 @@ fun DetalleProductoScreen(
                     .padding(start = 16.dp)
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorScheme.secondary,
+                    contentColor = colorScheme.onSecondary
+                )
             ) {
                 Text(
                     text = "Agregar al pedido",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = colorScheme.onSecondary
                 )
             }
         }

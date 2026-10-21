@@ -8,8 +8,10 @@ import com.salazar.cafetecsup.data.repository.CafeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SesionViewModel(
     private val repository: CafeRepository,
@@ -24,26 +26,26 @@ class SesionViewModel(
 
     val modoOscuro = prefs.modoOscuro.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { prefs.modoOscuro.first() }
     )
 
     val notificaciones = prefs.notificaciones.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = true
     )
 
     val recibirPedidos = prefs.recibirPedidos.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = true
     )
 
     val perfilActivo = prefs.perfilActivo.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ""
+        started = SharingStarted.Eagerly,
+        initialValue = runBlocking { prefs.perfilActivo.first() }
     )
 
     fun login(correo: String, clave: String, rolSeleccionado: String) {
@@ -81,6 +83,10 @@ class SesionViewModel(
 
     fun cambiarACliente() {
         viewModelScope.launch { prefs.guardarPerfil("CLIENTE") }
+    }
+
+    fun cambiarAAdmin() {
+        viewModelScope.launch { prefs.guardarPerfil("ADMIN") }
     }
 
     fun cerrarSesion() {

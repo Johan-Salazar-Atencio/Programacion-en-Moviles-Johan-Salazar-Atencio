@@ -51,7 +51,7 @@ fun PanelScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 8.dp) {
                 NavigationBarItem(
                     selected = true,
                     onClick = { },
@@ -63,19 +63,19 @@ fun PanelScreen(
                     selected = false,
                     onClick = { onNavegarPedidos() },
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Pedidos", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavegarMenu() },
                     icon = { Text("☕", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Menú", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavegarAjustes() },
                     icon = { Text("⚙️", fontSize = 18.sp) },
-                    label = { Text("Ajustes", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Ajustes", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -83,7 +83,7 @@ fun PanelScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -96,8 +96,8 @@ fun PanelScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text("Panel de control", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF111827))
-                    Text("Cafetería · Hoy", fontSize = 13.sp, color = Color(0xFF6B7280))
+                    Text("Panel de control", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text("Cafetería · Hoy", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text("🚪", fontSize = 22.sp, modifier = Modifier.clickable { onCerrarSesion() })
             }
@@ -132,7 +132,7 @@ fun PanelScreen(
                     Column {
                         Text("Ventas del día", color = Color(0xFFC7D2FE), fontSize = 13.sp)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("S/ ${String.format("%.2f", ventasHoy)}", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        Text("S/ ${String.format("%.2f", ventasHoy)}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     }
                     Text("21 pedidos", color = Color(0xFFC7D2FE), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
@@ -141,7 +141,7 @@ fun PanelScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 3. Gráfico "Pedidos por hora"
-            Text("Pedidos por hora", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF111827))
+            Text("Pedidos por hora", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             Spacer(modifier = Modifier.height(8.dp))
             GraficoPedidosPorHora(datos = datosGrafico)
 
@@ -153,7 +153,7 @@ fun PanelScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Nuevos pedidos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF111827))
+                Text("Nuevos pedidos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                 Text(
                     "Ver todos",
                     fontSize = 14.sp,
@@ -167,7 +167,7 @@ fun PanelScreen(
 
             if (nuevosPedidosLista.isEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay nuevos pedidos pendientes", color = Color(0xFF9CA3AF), fontSize = 14.sp)
+                    Text("No hay nuevos pedidos pendientes", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             } else {
                 LazyColumn(
@@ -192,7 +192,7 @@ fun GraficoPedidosPorHora(datos: List<ItemHoraGrafico>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -213,7 +213,7 @@ fun GraficoPedidosPorHora(datos: List<ItemHoraGrafico>) {
                         text = "${item.cantidad}",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4B5563)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -233,7 +233,7 @@ fun GraficoPedidosPorHora(datos: List<ItemHoraGrafico>) {
                     Text(
                         text = item.hora,
                         fontSize = 12.sp,
-                        color = Color(0xFF9CA3AF)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -270,7 +270,7 @@ fun ItemResumenPedido(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -279,9 +279,9 @@ fun ItemResumenPedido(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("#${String.format("%04d", pedidoConDetalle.pedido.id)} · Estudiante", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("#${String.format("%04d", pedidoConDetalle.pedido.id)} · Estudiante", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
                 val itemsSummary = pedidoConDetalle.detalles.joinToString { "${it.cantidad}x ${it.nombreProducto}" }
-                Text(itemsSummary.ifBlank { "Pedido de productos" }, fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text(itemsSummary.ifBlank { "Pedido de productos" }, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Button(
                 onClick = onPreparar,
@@ -289,7 +289,7 @@ fun ItemResumenPedido(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F46E5)),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
             ) {
-                Text("Preparar", fontSize = 12.sp, color = Color.White)
+                Text("Preparar", fontSize = 12.sp, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }

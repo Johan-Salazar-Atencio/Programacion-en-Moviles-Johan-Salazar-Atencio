@@ -41,12 +41,12 @@ fun PedidosAdminScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(containerColor = Color.White, tonalElevation = 8.dp) {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 8.dp) {
                 NavigationBarItem(
                     selected = false,
                     onClick = { onVolverPanel() },
                     icon = { Text("📊", fontSize = 18.sp) },
-                    label = { Text("Panel", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Panel", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = true,
@@ -59,13 +59,13 @@ fun PedidosAdminScreen(
                     selected = false,
                     onClick = onNavegarMenu,
                     icon = { Text("☕", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Menú", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavegarAjustes,
                     icon = { Text("⚙️", fontSize = 18.sp) },
-                    label = { Text("Ajustes", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Ajustes", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -73,7 +73,7 @@ fun PedidosAdminScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -87,9 +87,10 @@ fun PedidosAdminScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.clickable { onVolverPanel() }.padding(end = 16.dp)
                 )
-                Text("Pedidos de la Cafetería", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF111827))
+                Text("Pedidos de la Cafetería", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -101,12 +102,12 @@ fun PedidosAdminScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { vm.seleccionarEstado(estado) },
-                        color = if (esSel) Color(0xFF4F46E5) else Color(0xFFF3F4F6)
+                        color = if (esSel) Color(0xFF4F46E5) else MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Text(
                             text = estado.name,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            color = if (esSel) Color.White else Color(0xFF4B5563),
+                            color = if (esSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = if (esSel) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
@@ -118,7 +119,7 @@ fun PedidosAdminScreen(
 
             if (listaPedidos.isEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay pedidos en estado ${estadoSel.name}", color = Color(0xFF9CA3AF), fontSize = 14.sp)
+                    Text("No hay pedidos en estado ${estadoSel.name}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             } else {
                 LazyColumn(
@@ -159,7 +160,7 @@ fun TarjetaPedidoAdmin(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -168,14 +169,14 @@ fun TarjetaPedidoAdmin(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("#${String.format("%04d", p.id)} · Estudiante", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("#${String.format("%04d", p.id)} · Estudiante", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                 EstadoChip(estado = p.estado)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             val itemsText = pedidoConDetalle.detalles.joinToString("\n") { "${it.cantidad}x ${it.nombreProducto}" }
-            Text(itemsText.ifBlank { "Sin detalle" }, fontSize = 13.sp, color = Color(0xFF374151))
+            Text(itemsText.ifBlank { "Sin detalle" }, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             if (p.nota.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -188,7 +189,7 @@ fun TarjetaPedidoAdmin(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Recojo: ${p.horaRecojo}", fontSize = 12.sp, color = Color(0xFF6B7280))
+                Text("Recojo: ${p.horaRecojo}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("S/ ${String.format("%.2f", p.total)}", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color(0xFF4F46E5))
             }
 

@@ -20,17 +20,23 @@ import androidx.compose.ui.unit.sp
 import com.salazar.cafetecsup.ui.components.obtenerImagenProducto
 import com.salazar.cafetecsup.viewmodel.MenuViewModel
 import com.salazar.cafetecsup.viewmodel.PedidosClienteViewModel
+import com.salazar.cafetecsup.viewmodel.SesionViewModel
 
 @Composable
 fun ConfirmarPedidoScreen(
     menuVm: MenuViewModel,
     pedidosVm: PedidosClienteViewModel,
+    viewModel: SesionViewModel,
     onVolverMenu: () -> Unit,
     onPedidoConfirmado: (Long) -> Unit,
-    onNavegarPedidos: () -> Unit
+    onNavegarPedidos: () -> Unit,
+    onIrAPerfil: () -> Unit = {}
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val carrito by menuVm.carrito.collectAsState()
+    val recibirPedidos by viewModel.recibirPedidos.collectAsState()
     val subtotal = menuVm.total()
+    val cerrado = !recibirPedidos
 
     var horaSeleccionada by remember { mutableStateOf("10:30") }
     val horasDisponibles = listOf("Ahora", "10:30", "11:00", "11:30")
@@ -41,26 +47,26 @@ fun ConfirmarPedidoScreen(
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 NavigationBarItem(
                     selected = false,
                     onClick = { onVolverMenu() },
                     icon = { Text("🏠", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Menú", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavegarPedidos() },
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Pedidos", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = onIrAPerfil,
                     icon = { Text("👤", fontSize = 18.sp) },
-                    label = { Text("Perfil", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Perfil", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -68,7 +74,7 @@ fun ConfirmarPedidoScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
@@ -81,6 +87,7 @@ fun ConfirmarPedidoScreen(
                     text = "‹",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .clickable { onVolverMenu() }
                         .padding(end = 16.dp)
@@ -89,22 +96,46 @@ fun ConfirmarPedidoScreen(
                     text = "Confirmar pedido",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF111827)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            if (cerrado) {
+                Surface(
+                    color = colorScheme.error.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Cafetería cerrada",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "En este momento no estamos recibiendo nuevos pedidos.",
+                            fontSize = 13.sp,
+                            color = colorScheme.error.copy(alpha = 0.85f)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 1. Tarjeta de resumen de ítems (muestra notas individuales)
+                // 1. Tarjeta de resumen de ítems
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -136,12 +167,13 @@ fun ConfirmarPedidoScreen(
                                         Text(
                                             text = item.producto.nombre,
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 15.sp
+                                            fontSize = 15.sp,
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
                                             text = "x${item.cantidad}",
                                             fontSize = 13.sp,
-                                            color = Color(0xFF6B7280)
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                         if (item.nota.isNotBlank()) {
                                             Text(
@@ -156,7 +188,8 @@ fun ConfirmarPedidoScreen(
                                     Text(
                                         text = "S/ ${String.format("%.2f", item.producto.precio * item.cantidad)}",
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp
+                                        fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -171,7 +204,7 @@ fun ConfirmarPedidoScreen(
                             text = "Hora de recojo",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            color = Color(0xFF111827)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -181,12 +214,12 @@ fun ConfirmarPedidoScreen(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(20.dp))
                                         .clickable { horaSeleccionada = hora },
-                                    color = if (esSel) Color(0xFFEA580C) else Color(0xFFF3F4F6)
+                                    color = if (esSel) Color(0xFFEA580C) else MaterialTheme.colorScheme.surfaceVariant
                                 ) {
                                     Text(
                                         text = hora,
                                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                        color = if (esSel) Color.White else Color(0xFF4B5563),
+                                        color = if (esSel) colorScheme.onSecondary else colorScheme.onSurfaceVariant,
                                         fontWeight = if (esSel) FontWeight.Bold else FontWeight.Normal,
                                         fontSize = 13.sp
                                     )
@@ -203,7 +236,7 @@ fun ConfirmarPedidoScreen(
                             text = "Forma de pago",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            color = Color(0xFF111827)
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
@@ -217,7 +250,7 @@ fun ConfirmarPedidoScreen(
                                         .weight(1f)
                                         .clip(RoundedCornerShape(12.dp))
                                         .clickable { metodoPagoSeleccionado = metodo },
-                                    color = if (esSel) Color(0xFFFFF7ED) else Color(0xFFF3F4F6),
+                                    color = if (esSel) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
                                     border = if (esSel) androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFFEA580C)) else null
                                 ) {
                                     Box(
@@ -226,7 +259,7 @@ fun ConfirmarPedidoScreen(
                                     ) {
                                         Text(
                                             text = metodo,
-                                            color = if (esSel) Color(0xFFEA580C) else Color(0xFF4B5563),
+                                            color = if (esSel) Color(0xFFEA580C) else MaterialTheme.colorScheme.onSurfaceVariant,
                                             fontWeight = if (esSel) FontWeight.Bold else FontWeight.Normal,
                                             fontSize = 14.sp
                                         )
@@ -242,30 +275,30 @@ fun ConfirmarPedidoScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Subtotal", color = Color(0xFF6B7280))
-                                Text("S/ ${String.format("%.2f", subtotal)}", fontWeight = FontWeight.Bold)
+                                Text("Subtotal", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("S/ ${String.format("%.2f", subtotal)}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Servicio", color = Color(0xFF6B7280))
-                                Text("S/ 0.00", fontWeight = FontWeight.Bold)
+                                Text("Servicio", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("S/ 0.00", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
-                            Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color(0xFFF3F4F6))
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = MaterialTheme.colorScheme.surfaceVariant)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Total", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text("Total", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                                 Text(
                                     "S/ ${String.format("%.2f", subtotal)}",
                                     fontWeight = FontWeight.Bold,
@@ -283,7 +316,6 @@ fun ConfirmarPedidoScreen(
             // Botón Confirmar
             Button(
                 onClick = {
-                    //notas agregadas a cada ítem del carrito
                     val notaCombinada = carrito
                         .filter { it.nota.isNotBlank() }
                         .joinToString("; ") { item ->
@@ -301,14 +333,17 @@ fun ConfirmarPedidoScreen(
                         onPedidoConfirmado(nuevoId)
                     }
                 },
-                enabled = carrito.isNotEmpty(),
+                enabled = carrito.isNotEmpty() && recibirPedidos,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorScheme.secondary,
+                    disabledContainerColor = colorScheme.onSurface.copy(alpha = 0.38f)
+                )
             ) {
-                Text("Confirmar pedido", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                Text("Confirmar pedido", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorScheme.onSecondary)
             }
 
             Spacer(modifier = Modifier.height(8.dp))

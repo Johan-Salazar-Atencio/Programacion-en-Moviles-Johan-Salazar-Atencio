@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,8 +27,11 @@ fun MenuScreen(
     onProducto: (Int) -> Unit,
     onIrAConfirmar: () -> Unit = {},
     onIrAPedidos: () -> Unit = {},
+    onIrAPerfil: () -> Unit = {},
     onCerrarSesion: () -> Unit = {}
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     val productos by vm.productos.collectAsState()
     val carrito by vm.carrito.collectAsState()
     val totalItems = carrito.sumOf { it.cantidad }
@@ -38,8 +40,8 @@ fun MenuScreen(
     var categoriaSeleccionada by remember { mutableStateOf("Todo") }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
 
-    val productosFiltrados = remember(productos, categoriaSeleccionada) {
-        if (categoriaSeleccionada == "Todo") {
+    val productosFiltrados = remember(productos, categoriaSeleccionada, textoBusqueda) {
+        val base = if (categoriaSeleccionada == "Todo") {
             productos
         } else {
             productos.filter { p ->
@@ -63,34 +65,35 @@ fun MenuScreen(
                 }
             }
         }
+        if (textoBusqueda.isBlank()) base else base.filter { it.nombre.contains(textoBusqueda, ignoreCase = true) }
     }
 
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 NavigationBarItem(
                     selected = true,
                     onClick = { },
                     icon = { Text("🏠", fontSize = 18.sp) },
-                    label = { Text("Menú", color = Color(0xFFEA580C), fontWeight = FontWeight.Bold) },
+                    label = { Text("Menú", color = colorScheme.secondary, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color(0xFFFFEDD5)
+                        indicatorColor = colorScheme.secondary.copy(alpha = 0.15f)
                     )
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = { onIrAPedidos() },
                     icon = { Text("📋", fontSize = 18.sp) },
-                    label = { Text("Pedidos", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Pedidos", color = colorScheme.onSurfaceVariant) }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { onCerrarSesion() },
+                    onClick = onIrAPerfil,
                     icon = { Text("👤", fontSize = 18.sp) },
-                    label = { Text("Perfil", color = Color(0xFF9CA3AF)) }
+                    label = { Text("Perfil", color = colorScheme.onSurfaceVariant) }
                 )
             }
         }
@@ -98,7 +101,7 @@ fun MenuScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFAFAFA))
+                .background(colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -114,12 +117,12 @@ fun MenuScreen(
                         text = "¡Hola, Johan!",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF111827)
+                        color = colorScheme.onBackground
                     )
                     Text(
                         text = "¿Qué se te antoja hoy?",
                         fontSize = 14.sp,
-                        color = Color(0xFF6B7280)
+                        color = colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -127,7 +130,7 @@ fun MenuScreen(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF3F4F6))
+                        .background(colorScheme.surfaceVariant)
                         .clickable { onIrAConfirmar() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -137,13 +140,13 @@ fun MenuScreen(
                             modifier = Modifier
                                 .size(18.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFEA580C))
+                                .background(colorScheme.secondary)
                                 .align(Alignment.TopEnd),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "$totalItems",
-                                color = Color.White,
+                                color = colorScheme.onSecondary,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -157,14 +160,16 @@ fun MenuScreen(
             OutlinedTextField(
                 value = textoBusqueda,
                 onValueChange = { textoBusqueda = it },
-                placeholder = { Text("Buscar en el menú...", color = Color(0xFF9CA3AF)) },
+                placeholder = { Text("Buscar en el menú...", color = colorScheme.onSurfaceVariant) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFFEA580C),
-                    unfocusedBorderColor = Color(0xFFE5E7EB)
+                    focusedContainerColor = colorScheme.surfaceVariant,
+                    unfocusedContainerColor = colorScheme.surfaceVariant,
+                    focusedBorderColor = colorScheme.secondary,
+                    unfocusedBorderColor = colorScheme.outline,
+                    focusedTextColor = colorScheme.onSurface,
+                    unfocusedTextColor = colorScheme.onSurface
                 ),
                 singleLine = true
             )
@@ -180,12 +185,12 @@ fun MenuScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { categoriaSeleccionada = cat },
-                        color = if (esSeleccionado) Color(0xFFEA580C) else Color(0xFFF3F4F6)
+                        color = if (esSeleccionado) colorScheme.secondary else colorScheme.surfaceVariant
                     ) {
                         Text(
                             text = cat,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            color = if (esSeleccionado) Color.White else Color(0xFF4B5563),
+                            color = if (esSeleccionado) colorScheme.onSecondary else colorScheme.onSurfaceVariant,
                             fontWeight = if (esSeleccionado) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 14.sp
                         )
@@ -199,7 +204,7 @@ fun MenuScreen(
                 text = "Populares hoy",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF111827)
+                color = colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -213,7 +218,7 @@ fun MenuScreen(
                 ) {
                     Text(
                         text = "No hay productos en esta categoría",
-                        color = Color(0xFF9CA3AF),
+                        color = colorScheme.onSurfaceVariant,
                         fontSize = 14.sp
                     )
                 }

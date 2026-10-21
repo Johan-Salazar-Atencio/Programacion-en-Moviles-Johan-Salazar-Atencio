@@ -43,6 +43,8 @@ fun ProductoCard(
     producto: Producto,
     onClick: () -> Unit
 ) {
+    val colorScheme = androidx.compose.material3.MaterialTheme.colorScheme
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +52,7 @@ fun ProductoCard(
             .clickable(enabled = producto.disponible) { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (producto.disponible) Color(0xFFFFF8F1) else Color(0xFFF3F4F6)
+            containerColor = if (producto.disponible) colorScheme.surface else colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (producto.disponible) 2.dp else 0.dp)
     ) {
@@ -64,7 +66,7 @@ fun ProductoCard(
                     .fillMaxWidth()
                     .height(110.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFFEF3C7)),
+                    .background(colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 if (producto.icono.startsWith("content://") || producto.icono.startsWith("file://")) {
@@ -91,12 +93,12 @@ fun ProductoCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Surface(
-                            color = Color(0xFFEF4444),
+                            color = colorScheme.error,
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
                                 text = "Agotado",
-                                color = Color.White,
+                                color = colorScheme.onError,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -112,7 +114,7 @@ fun ProductoCard(
                 text = producto.nombre,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
-                color = if (producto.disponible) Color(0xFF111827) else Color(0xFF9CA3AF),
+                color = if (producto.disponible) colorScheme.onSurface else colorScheme.onSurfaceVariant,
                 maxLines = 1
             )
 
@@ -127,7 +129,7 @@ fun ProductoCard(
                     text = "S/ ${String.format("%.2f", producto.precio)}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = if (producto.disponible) Color(0xFFEA580C) else Color(0xFF9CA3AF)
+                    color = if (producto.disponible) colorScheme.secondary else colorScheme.onSurfaceVariant
                 )
 
                 if (producto.disponible) {
@@ -135,12 +137,12 @@ fun ProductoCard(
                         modifier = Modifier
                             .size(30.dp)
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFFEA580C)),
+                            .background(colorScheme.secondary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "+",
-                            color = Color.White,
+                            color = colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -149,7 +151,7 @@ fun ProductoCard(
                     Text(
                         text = "No disponible",
                         fontSize = 11.sp,
-                        color = Color(0xFFEF4444),
+                        color = colorScheme.error,
                         fontWeight = FontWeight.Bold
                     )
                 }

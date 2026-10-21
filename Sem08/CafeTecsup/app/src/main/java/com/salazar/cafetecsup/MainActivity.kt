@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.salazar.cafetecsup.data.local.CafeDatabase
 import com.salazar.cafetecsup.data.prefs.PreferenciasStore
@@ -40,7 +42,8 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            CafetecsupTheme {
+            val modoOscuro by sesionViewModel.modoOscuro.collectAsState(initial = false)
+            CafetecsupTheme(darkTheme = modoOscuro) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
