@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.ProductoVendido
 import com.salazar.cafetecsup.data.local.entity.DetallePedido
 import com.salazar.cafetecsup.data.local.entity.Pedido
 import com.salazar.cafetecsup.data.local.relation.PedidoConDetalle
@@ -54,4 +56,26 @@ interface PedidoDao {
 
     @Query("SELECT COUNT(*) FROM pedidos WHERE estado = :estado")
     fun cantidadPorEstado(estado: String): Flow<Int>
+
+    // Reporte diario
+
+    @Query(
+        "SELECT nombreProducto AS nombre, SUM(cantidad) AS cantidad " +
+                "FROM detalle_pedido dp " +
+                "INNER JOIN pedidos p ON p.id = dp.pedidoId " +
+                "WHERE p.fecha >= :inicio AND p.estado != 'CANCELADO' " +
+                "GROUP BY nombreProducto " +
+                "ORDER BY cantidad DESC " +
+                "LIMIT 1"
+    )
+    fun productoMasVendido(inicio: Long): Flow<ProductoVendido?>
+
+    @Query(
+        "SELECT pago AS metodo, COALESCE(SUM(total), 0.0) AS monto " +
+                "FROM pedidos " +
+                "WHERE fecha >= :inicio AND estado != 'CANCELADO' " +
+                "GROUP BY pago " +
+                "ORDER BY monto DESC"
+    )
+    fun pagosPorMetodo(inicio: Long): Flow<List<PagoResumen>>
 }

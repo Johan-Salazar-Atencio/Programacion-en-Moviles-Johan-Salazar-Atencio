@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.salazar.cafetecsup.data.local.relation.PedidoConDetalle
 import com.salazar.cafetecsup.viewmodel.PanelAdminViewModel
+import com.salazar.cafetecsup.viewmodel.ReporteDiario
 
 data class ItemHoraGrafico(
     val hora: String,
@@ -38,6 +39,7 @@ fun PanelScreen(
     val listos by vm.listosCount.collectAsState()
     val ventasHoy by vm.ventasHoy.collectAsState()
     val nuevosPedidosLista by vm.nuevosPedidos.collectAsState()
+    val reporteDiario by vm.reporteDiario.collectAsState()
 
     val datosGrafico = remember {
         listOf(
@@ -140,7 +142,12 @@ fun PanelScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 3. Gráfico "Pedidos por hora"
+            // 3. Reporte Diario
+            ReporteDiarioCard(reporte = reporteDiario)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 4. Gráfico "Pedidos por hora"
             Text("Pedidos por hora", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             Spacer(modifier = Modifier.height(8.dp))
             GraficoPedidosPorHora(datos = datosGrafico)
@@ -182,6 +189,114 @@ fun PanelScreen(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+private fun etiquetaMetodoPago(metodo: String): String = when {
+    metodo.contains("caja", ignoreCase = true) || metodo.contains("efectivo", ignoreCase = true) -> "Efectivo"
+    metodo.contains("yape", ignoreCase = true) && metodo.contains("plin", ignoreCase = true) -> "Yape / Plin"
+    metodo.contains("yape", ignoreCase = true) -> "Yape"
+    metodo.contains("plin", ignoreCase = true) -> "Plin"
+    else -> metodo
+}
+
+private fun emojiMetodoPago(metodo: String): String = when {
+    metodo.contains("caja", ignoreCase = true) || metodo.contains("efectivo", ignoreCase = true) -> "💵"
+    else -> "📱"
+}
+
+@Composable
+fun ReporteDiarioCard(reporte: ReporteDiario) {
+    val colorScheme = MaterialTheme.colorScheme
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                "📊 Reporte Diario",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("🥇", fontSize = 22.sp)
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Producto más vendido", fontSize = 12.sp, color = colorScheme.onSurfaceVariant)
+                    Text(
+                        text = reporte.productoEstrella.ifBlank { "Sin ventas registradas" },
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.onSurface
+                    )
+                }
+                if (reporte.cantidadEstrella > 0) {
+                    Text(
+                        text = "${reporte.cantidadEstrella} und.",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorScheme.secondary
+                    )
+                }
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = colorScheme.outline)
+
+            Text("Desglose por método de pago", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = colorScheme.onSurfaceVariant)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (reporte.pagos.isEmpty()) {
+                Text("Sin pagos registrados hoy", fontSize = 13.sp, color = colorScheme.onSurfaceVariant)
+            } else {
+                reporte.pagos.forEach { pago ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "${emojiMetodoPago(pago.metodo)} ${etiquetaMetodoPago(pago.metodo)}",
+                            fontSize = 13.sp,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "S/ ${String.format("%.2f", pago.monto)}",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = colorScheme.outline)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Total del día", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colorScheme.onSurface)
+                Text(
+                    text = "S/ ${String.format("%.2f", reporte.totalRecaudado)}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.secondary
+                )
             }
         }
     }

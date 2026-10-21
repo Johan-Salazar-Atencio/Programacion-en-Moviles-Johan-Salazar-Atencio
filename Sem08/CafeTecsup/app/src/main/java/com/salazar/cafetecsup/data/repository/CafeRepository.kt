@@ -1,5 +1,7 @@
 package com.salazar.cafetecsup.data.repository
 
+import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.ProductoVendido
 import com.salazar.cafetecsup.data.local.entity.Producto
 import com.salazar.cafetecsup.data.local.entity.Usuario
 import com.salazar.cafetecsup.data.local.relation.PedidoConDetalle
@@ -35,4 +37,6 @@ interface CafeRepository {
     // Panel
     fun observarVentasHoy(inicioDia: Long): Flow<Double>
     fun observarCantidadPorEstado(estado: EstadoPedido): Flow<Int>
+    fun observarProductoEstrella(inicioDia: Long): Flow<ProductoVendido?>
+    fun observarPagosPorMetodo(inicioDia: Long): Flow<List<PagoResumen>>
 }

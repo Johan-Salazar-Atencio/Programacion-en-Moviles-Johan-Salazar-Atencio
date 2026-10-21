@@ -1,6 +1,8 @@
 package com.salazar.cafetecsup.data.repository
 
 import com.salazar.cafetecsup.data.local.CafeDatabase
+import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.ProductoVendido
 import com.salazar.cafetecsup.data.local.entity.DetallePedido
 import com.salazar.cafetecsup.data.local.entity.Pedido
 import com.salazar.cafetecsup.data.local.entity.Producto
@@ -99,5 +101,13 @@ class CafeRepositoryRoom(
 
     override fun observarCantidadPorEstado(estado: EstadoPedido): Flow<Int> {
         return db.pedidoDao().cantidadPorEstado(estado.name)
+    }
+
+    override fun observarProductoEstrella(inicioDia: Long): Flow<ProductoVendido?> {
+        return db.pedidoDao().productoMasVendido(inicioDia)
+    }
+
+    override fun observarPagosPorMetodo(inicioDia: Long): Flow<List<PagoResumen>> {
+        return db.pedidoDao().pagosPorMetodo(inicioDia)
     }
 }
