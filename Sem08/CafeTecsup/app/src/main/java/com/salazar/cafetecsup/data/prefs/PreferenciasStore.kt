@@ -15,6 +15,7 @@ class PreferenciasStore(private val context: Context) {
     companion object {
         val PERFIL_ACTIVO = stringPreferencesKey("perfil_activo")
         val MODO_OSCURO = booleanPreferencesKey("modo_oscuro")
+        val NOTIFICACIONES = booleanPreferencesKey("notificaciones")
         val RECIBIR_PEDIDOS = booleanPreferencesKey("recibir_pedidos")
     }
 
@@ -24,6 +25,10 @@ class PreferenciasStore(private val context: Context) {
 
     val modoOscuro: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[MODO_OSCURO] ?: false
+    }
+
+    val notificaciones: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[NOTIFICACIONES] ?: true
     }
 
     val recibirPedidos: Flow<Boolean> = context.dataStore.data.map { preferences ->
@@ -39,6 +44,12 @@ class PreferenciasStore(private val context: Context) {
     suspend fun guardarModoOscuro(b: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[MODO_OSCURO] = b
+        }
+    }
+
+    suspend fun guardarNotificaciones(b: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[NOTIFICACIONES] = b
         }
     }
 

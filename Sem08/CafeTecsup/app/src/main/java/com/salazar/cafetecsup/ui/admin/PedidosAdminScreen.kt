@@ -25,6 +25,8 @@ import com.salazar.cafetecsup.viewmodel.PedidosAdminViewModel
 fun PedidosAdminScreen(
     vm: PedidosAdminViewModel,
     onVolverPanel: () -> Unit,
+    onNavegarMenu: () -> Unit = {},
+    onNavegarAjustes: () -> Unit = {},
     onVerDetalle: (Int) -> Unit = {}
 ) {
     val estadoSel by vm.estadoSeleccionado.collectAsState()
@@ -55,13 +57,13 @@ fun PedidosAdminScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = onNavegarMenu,
                     icon = { Text("☕", fontSize = 18.sp) },
                     label = { Text("Menú", color = Color(0xFF9CA3AF)) }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = onNavegarAjustes,
                     icon = { Text("⚙️", fontSize = 18.sp) },
                     label = { Text("Ajustes", color = Color(0xFF9CA3AF)) }
                 )

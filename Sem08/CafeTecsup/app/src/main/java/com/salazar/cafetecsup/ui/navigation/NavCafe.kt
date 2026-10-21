@@ -8,10 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.salazar.cafetecsup.ui.admin.AjustesAdminScreen
 import com.salazar.cafetecsup.ui.admin.DetallePedidoAdminScreen
+import com.salazar.cafetecsup.ui.admin.FormularioProductoScreen
+import com.salazar.cafetecsup.ui.admin.MenuAdminScreen
 import com.salazar.cafetecsup.ui.admin.PanelScreen
 import com.salazar.cafetecsup.ui.admin.PedidosAdminScreen
 import com.salazar.cafetecsup.ui.cliente.*
+import com.salazar.cafetecsup.viewmodel.MenuAdminViewModel
 import com.salazar.cafetecsup.viewmodel.MenuViewModel
 import com.salazar.cafetecsup.viewmodel.PanelAdminViewModel
 import com.salazar.cafetecsup.viewmodel.PedidosAdminViewModel
@@ -24,7 +28,8 @@ fun NavCafe(
     menuViewModel: MenuViewModel,
     pedidosViewModel: PedidosClienteViewModel,
     panelAdminViewModel: PanelAdminViewModel,
-    pedidosAdminViewModel: PedidosAdminViewModel
+    pedidosAdminViewModel: PedidosAdminViewModel,
+    menuAdminViewModel: MenuAdminViewModel
 ) {
     val navController = rememberNavController()
     val perfilActivo by viewModel.perfilActivo.collectAsState()
@@ -122,23 +127,8 @@ fun NavCafe(
             PanelScreen(
                 vm = panelAdminViewModel,
                 onNavegarPedidos = { navController.navigate("pedidos_admin") },
-                onCerrarSesion = {
-                    viewModel.cerrarSesion()
-                    navController.navigate("login") { popUpTo(0) { inclusive = true } }
-                }
-            )
-        }
-
-        composable("pedidos_admin") {
-            PedidosAdminScreen(
-                vm = pedidosAdminViewModel,
-                onVolverPanel = { navController.popBackStack() }
-            )
-        }
-        composable("panel_admin") {
-            PanelScreen(
-                vm = panelAdminViewModel,
-                onNavegarPedidos = { navController.navigate("pedidos_admin") },
+                onNavegarMenu = { navController.navigate("menu_admin") },
+                onNavegarAjustes = { navController.navigate("ajustes_admin") },
                 onCerrarSesion = {
                     viewModel.cerrarSesion()
                     navController.navigate("login") { popUpTo(0) { inclusive = true } }
@@ -153,9 +143,55 @@ fun NavCafe(
             PedidosAdminScreen(
                 vm = pedidosAdminViewModel,
                 onVolverPanel = { navController.popBackStack() },
+                onNavegarMenu = { navController.navigate("menu_admin") },
+                onNavegarAjustes = { navController.navigate("ajustes_admin") },
                 onVerDetalle = { id ->
                     navController.navigate("detalle_pedido_admin/$id")
                 }
+            )
+        }
+
+        composable("menu_admin") {
+            MenuAdminScreen(
+                vm = menuAdminViewModel,
+                onNavegarPanel = { navController.navigate("panel_admin") { popUpTo("panel_admin") { inclusive = true } } },
+                onNavegarPedidos = { navController.navigate("pedidos_admin") },
+                onNavegarMenu = { },
+                onNavegarAjustes = { navController.navigate("ajustes_admin") },
+                onAgregarProducto = { navController.navigate("formulario_producto/0") },
+                onEditarProducto = { id -> navController.navigate("formulario_producto/$id") }
+            )
+        }
+
+        composable("ajustes_admin") {
+            AjustesAdminScreen(
+                viewModel = viewModel,
+                onNavegarPanel = { navController.navigate("panel_admin") { popUpTo("panel_admin") { inclusive = true } } },
+                onNavegarPedidos = { navController.navigate("pedidos_admin") },
+                onNavegarMenu = { navController.navigate("menu_admin") },
+                onCambiarACliente = {
+                    navController.navigate("menu_cliente") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onCerrarSesion = {
+                    viewModel.cerrarSesion()
+                    navController.navigate("login") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "formulario_producto/{productoId}",
+            arguments = listOf(navArgument("productoId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val productoId = backStackEntry.arguments?.getInt("productoId") ?: 0
+            FormularioProductoScreen(
+                productoId = productoId,
+                vm = menuAdminViewModel,
+                onVolver = { navController.popBackStack() }
             )
         }
 

@@ -28,6 +28,18 @@ class SesionViewModel(
         initialValue = false
     )
 
+    val notificaciones = prefs.notificaciones.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = true
+    )
+
+    val recibirPedidos = prefs.recibirPedidos.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = true
+    )
+
     val perfilActivo = prefs.perfilActivo.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -53,6 +65,22 @@ class SesionViewModel(
                 prefs.guardarPerfil(usuario.rol)
             }
         }
+    }
+
+    fun cambiarModoOscuro(b: Boolean) {
+        viewModelScope.launch { prefs.guardarModoOscuro(b) }
+    }
+
+    fun cambiarNotificaciones(b: Boolean) {
+        viewModelScope.launch { prefs.guardarNotificaciones(b) }
+    }
+
+    fun cambiarRecibirPedidos(b: Boolean) {
+        viewModelScope.launch { prefs.guardarRecibirPedidos(b) }
+    }
+
+    fun cambiarACliente() {
+        viewModelScope.launch { prefs.guardarPerfil("CLIENTE") }
     }
 
     fun cerrarSesion() {

@@ -28,6 +28,8 @@ data class ItemHoraGrafico(
 fun PanelScreen(
     vm: PanelAdminViewModel,
     onNavegarPedidos: () -> Unit,
+    onNavegarMenu: () -> Unit = {},
+    onNavegarAjustes: () -> Unit = {},
     onCerrarSesion: () -> Unit,
     onVerDetalle: (Int) -> Unit = {}
 ) {
@@ -65,13 +67,13 @@ fun PanelScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = { onNavegarMenu() },
                     icon = { Text("☕", fontSize = 18.sp) },
                     label = { Text("Menú", color = Color(0xFF9CA3AF)) }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = { onNavegarAjustes() },
                     icon = { Text("⚙️", fontSize = 18.sp) },
                     label = { Text("Ajustes", color = Color(0xFF9CA3AF)) }
                 )
