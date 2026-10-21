@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.PedidosPorHora
 import com.salazar.cafetecsup.data.local.dao.ProductoVendido
 import com.salazar.cafetecsup.data.local.entity.DetallePedido
 import com.salazar.cafetecsup.data.local.entity.Pedido
@@ -78,4 +79,14 @@ interface PedidoDao {
                 "ORDER BY monto DESC"
     )
     fun pagosPorMetodo(inicio: Long): Flow<List<PagoResumen>>
+
+    @Query(
+        "SELECT CAST(strftime('%H', datetime(fecha / 1000, 'unixepoch', 'localtime')) AS INTEGER) AS hora, " +
+                "COUNT(*) AS cantidad " +
+                "FROM pedidos " +
+                "WHERE fecha >= :inicio AND estado != 'CANCELADO' " +
+                "GROUP BY hora " +
+                "ORDER BY hora ASC"
+    )
+    fun pedidosPorHora(inicio: Long): Flow<List<PedidosPorHora>>
 }

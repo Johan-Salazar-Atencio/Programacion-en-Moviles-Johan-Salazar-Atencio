@@ -3,6 +3,7 @@ package com.salazar.cafetecsup.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.PedidosPorHora
 import com.salazar.cafetecsup.data.local.relation.PedidoConDetalle
 import com.salazar.cafetecsup.data.repository.CafeRepository
 import com.salazar.cafetecsup.model.EstadoPedido
@@ -61,6 +62,9 @@ class PanelAdminViewModel(
             pagos = pagos
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReporteDiario())
+
+    val pedidosPorHora: StateFlow<List<PedidosPorHora>> = repository.observarPedidosPorHora(inicioDiaHoy)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun pasarAPreparando(pedidoId: Int) {
         viewModelScope.launch {

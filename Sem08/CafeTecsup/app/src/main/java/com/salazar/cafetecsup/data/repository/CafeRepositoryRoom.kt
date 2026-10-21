@@ -2,6 +2,7 @@ package com.salazar.cafetecsup.data.repository
 
 import com.salazar.cafetecsup.data.local.CafeDatabase
 import com.salazar.cafetecsup.data.local.dao.PagoResumen
+import com.salazar.cafetecsup.data.local.dao.PedidosPorHora
 import com.salazar.cafetecsup.data.local.dao.ProductoVendido
 import com.salazar.cafetecsup.data.local.entity.DetallePedido
 import com.salazar.cafetecsup.data.local.entity.Pedido
@@ -109,5 +110,9 @@ class CafeRepositoryRoom(
 
     override fun observarPagosPorMetodo(inicioDia: Long): Flow<List<PagoResumen>> {
         return db.pedidoDao().pagosPorMetodo(inicioDia)
+    }
+
+    override fun observarPedidosPorHora(inicioDia: Long): Flow<List<PedidosPorHora>> {
+        return db.pedidoDao().pedidosPorHora(inicioDia)
     }
 }

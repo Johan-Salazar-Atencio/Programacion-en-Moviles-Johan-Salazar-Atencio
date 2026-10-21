@@ -2,7 +2,9 @@ package com.salazar.cafetecsup.ui.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,15 +42,26 @@ fun PanelScreen(
     val ventasHoy by vm.ventasHoy.collectAsState()
     val nuevosPedidosLista by vm.nuevosPedidos.collectAsState()
     val reporteDiario by vm.reporteDiario.collectAsState()
+    val pedidosPorHora by vm.pedidosPorHora.collectAsState()
 
-    val datosGrafico = remember {
-        listOf(
-            ItemHoraGrafico("8h", 3),
-            ItemHoraGrafico("9h", 6),
-            ItemHoraGrafico("10h", 9, esDestacado = true),
-            ItemHoraGrafico("11h", 5),
-            ItemHoraGrafico("12h", 7)
-        )
+    val datosGrafico = remember(pedidosPorHora) {
+        if (pedidosPorHora.isEmpty()) {
+            emptyList()
+        } else {
+            val porHora = pedidosPorHora.associate { it.hora to it.cantidad }
+            val minHora = porHora.keys.min()
+            val maxHora = porHora.keys.max()
+            val maxCantidad = porHora.values.max()
+
+            (minHora..maxHora).map { hora ->
+                val cantidad = porHora[hora] ?: 0
+                ItemHoraGrafico(
+                    hora = "${hora}h",
+                    cantidad = cantidad,
+                    esDestacado = cantidad == maxCantidad && cantidad > 0
+                )
+            }
+        }
     }
 
     Scaffold(
@@ -82,112 +95,115 @@ fun PanelScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Cabecera superior
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text("Panel de control", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                    Text("Cafetería · Hoy", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Text("🚪", fontSize = 22.sp, modifier = Modifier.clickable { onCerrarSesion() })
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 1. 3 Contadores
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                ContadorBox("Nuevos", nuevos, Color(0xFFDBEAFE), Color(0xFF1D4ED8), Modifier.weight(1f))
-                ContadorBox("Preparando", preparando, Color(0xFFFEF3C7), Color(0xFFD97706), Modifier.weight(1f))
-                ContadorBox("Listos", listos, Color(0xFFD1FAE5), Color(0xFF059669), Modifier.weight(1f))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 2. Tarjeta Ventas del Día
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF4F46E5))
-            ) {
+            item {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Ventas del día", color = Color(0xFFC7D2FE), fontSize = 13.sp)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text("S/ ${String.format("%.2f", ventasHoy)}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        Text("Panel de control", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                        Text("Cafetería · Hoy", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    Text("21 pedidos", color = Color(0xFFC7D2FE), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text("🚪", fontSize = 22.sp, modifier = Modifier.clickable { onCerrarSesion() })
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // 1. 3 Contadores
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    ContadorBox("Nuevos", nuevos, Color(0xFFDBEAFE), Color(0xFF1D4ED8), Modifier.weight(1f))
+                    ContadorBox("Preparando", preparando, Color(0xFFFEF3C7), Color(0xFFD97706), Modifier.weight(1f))
+                    ContadorBox("Listos", listos, Color(0xFFD1FAE5), Color(0xFF059669), Modifier.weight(1f))
+                }
+            }
+
+            // 2. Tarjeta Ventas del Día
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF4F46E5))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text("Ventas del día", color = Color(0xFFC7D2FE), fontSize = 13.sp)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("S/ ${String.format("%.2f", ventasHoy)}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Text("21 pedidos", color = Color(0xFFC7D2FE), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
 
             // 3. Reporte Diario
-            ReporteDiarioCard(reporte = reporteDiario)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 4. Gráfico "Pedidos por hora"
-            Text("Pedidos por hora", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-            Spacer(modifier = Modifier.height(8.dp))
-            GraficoPedidosPorHora(datos = datosGrafico)
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // 4. Resumen Nuevos Pedidos
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Nuevos pedidos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                Text(
-                    "Ver todos",
-                    fontSize = 14.sp,
-                    color = Color(0xFF4F46E5),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { onNavegarPedidos() }
-                )
+            item {
+                ReporteDiarioCard(reporte = reporteDiario)
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            // 4. Gráfico "Pedidos por hora"
+            item {
+                Column {
+                    Text("Pedidos por hora", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    GraficoPedidosPorHora(datos = datosGrafico)
+                }
+            }
+
+            // 5. Resumen Nuevos Pedidos
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Nuevos pedidos", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text(
+                        "Ver todos",
+                        fontSize = 14.sp,
+                        color = Color(0xFF4F46E5),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { onNavegarPedidos() }
+                    )
+                }
+            }
 
             if (nuevosPedidosLista.isEmpty()) {
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay nuevos pedidos pendientes", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No hay nuevos pedidos pendientes", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                    }
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(nuevosPedidosLista) { p ->
-                        ItemResumenPedido(
-                            pedidoConDetalle = p,
-                            onClick = { onVerDetalle(p.pedido.id) },
-                            onPreparar = { vm.pasarAPreparando(p.pedido.id) }
-                        )
-                    }
+                items(nuevosPedidosLista) { p ->
+                    ItemResumenPedido(
+                        pedidoConDetalle = p,
+                        onClick = { onVerDetalle(p.pedido.id) },
+                        onPreparar = { vm.pasarAPreparando(p.pedido.id) }
+                    )
                 }
             }
         }
@@ -304,52 +320,75 @@ fun ReporteDiarioCard(reporte: ReporteDiario) {
 
 @Composable
 fun GraficoPedidosPorHora(datos: List<ItemHoraGrafico>) {
+    val colorScheme = MaterialTheme.colorScheme
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            datos.forEach { item ->
-                val alturaBarra = (item.cantidad * 8).dp
+        if (datos.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Sin pedidos registrados hoy",
+                    fontSize = 13.sp,
+                    color = colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            val maxCantidad = (datos.maxOfOrNull { it.cantidad } ?: 0).coerceAtLeast(1)
+            val alturaMaxima = 96.dp
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(
-                        text = "${item.cantidad}",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                datos.forEach { item ->
+                    val fraccion = item.cantidad.toFloat() / maxCantidad
+                    val alturaBarra = (alturaMaxima * fraccion).coerceAtLeast(4.dp)
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        Text(
+                            text = "${item.cantidad}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.onSurface
+                        )
 
-                    Box(
-                        modifier = Modifier
-                            .width(28.dp)
-                            .height(alturaBarra)
-                            .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
-                            .background(
-                                if (item.esDestacado) Color(0xFF4F46E5) else Color(0xFFC7D2FE)
-                            )
-                    )
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(28.dp)
+                                .height(alturaBarra)
+                                .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
+                                .background(
+                                    if (item.esDestacado) colorScheme.primary
+                                    else colorScheme.primary.copy(alpha = 0.35f)
+                                )
+                        )
 
-                    Text(
-                        text = item.hora,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(
+                            text = item.hora,
+                            fontSize = 12.sp,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
