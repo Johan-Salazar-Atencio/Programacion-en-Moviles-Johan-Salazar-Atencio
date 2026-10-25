@@ -4,12 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,9 +35,9 @@ fun ComboPresupuestoDialog(
 ) {
     val colorScheme = MaterialTheme.colorScheme
 
-    var presupuestoTexto by remember { mutableStateOf("") }
+    var presupuestoTexto by rememberSaveable { mutableStateOf("") }
     var combo by remember { mutableStateOf<ComboSugerido?>(null) }
-    var mensaje by remember { mutableStateOf("") }
+    var mensaje by rememberSaveable { mutableStateOf("") }
 
     val montosRapidos = listOf(6.0, 8.0, 10.0, 12.0, 15.0)
 
@@ -57,7 +60,7 @@ fun ComboPresupuestoDialog(
             }
         },
         text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 Text(
                     text = "¿Cuánto quieres gastar hoy?",
                     fontSize = 14.sp,

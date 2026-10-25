@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +28,7 @@ fun MisPedidosScreen(
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val todosLosPedidos by pedidosVm.todosLosPedidos.collectAsState()
-    var tabSeleccionada by remember { mutableStateOf(0) }
+    var tabSeleccionada by rememberSaveable { mutableStateOf(0) }
 
     val pedidosActivos = todosLosPedidos.filter {
         it.pedido.estado in listOf("RECIBIDO", "PREPARANDO", "LISTO")
@@ -67,13 +68,16 @@ fun MisPedidosScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
+            item {
+            Column {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -140,32 +144,31 @@ fun MisPedidosScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            }
+            }
 
             if (listaMostrar.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (tabSeleccionada == 0) "No tienes pedidos activos" else "No tienes historial de pedidos",
-                        color = colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp
-                    )
-                }
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(listaMostrar) { pedidoConDetalle ->
-                        TarjetaPedido(
-                            pedidoConDetalle = pedidoConDetalle,
-                            onClick = { onVerSeguimiento(pedidoConDetalle.pedido.id) }
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (tabSeleccionada == 0) "No tienes pedidos activos" else "No tienes historial de pedidos",
+                            color = colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
                         )
                     }
+                }
+            } else {
+                items(listaMostrar) { pedidoConDetalle ->
+                    TarjetaPedido(
+                        pedidoConDetalle = pedidoConDetalle,
+                        onClick = { onVerSeguimiento(pedidoConDetalle.pedido.id) }
+                    )
                 }
             }
         }

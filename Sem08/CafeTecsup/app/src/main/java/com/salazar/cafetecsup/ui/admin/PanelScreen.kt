@@ -3,8 +3,8 @@ package com.salazar.cafetecsup.ui.admin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -84,6 +84,7 @@ fun PanelScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
@@ -171,11 +172,11 @@ fun PanelScreen(
                     Text("No hay nuevos pedidos pendientes", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             } else {
-                LazyColumn(
+                Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(nuevosPedidosLista) { p ->
+                    nuevosPedidosLista.forEach { p ->
                         ItemResumenPedido(
                             pedidoConDetalle = p,
                             onClick = { onVerDetalle(p.pedido.id) },

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +38,9 @@ fun MenuScreen(
     val carrito by vm.carrito.collectAsState()
     val totalItems = carrito.sumOf { it.cantidad }
 
-    var textoBusqueda by remember { mutableStateOf("") }
-    var categoriaSeleccionada by remember { mutableStateOf("Todo") }
-    var mostrarComboDialog by remember { mutableStateOf(false) }
+    var textoBusqueda by rememberSaveable { mutableStateOf("") }
+    var categoriaSeleccionada by rememberSaveable { mutableStateOf("Todo") }
+    var mostrarComboDialog by rememberSaveable { mutableStateOf(false) }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
 
     if (mostrarComboDialog) {
@@ -110,13 +112,17 @@ fun MenuScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
                 .background(colorScheme.background)
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+            Column {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -255,32 +261,30 @@ fun MenuScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+            }
+            }
 
             if (productosFiltrados.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No hay productos en esta categoría",
-                        color = colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp
-                    )
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
-                ) {
-                    items(productosFiltrados) { p ->
-                        ProductoCard(
-                            producto = p,
-                            onClick = { onProducto(p.id) }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No hay productos en esta categoría",
+                            color = colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
                         )
                     }
+                }
+            } else {
+                items(productosFiltrados) { p ->
+                    ProductoCard(
+                        producto = p,
+                        onClick = { onProducto(p.id) }
+                    )
                 }
             }
         }

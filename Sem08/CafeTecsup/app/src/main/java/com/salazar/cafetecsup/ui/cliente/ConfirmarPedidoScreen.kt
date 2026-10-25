@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,10 +40,10 @@ fun ConfirmarPedidoScreen(
     val subtotal = menuVm.total()
     val cerrado = !recibirPedidos
 
-    var horaSeleccionada by remember { mutableStateOf("10:30") }
+    var horaSeleccionada by rememberSaveable { mutableStateOf("10:30") }
     val horasDisponibles = listOf("Ahora", "10:30", "11:00", "11:30")
 
-    var metodoPagoSeleccionado by remember { mutableStateOf("Pagar en caja") }
+    var metodoPagoSeleccionado by rememberSaveable { mutableStateOf("Pagar en caja") }
     val metodosPago = listOf("Pagar en caja", "Yape / Plin")
 
     Scaffold(
@@ -74,6 +76,7 @@ fun ConfirmarPedidoScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(16.dp)
@@ -126,12 +129,12 @@ fun ConfirmarPedidoScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            LazyColumn(
-                modifier = Modifier.weight(1f),
+            Column(
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // 1. Tarjeta de resumen de ítems
-                item {
+                Column {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
@@ -198,7 +201,7 @@ fun ConfirmarPedidoScreen(
                 }
 
                 // 2. Hora de recojo
-                item {
+                Column {
                     Column {
                         Text(
                             text = "Hora de recojo",
@@ -230,7 +233,7 @@ fun ConfirmarPedidoScreen(
                 }
 
                 // 3. Forma de pago
-                item {
+                Column {
                     Column {
                         Text(
                             text = "Forma de pago",
@@ -271,7 +274,7 @@ fun ConfirmarPedidoScreen(
                 }
 
                 // 4. Detalle de montos
-                item {
+                Column {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),

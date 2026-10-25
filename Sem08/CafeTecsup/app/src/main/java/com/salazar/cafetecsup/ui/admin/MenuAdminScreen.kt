@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +36,7 @@ fun MenuAdminScreen(
     onEditarProducto: (Int) -> Unit
 ) {
     val productos by vm.productos.collectAsState()
-    var categoriaSel by remember { mutableStateOf("Todo") }
+    var categoriaSel by rememberSaveable { mutableStateOf("Todo") }
     val categorias = listOf("Todo", "Desayunos", "Almuerzos", "Bebidas")
 
     var productoAEliminar by remember { mutableStateOf<Producto?>(null) }
@@ -110,13 +111,16 @@ fun MenuAdminScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
+            item {
+            Column {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -155,25 +159,24 @@ fun MenuAdminScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            }
+            }
 
             if (productosFiltrados.isEmpty()) {
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay productos en esta categoría", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
+                        Text("No hay productos en esta categoría", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                    }
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(productosFiltrados) { p ->
-                        ItemProductoAdmin(
-                            producto = p,
-                            onToggleDisponibilidad = { vm.alternarDisponibilidad(p) },
-                            onEditar = { onEditarProducto(p.id) },
-                            onEliminar = { productoAEliminar = p }
-                        )
-                    }
+                items(productosFiltrados) { p ->
+                    ItemProductoAdmin(
+                        producto = p,
+                        onToggleDisponibilidad = { vm.alternarDisponibilidad(p) },
+                        onEditar = { onEditarProducto(p.id) },
+                        onEliminar = { productoAEliminar = p }
+                    )
                 }
             }
         }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,12 +37,12 @@ fun FormularioProductoScreen(
         productos.find { it.id == productoId }
     }
 
-    var nombre by remember(productoExistente) { mutableStateOf(productoExistente?.nombre ?: "") }
-    var categoria by remember(productoExistente) { mutableStateOf(productoExistente?.categoria ?: "Desayunos") }
-    var precioTexto by remember(productoExistente) { mutableStateOf(productoExistente?.precio?.toString() ?: "") }
-    var descripcion by remember(productoExistente) { mutableStateOf(productoExistente?.descripcion ?: "") }
-    var disponible by remember(productoExistente) { mutableStateOf(productoExistente?.disponible ?: true) }
-    var iconoUri by remember(productoExistente) { mutableStateOf(productoExistente?.icono ?: "cafe") }
+    var nombre by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.nombre ?: "") }
+    var categoria by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.categoria ?: "Desayunos") }
+    var precioTexto by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.precio?.toString() ?: "") }
+    var descripcion by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.descripcion ?: "") }
+    var disponible by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.disponible ?: true) }
+    var iconoUri by rememberSaveable(productoExistente) { mutableStateOf(productoExistente?.icono ?: "cafe") }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -51,7 +52,7 @@ fun FormularioProductoScreen(
         }
     }
 
-    var errorMensaje by remember { mutableStateOf("") }
+    var errorMensaje by rememberSaveable { mutableStateOf("") }
     val esEdicion = productoId > 0
     val scrollState = rememberScrollState()
 

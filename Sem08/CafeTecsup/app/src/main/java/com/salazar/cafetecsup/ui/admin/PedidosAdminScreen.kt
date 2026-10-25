@@ -70,13 +70,16 @@ fun PedidosAdminScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
+            item {
+            Column {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -115,25 +118,24 @@ fun PedidosAdminScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            }
+            }
 
             if (listaPedidos.isEmpty()) {
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Text("No hay pedidos en estado ${estadoSel.name}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
+                        Text("No hay pedidos en estado ${estadoSel.name}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                    }
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(listaPedidos) { p ->
-                        TarjetaPedidoAdmin(
-                            pedidoConDetalle = p,
-                            onClick = { onVerDetalle(p.pedido.id) },
-                            onAvanzar = { vm.avanzar(p.pedido) },
-                            onCancelar = { vm.cancelar(p.pedido) }
-                        )
-                    }
+                items(listaPedidos) { p ->
+                    TarjetaPedidoAdmin(
+                        pedidoConDetalle = p,
+                        onClick = { onVerDetalle(p.pedido.id) },
+                        onAvanzar = { vm.avanzar(p.pedido) },
+                        onCancelar = { vm.cancelar(p.pedido) }
+                    )
                 }
             }
         }
