@@ -37,10 +37,21 @@ fun NavCafe(
     val startDestination = when (perfilActivo) {
         "CLIENTE" -> "menu_cliente"
         "ADMIN" -> "panel_admin"
-        else -> "login"
+        else -> "splash"
     }
 
     NavHost(navController = navController, startDestination = startDestination) {
+        composable("splash") {
+            SplashScreen(
+                onComenzar = {
+                    navController.navigate("login") { popUpTo("splash") { inclusive = true } }
+                },
+                onYaTengoCuenta = {
+                    navController.navigate("login") { popUpTo("splash") { inclusive = true } }
+                }
+            )
+        }
+
         composable("login") {
             LoginScreen(
                 viewModel = viewModel,
