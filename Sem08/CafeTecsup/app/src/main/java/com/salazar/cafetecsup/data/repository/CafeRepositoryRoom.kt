@@ -97,6 +97,10 @@ class CafeRepositoryRoom(
         return db.pedidoDao().ventasDesde(inicioDia)
     }
 
+    override fun observarPedidosHoy(inicioDia: Long): Flow<Int> {
+        return db.pedidoDao().cantidadPedidosDesde(inicioDia)
+    }
+
     override fun observarCantidadPorEstado(estado: EstadoPedido): Flow<Int> {
         return db.pedidoDao().cantidadPorEstado(estado.name)
     }

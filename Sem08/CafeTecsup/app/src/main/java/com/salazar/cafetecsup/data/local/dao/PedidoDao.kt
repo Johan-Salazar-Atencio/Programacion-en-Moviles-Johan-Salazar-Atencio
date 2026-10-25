@@ -52,6 +52,9 @@ interface PedidoDao {
     @Query("SELECT COALESCE(SUM(total), 0.0) FROM pedidos WHERE fecha >= :inicio AND estado != 'CANCELADO'")
     fun ventasDesde(inicio: Long): Flow<Double>
 
+    @Query("SELECT COUNT(*) FROM pedidos WHERE fecha >= :inicio AND estado != 'CANCELADO'")
+    fun cantidadPedidosDesde(inicio: Long): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM pedidos WHERE estado = :estado")
     fun cantidadPorEstado(estado: String): Flow<Int>
 }

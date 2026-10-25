@@ -37,6 +37,7 @@ fun PanelScreen(
     val preparando by vm.preparandoCount.collectAsState()
     val listos by vm.listosCount.collectAsState()
     val ventasHoy by vm.ventasHoy.collectAsState()
+    val pedidosHoy by vm.pedidosHoy.collectAsState()
     val nuevosPedidosLista by vm.nuevosPedidos.collectAsState()
 
     val datosGrafico = remember {
@@ -134,7 +135,7 @@ fun PanelScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text("S/ ${String.format("%.2f", ventasHoy)}", color = MaterialTheme.colorScheme.onPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     }
-                    Text("21 pedidos", color = Color(0xFFC7D2FE), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(if (pedidosHoy == 1) "1 pedido" else "$pedidosHoy pedidos", color = Color(0xFFC7D2FE), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
 

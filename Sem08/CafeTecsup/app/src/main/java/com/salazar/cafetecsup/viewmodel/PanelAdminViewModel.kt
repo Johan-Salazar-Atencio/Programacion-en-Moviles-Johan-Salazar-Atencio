@@ -37,6 +37,9 @@ class PanelAdminViewModel(
     val ventasHoy: StateFlow<Double> = repository.observarVentasHoy(inicioDiaHoy)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
+    val pedidosHoy: StateFlow<Int> = repository.observarPedidosHoy(inicioDiaHoy)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     val nuevosPedidos: StateFlow<List<PedidoConDetalle>> = repository.observarPedidosPorEstado(EstadoPedido.RECIBIDO)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

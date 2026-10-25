@@ -34,5 +34,6 @@ interface CafeRepository {
 
     // Panel
     fun observarVentasHoy(inicioDia: Long): Flow<Double>
+    fun observarPedidosHoy(inicioDia: Long): Flow<Int>
     fun observarCantidadPorEstado(estado: EstadoPedido): Flow<Int>
 }
