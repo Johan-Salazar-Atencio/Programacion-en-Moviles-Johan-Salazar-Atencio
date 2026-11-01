@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ import androidx.navigation.navArgument
 import com.salazar.retrofit.data.local.AppDatabase
 import com.salazar.retrofit.data.remote.ApiClient
 import com.salazar.retrofit.data.repository.PostRepository
+import com.salazar.retrofit.screens.FavoritesScreen
 import com.salazar.retrofit.screens.HomeScreen
 import com.salazar.retrofit.screens.PostDetailScreen
 import com.salazar.retrofit.ui.theme.RetrofitTheme
@@ -84,6 +86,7 @@ fun ProgPrincipal9(viewModel: PostViewModel) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("home") { HomeScreen(navController, viewModel) }
+            composable("favorites") { FavoritesScreen(viewModel) }
             composable(
                 route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
@@ -102,6 +105,12 @@ fun BarraInferior(navController: NavHostController, rutaActual: String?) {
             label = { Text("Inicio") },
             selected = rutaActual == "home",
             onClick = { navController.navigate("home") }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Favorite, contentDescription = "Favoritos") },
+            label = { Text("Favoritos") },
+            selected = rutaActual == "favorites",
+            onClick = { navController.navigate("favorites") }
         )
     }
 }
