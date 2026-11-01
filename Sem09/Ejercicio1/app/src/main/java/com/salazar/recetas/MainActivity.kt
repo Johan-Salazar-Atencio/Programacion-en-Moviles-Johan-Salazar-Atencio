@@ -15,11 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.salazar.recetas.data.remote.ApiClient
 import com.salazar.recetas.data.repository.RecipeRepository
+import com.salazar.recetas.screens.RecipeDetailScreen
 import com.salazar.recetas.screens.RecipesScreen
 import com.salazar.recetas.ui.theme.RecetasTheme
 import com.salazar.recetas.viewmodel.RecipeViewModel
@@ -70,7 +73,20 @@ fun RecetasApp(viewModel: RecipeViewModel) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("recetas") {
-                RecipesScreen(viewModel, onRecipeClick = {})
+                RecipesScreen(
+                    viewModel,
+                    onRecipeClick = { id -> navController.navigate("detalle/$id") }
+                )
+            }
+            composable(
+                route = "detalle/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) {
+                RecipeDetailScreen(
+                    id = it.arguments?.getInt("id") ?: 0,
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
