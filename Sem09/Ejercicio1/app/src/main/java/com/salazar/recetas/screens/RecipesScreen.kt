@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -66,13 +67,23 @@ fun RecipesScreen(
             if (loading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            error?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp)
-                )
+            if (!loading) {
+                error?.let {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = it)
+                        Button(
+                            onClick = { viewModel.loadRecipes() },
+                            modifier = Modifier.padding(top = 12.dp)
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
             }
             LazyColumn(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(
