@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.salazar.retrofit.data.local.AppDatabase
 import com.salazar.retrofit.data.remote.ApiClient
 import com.salazar.retrofit.data.repository.PostRepository
 import com.salazar.retrofit.screens.HomeScreen
@@ -40,7 +41,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val repository = PostRepository(ApiClient.apiService)
+        val database = AppDatabase.getDatabase(this)
+        val repository = PostRepository(ApiClient.apiService, database.postDao())
 
         setContent {
             RetrofitTheme {
