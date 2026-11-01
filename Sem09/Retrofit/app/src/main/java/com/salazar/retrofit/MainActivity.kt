@@ -8,9 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -18,6 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.salazar.retrofit.ui.theme.RetrofitTheme
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,10 +53,12 @@ fun ProgPrincipal9() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val servicio = retrofit.create(PostApiService::class.java)
+    val navController = rememberNavController()
 
     Scaffold(
         topBar = { BarraSuperior() },
-        content = { paddingValues -> Contenido(paddingValues, servicio) }
+        bottomBar = { BarraInferior(navController) },
+        content = { paddingValues -> Contenido(paddingValues, navController, servicio) }
     )
 }
 
@@ -67,13 +80,41 @@ fun BarraSuperior() {
 }
 
 @Composable
-fun Contenido(pv: PaddingValues, servicio: PostApiService) {
+fun BarraInferior(navController: NavHostController) {
+    val rutaActual = navController.currentBackStackEntryAsState().value?.destination?.route
+    NavigationBar(containerColor = Color.LightGray) {
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Home, contentDescription = "Inicio") },
+            label = { Text("Inicio") },
+            selected = rutaActual == "inicio",
+            onClick = { navController.navigate("inicio") }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Favorite, contentDescription = "Posts") },
+            label = { Text("Posts") },
+            selected = rutaActual == "posts",
+            onClick = { navController.navigate("posts") }
+        )
+    }
+}
+
+@Composable
+fun Contenido(
+    pv: PaddingValues,
+    navController: NavHostController,
+    servicio: PostApiService
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(pv)
     ) {
-        ScreenInicio()
+        NavHost(
+            navController = navController,
+            startDestination = "inicio"
+        ) {
+            composable("inicio") { ScreenInicio() }
+        }
     }
 }
 
