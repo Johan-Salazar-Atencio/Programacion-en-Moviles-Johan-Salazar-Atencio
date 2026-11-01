@@ -1,4 +1,4 @@
-package com.salazar.retrofit
+package com.salazar.retrofit.data.model
 
 import com.google.gson.annotations.SerializedName
 

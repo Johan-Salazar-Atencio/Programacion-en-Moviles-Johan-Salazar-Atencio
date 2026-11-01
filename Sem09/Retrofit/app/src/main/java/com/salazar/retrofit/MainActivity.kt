@@ -4,12 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,110 +20,86 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.salazar.retrofit.data.remote.ApiClient
+import com.salazar.retrofit.data.repository.PostRepository
+import com.salazar.retrofit.screens.HomeScreen
+import com.salazar.retrofit.screens.PostDetailScreen
 import com.salazar.retrofit.ui.theme.RetrofitTheme
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.salazar.retrofit.viewmodel.PostViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val repository = PostRepository(ApiClient.apiService)
+
         setContent {
             RetrofitTheme {
-                ProgPrincipal9()
+                val viewModel: PostViewModel = viewModel(
+                    factory = PostViewModel.Factory(repository)
+                )
+                ProgPrincipal9(viewModel)
             }
         }
     }
-}
-
-@Composable
-fun ProgPrincipal9() {
-    val urlBase = "https://jsonplaceholder.typicode.com/"
-    val retrofit = Retrofit.Builder()
-        .baseUrl(urlBase)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val servicio = retrofit.create(PostApiService::class.java)
-    val navController = rememberNavController()
-
-    Scaffold(
-        topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController) },
-        content = { paddingValues -> Contenido(paddingValues, navController, servicio) }
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BarraSuperior() {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "JSONPlaceHolder Access",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+fun ProgPrincipal9(viewModel: PostViewModel) {
+    val navController = rememberNavController()
+    val rutaActual = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "JSONPlaceHolder Access",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             )
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
-    )
-}
-
-@Composable
-fun BarraInferior(navController: NavHostController) {
-    val rutaActual = navController.currentBackStackEntryAsState().value?.destination?.route
-    NavigationBar(containerColor = Color.LightGray) {
-        NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Home, contentDescription = "Inicio") },
-            label = { Text("Inicio") },
-            selected = rutaActual == "inicio",
-            onClick = { navController.navigate("inicio") }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Favorite, contentDescription = "Posts") },
-            label = { Text("Posts") },
-            selected = rutaActual == "posts",
-            onClick = { navController.navigate("posts") }
-        )
-    }
-}
-
-@Composable
-fun Contenido(
-    pv: PaddingValues,
-    navController: NavHostController,
-    servicio: PostApiService
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(pv)
-    ) {
+        bottomBar = { BarraInferior(navController, rutaActual) }
+    ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = "inicio"
+            startDestination = "home",
+            modifier = Modifier.padding(paddingValues)
         ) {
-            composable("inicio") { ScreenInicio() }
-            composable("posts") { ScreenPosts(navController, servicio) }
+            composable("home") { HomeScreen(navController, viewModel) }
             composable(
-                "postsVer/{id}",
+                route = "detail/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
-                ScreenPost(navController, servicio, it.arguments!!.getInt("id"))
+                PostDetailScreen(it.arguments?.getInt("id") ?: 0, viewModel)
             }
         }
     }
 }
 
 @Composable
-fun ScreenInicio() {
-    Text("INICIO")
+fun BarraInferior(navController: NavHostController, rutaActual: String?) {
+    NavigationBar(containerColor = Color.LightGray) {
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Home, contentDescription = "Inicio") },
+            label = { Text("Inicio") },
+            selected = rutaActual == "home",
+            onClick = { navController.navigate("home") }
+        )
+    }
 }
