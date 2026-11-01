@@ -114,6 +114,7 @@ fun Contenido(
             startDestination = "inicio"
         ) {
             composable("inicio") { ScreenInicio() }
+            composable("posts") { ScreenPosts(navController, servicio) }
         }
     }
 }
