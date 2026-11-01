@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.salazar.retrofit.data.local.PostEntity
+import com.salazar.retrofit.data.model.PhotoModel
 import com.salazar.retrofit.data.model.PostModel
 import com.salazar.retrofit.data.repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +49,20 @@ class PostViewModel(
 
     fun deleteFavorite(id: Int) {
         viewModelScope.launch { repository.deleteFavorite(id) }
+    }
+
+    private val _photos = MutableStateFlow<List<PhotoModel>>(emptyList())
+    val photos: StateFlow<List<PhotoModel>> = _photos
+
+    fun loadPhotos() {
+        viewModelScope.launch {
+            try {
+                _photos.value = repository.getPhotos()
+                _error.value = null
+            } catch (e: Exception) {
+                _error.value = "No se pudieron cargar las fotos"
+            }
+        }
     }
 
     fun loadPosts() {
