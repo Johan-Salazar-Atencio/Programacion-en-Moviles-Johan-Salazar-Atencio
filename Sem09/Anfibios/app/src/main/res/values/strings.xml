@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Anfibios</string>
+    <string name="loading_failed">No se pudo cargar</string>
+    <string name="retry">Reintentar</string>
+    <string name="loading">Cargando</string>
+    <string name="amphibian_title">%s (%s)</string>
 </resources>
