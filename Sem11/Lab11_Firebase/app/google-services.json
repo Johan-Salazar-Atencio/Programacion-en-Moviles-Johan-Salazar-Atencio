@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820079626459",
+    "project_id": "authfirebaseapp-cf570",
+    "storage_bucket": "authfirebaseapp-cf570.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820079626459:android:8d726d7155ee70799924fe",
+        "android_client_info": {
+          "package_name": "com.salazar.authfirebaseapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMmGVqc8qwH2TaJzTRAEh7YVXBI_tUTow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
