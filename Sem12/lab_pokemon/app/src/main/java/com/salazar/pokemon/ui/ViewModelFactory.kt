@@ -16,9 +16,9 @@ class ViewModelFactory(private val container: AppContainer) : ViewModelProvider.
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T = when {
         modelClass.isAssignableFrom(ListaViewModel::class.java) ->
-            ListaViewModel(container.itemRepository) as T
+            ListaViewModel(container.itemRepository, container.notificador) as T
         modelClass.isAssignableFrom(AdminViewModel::class.java) ->
-            AdminViewModel(container.itemRepository) as T
+            AdminViewModel(container.itemRepository, container.notificador) as T
         modelClass.isAssignableFrom(SesionViewModel::class.java) ->
             SesionViewModel(container.authRepository) as T
         modelClass.isAssignableFrom(LoginViewModel::class.java) ->

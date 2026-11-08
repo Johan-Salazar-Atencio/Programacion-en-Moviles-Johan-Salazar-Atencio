@@ -7,6 +7,8 @@ import com.salazar.pokemon.data.local.AppDatabase
 import com.salazar.pokemon.data.remote.RetrofitClient
 import com.salazar.pokemon.data.repository.ItemRepository
 import com.salazar.pokemon.data.repository.ItemRepositoryImpl
+import com.salazar.pokemon.notification.Notificador
+import com.salazar.pokemon.notification.NotificadorAndroid
 
 class AppContainer(context: Context) {
     private val database = AppDatabase.crear(context)
@@ -15,4 +17,6 @@ class AppContainer(context: Context) {
         ItemRepositoryImpl(RetrofitClient.api, database.itemDao())
 
     val authRepository: AuthRepository = FirebaseAuthRepository()
+
+    val notificador: Notificador = NotificadorAndroid(context)
 }

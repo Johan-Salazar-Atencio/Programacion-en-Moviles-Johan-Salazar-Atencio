@@ -3,6 +3,7 @@ package com.salazar.pokemon.ui.admin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salazar.pokemon.data.repository.ItemRepository
+import com.salazar.pokemon.notification.Notificador
 import com.salazar.pokemon.ui.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,10 @@ import java.io.IOException
 
 data class AdminResumen(val guardados: Int, val favoritos: Int)
 
-class AdminViewModel(private val repo: ItemRepository) : ViewModel() {
+class AdminViewModel(
+    private val repo: ItemRepository,
+    private val notificador: Notificador
+) : ViewModel() {
 
     private val _estado = MutableStateFlow<UiState<AdminResumen>>(UiState.Cargando)
     val estado: StateFlow<UiState<AdminResumen>> = _estado.asStateFlow()
@@ -28,7 +32,10 @@ class AdminViewModel(private val repo: ItemRepository) : ViewModel() {
     fun sincronizar() {
         viewModelScope.launch {
             repo.refrescar()
-                .onSuccess { _mensaje.value = "Se guardaron $it elementos" }
+                .onSuccess {
+                    _mensaje.value = "Se guardaron $it elementos"
+                    notificador.mostrar("Datos actualizados", "Se guardaron $it elementos")
+                }
                 .onFailure { _mensaje.value = mensajeDe(it) }
             actualizarTotales()
         }
