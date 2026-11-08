@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +37,8 @@ import com.salazar.pokemon.ui.components.ItemCard
 fun ListaScreen(
     viewModel: ListaViewModel,
     onItemClick: (Int) -> Unit,
-    onFavoritos: () -> Unit
+    onFavoritos: () -> Unit,
+    onCerrarSesion: () -> Unit
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val aviso by viewModel.aviso.collectAsStateWithLifecycle()
@@ -51,6 +53,9 @@ fun ListaScreen(
                     }
                     IconButton(onClick = onFavoritos) {
                         Icon(Icons.Filled.Favorite, contentDescription = "Ver favoritos")
+                    }
+                    IconButton(onClick = onCerrarSesion) {
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
                     }
                 }
             )

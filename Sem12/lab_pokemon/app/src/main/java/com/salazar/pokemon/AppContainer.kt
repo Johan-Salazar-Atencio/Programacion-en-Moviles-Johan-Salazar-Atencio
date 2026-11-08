@@ -1,6 +1,8 @@
 package com.salazar.pokemon
 
 import android.content.Context
+import com.salazar.pokemon.data.auth.AuthRepository
+import com.salazar.pokemon.data.auth.FirebaseAuthRepository
 import com.salazar.pokemon.data.local.AppDatabase
 import com.salazar.pokemon.data.remote.RetrofitClient
 import com.salazar.pokemon.data.repository.ItemRepository
@@ -11,4 +13,6 @@ class AppContainer(context: Context) {
 
     val itemRepository: ItemRepository =
         ItemRepositoryImpl(RetrofitClient.api, database.itemDao())
+
+    val authRepository: AuthRepository = FirebaseAuthRepository()
 }
