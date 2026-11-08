@@ -1,6 +1,7 @@
 package com.salazar.pokemon.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,6 +11,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.salazar.pokemon.AppContainer
+import com.salazar.pokemon.domain.model.Rol
+import com.salazar.pokemon.ui.admin.AdminScreen
+import com.salazar.pokemon.ui.admin.AdminViewModel
 import com.salazar.pokemon.ui.SesionViewModel
 import com.salazar.pokemon.ui.UiState
 import com.salazar.pokemon.ui.ViewModelFactory
@@ -26,6 +30,7 @@ import com.salazar.pokemon.ui.login.LoginViewModel
 private const val RUTA_LOGIN = "login"
 private const val RUTA_LISTA = "lista"
 private const val RUTA_FAVORITOS = "favoritos"
+private const val RUTA_ADMIN = "admin"
 private const val RUTA_DETALLE = "detalle/{id}"
 
 @Composable
@@ -42,6 +47,7 @@ fun AppNav(container: AppContainer) {
     }
 
     val navController = rememberNavController()
+    val esAdmin = inicial.datos?.rol == Rol.ADMIN
     val destinoInicial = if (inicial.datos != null) RUTA_LISTA else RUTA_LOGIN
 
     NavHost(navController = navController, startDestination = destinoInicial) {
@@ -58,11 +64,21 @@ fun AppNav(container: AppContainer) {
                 viewModel,
                 onItemClick = { id -> navController.navigate("detalle/$id") },
                 onFavoritos = { navController.navigate(RUTA_FAVORITOS) },
+                esAdmin = esAdmin,
+                onAdmin = { navController.navigate(RUTA_ADMIN) },
                 onCerrarSesion = {
                     sesionViewModel.cerrarSesion()
                     navController.navigate(RUTA_LOGIN) { popUpTo(RUTA_LISTA) { inclusive = true } }
                 }
             )
+        }
+        composable(RUTA_ADMIN) {
+            if (esAdmin) {
+                val viewModel: AdminViewModel = viewModel(factory = factory)
+                AdminScreen(viewModel, onVolver = { navController.popBackStack() })
+            } else {
+                LaunchedEffect(Unit) { navController.popBackStack() }
+            }
         }
         composable(RUTA_FAVORITOS) {
             val viewModel: FavoritosViewModel = viewModel(factory = factory)

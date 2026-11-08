@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.createSavedStateHandle
 import com.salazar.pokemon.AppContainer
+import com.salazar.pokemon.ui.admin.AdminViewModel
 import com.salazar.pokemon.ui.detalle.DetalleViewModel
 import com.salazar.pokemon.ui.favoritos.FavoritosViewModel
 import com.salazar.pokemon.ui.lista.ListaViewModel
@@ -16,6 +17,8 @@ class ViewModelFactory(private val container: AppContainer) : ViewModelProvider.
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T = when {
         modelClass.isAssignableFrom(ListaViewModel::class.java) ->
             ListaViewModel(container.itemRepository) as T
+        modelClass.isAssignableFrom(AdminViewModel::class.java) ->
+            AdminViewModel(container.itemRepository) as T
         modelClass.isAssignableFrom(SesionViewModel::class.java) ->
             SesionViewModel(container.authRepository) as T
         modelClass.isAssignableFrom(LoginViewModel::class.java) ->

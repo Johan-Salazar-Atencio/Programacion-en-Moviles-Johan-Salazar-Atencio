@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +39,8 @@ fun ListaScreen(
     viewModel: ListaViewModel,
     onItemClick: (Int) -> Unit,
     onFavoritos: () -> Unit,
+    esAdmin: Boolean,
+    onAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -53,6 +56,11 @@ fun ListaScreen(
                     }
                     IconButton(onClick = onFavoritos) {
                         Icon(Icons.Filled.Favorite, contentDescription = "Ver favoritos")
+                    }
+                    if (esAdmin) {
+                        IconButton(onClick = onAdmin) {
+                            Icon(Icons.Filled.Settings, contentDescription = "Panel Admin")
+                        }
                     }
                     IconButton(onClick = onCerrarSesion) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
