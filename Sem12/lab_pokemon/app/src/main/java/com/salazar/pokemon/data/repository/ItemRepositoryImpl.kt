@@ -29,10 +29,14 @@ class ItemRepositoryImpl(private val api: ApiService) : ItemRepository {
         Result.failure(e)
     }
 
-    override suspend fun obtenerDetalle(id: Int): Result<Item> =
-        datos.value.firstOrNull { it.id == id }
-            ?.let { Result.success(it) }
-            ?: Result.failure(NoSuchElementException())
+    override suspend fun obtenerDetalle(id: Int): Result<Item> = try {
+        val esFavorito = datos.value.firstOrNull { it.id == id }?.esFavorito ?: false
+        Result.success(api.detalle(id).aModelo(esFavorito))
+    } catch (e: IOException) {
+        Result.failure(e)
+    } catch (e: HttpException) {
+        Result.failure(e)
+    }
 
     override suspend fun alternarFavorito(id: Int) {
         datos.value = datos.value.map { if (it.id == id) it.copy(esFavorito = !it.esFavorito) else it }
