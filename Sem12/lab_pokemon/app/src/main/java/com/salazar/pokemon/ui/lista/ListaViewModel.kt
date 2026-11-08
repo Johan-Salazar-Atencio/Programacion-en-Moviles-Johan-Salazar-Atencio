@@ -44,6 +44,10 @@ class ListaViewModel(private val repo: ItemRepository) : ViewModel() {
         }
     }
 
+    fun alternarFavorito(id: Int) {
+        viewModelScope.launch { repo.alternarFavorito(id) }
+    }
+
     private fun mensajeDe(e: Throwable) = when (e) {
         is IOException -> "No hay conexión a internet"
         is HttpException -> "El servidor respondió con error ${e.code()}"

@@ -11,10 +11,13 @@ import com.salazar.pokemon.AppContainer
 import com.salazar.pokemon.ui.ViewModelFactory
 import com.salazar.pokemon.ui.detalle.DetalleScreen
 import com.salazar.pokemon.ui.detalle.DetalleViewModel
+import com.salazar.pokemon.ui.favoritos.FavoritosScreen
+import com.salazar.pokemon.ui.favoritos.FavoritosViewModel
 import com.salazar.pokemon.ui.lista.ListaScreen
 import com.salazar.pokemon.ui.lista.ListaViewModel
 
 private const val RUTA_LISTA = "lista"
+private const val RUTA_FAVORITOS = "favoritos"
 private const val RUTA_DETALLE = "detalle/{id}"
 
 @Composable
@@ -25,7 +28,19 @@ fun AppNav(container: AppContainer) {
     NavHost(navController = navController, startDestination = RUTA_LISTA) {
         composable(RUTA_LISTA) {
             val viewModel: ListaViewModel = viewModel(factory = factory)
-            ListaScreen(viewModel, onItemClick = { id -> navController.navigate("detalle/$id") })
+            ListaScreen(
+                viewModel,
+                onItemClick = { id -> navController.navigate("detalle/$id") },
+                onFavoritos = { navController.navigate(RUTA_FAVORITOS) }
+            )
+        }
+        composable(RUTA_FAVORITOS) {
+            val viewModel: FavoritosViewModel = viewModel(factory = factory)
+            FavoritosScreen(
+                viewModel,
+                onItemClick = { id -> navController.navigate("detalle/$id") },
+                onVolver = { navController.popBackStack() }
+            )
         }
         composable(
             route = RUTA_DETALLE,

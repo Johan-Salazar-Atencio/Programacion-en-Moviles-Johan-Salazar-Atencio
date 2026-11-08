@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.createSavedStateHandle
 import com.salazar.pokemon.AppContainer
 import com.salazar.pokemon.ui.detalle.DetalleViewModel
+import com.salazar.pokemon.ui.favoritos.FavoritosViewModel
 import com.salazar.pokemon.ui.lista.ListaViewModel
 
 class ViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
@@ -14,6 +15,8 @@ class ViewModelFactory(private val container: AppContainer) : ViewModelProvider.
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T = when {
         modelClass.isAssignableFrom(ListaViewModel::class.java) ->
             ListaViewModel(container.itemRepository) as T
+        modelClass.isAssignableFrom(FavoritosViewModel::class.java) ->
+            FavoritosViewModel(container.itemRepository) as T
         modelClass.isAssignableFrom(DetalleViewModel::class.java) -> {
             val id = extras.createSavedStateHandle().get<Int>("id") ?: error("Falta el id")
             DetalleViewModel(container.itemRepository, id) as T
