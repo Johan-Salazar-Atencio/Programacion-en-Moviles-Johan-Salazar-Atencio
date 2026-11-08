@@ -36,7 +36,7 @@ fun ListaScreen(viewModel: ListaViewModel) {
         val modifier = Modifier.padding(padding)
         when (val e = estado) {
             is UiState.Cargando -> Cargando(modifier)
-            is UiState.Error -> ErrorView(e.mensaje, onReintentar = {}, modifier = modifier)
+            is UiState.Error -> ErrorView(e.mensaje, onReintentar = viewModel::refrescar, modifier = modifier)
             is UiState.Exito ->
                 if (e.datos.isEmpty()) Vacio(modifier) else ListaItems(e.datos, modifier)
         }

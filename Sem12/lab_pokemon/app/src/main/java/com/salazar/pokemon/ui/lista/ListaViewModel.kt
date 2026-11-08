@@ -9,15 +9,44 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class ListaViewModel(private val repo: ItemRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow<UiState<List<Item>>>(UiState.Cargando)
     val estado: StateFlow<UiState<List<Item>>> = _estado.asStateFlow()
 
+    // evita mostrar la lista vacía antes de que termine la primera descarga
+    private var refrescoTerminado = false
+
     init {
         viewModelScope.launch {
-            repo.items.collect { _estado.value = UiState.Exito(it) }
+            repo.items.collect { lista ->
+                if (lista.isNotEmpty() || refrescoTerminado) _estado.value = UiState.Exito(lista)
+            }
         }
+        refrescar()
+    }
+
+    fun refrescar() {
+        viewModelScope.launch {
+            if (_estado.value is UiState.Error) _estado.value = UiState.Cargando
+            val resultado = repo.refrescar()
+            refrescoTerminado = true
+            resultado
+                .onSuccess {
+                    if (_estado.value is UiState.Cargando) _estado.value = UiState.Exito(emptyList())
+                }
+                .onFailure { e ->
+                    if (repo.cantidadGuardada() == 0) _estado.value = UiState.Error(mensajeDe(e))
+                }
+        }
+    }
+
+    private fun mensajeDe(e: Throwable) = when (e) {
+        is IOException -> "No hay conexión a internet"
+        is HttpException -> "El servidor respondió con error ${e.code()}"
+        else -> "Ocurrió un error inesperado"
     }
 }
