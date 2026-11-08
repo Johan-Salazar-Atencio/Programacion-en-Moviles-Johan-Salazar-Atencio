@@ -1,5 +1,6 @@
 package com.salazar.pokemon.data.mapper
 
+import com.salazar.pokemon.data.local.ItemEntity
 import com.salazar.pokemon.data.remote.dto.DetalleDto
 import com.salazar.pokemon.data.remote.dto.ItemDto
 import com.salazar.pokemon.domain.model.Item
@@ -9,9 +10,9 @@ private const val IMAGEN_BASE =
 
 private fun imagenDe(id: Int) = "$IMAGEN_BASE$id.png"
 
-fun ItemDto.aModelo(esFavorito: Boolean = false): Item {
+fun ItemDto.aEntity(esFavorito: Boolean = false): ItemEntity {
     val id = url.trimEnd('/').substringAfterLast('/').toInt()
-    return Item(
+    return ItemEntity(
         id = id,
         titulo = name,
         subtitulo = "#$id",
@@ -19,6 +20,14 @@ fun ItemDto.aModelo(esFavorito: Boolean = false): Item {
         esFavorito = esFavorito
     )
 }
+
+fun ItemEntity.aModelo() = Item(
+    id = id,
+    titulo = titulo,
+    subtitulo = subtitulo,
+    imagenUrl = imagenUrl,
+    esFavorito = esFavorito
+)
 
 fun DetalleDto.aModelo(esFavorito: Boolean = false) = Item(
     id = id,
