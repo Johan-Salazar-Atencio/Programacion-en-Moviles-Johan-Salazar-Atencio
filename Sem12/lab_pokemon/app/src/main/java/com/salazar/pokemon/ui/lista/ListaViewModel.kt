@@ -6,13 +6,12 @@ import com.salazar.pokemon.data.repository.ItemRepository
 import com.salazar.pokemon.domain.model.Item
 import com.salazar.pokemon.notification.Notificador
 import com.salazar.pokemon.ui.UiState
+import com.salazar.pokemon.ui.mensajeDeError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 class ListaViewModel(
     private val repo: ItemRepository,
@@ -61,7 +60,7 @@ class ListaViewModel(
                 }
                 .onFailure { e ->
                     if (repo.cantidadGuardada() == 0) {
-                        _estado.value = UiState.Error(mensajeDe(e))
+                        _estado.value = UiState.Error(mensajeDeError(e))
                     } else {
                         _aviso.value = "Sin conexión: mostrando datos guardados"
                     }
@@ -71,11 +70,5 @@ class ListaViewModel(
 
     fun alternarFavorito(id: Int) {
         viewModelScope.launch { repo.alternarFavorito(id) }
-    }
-
-    private fun mensajeDe(e: Throwable) = when (e) {
-        is IOException -> "No hay conexión a internet"
-        is HttpException -> "El servidor respondió con error ${e.code()}"
-        else -> "Ocurrió un error inesperado"
     }
 }

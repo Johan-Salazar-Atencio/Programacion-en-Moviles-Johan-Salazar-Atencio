@@ -1,7 +1,10 @@
 package com.salazar.pokemon.data.auth
 
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.salazar.pokemon.domain.model.Rol
 import com.salazar.pokemon.domain.model.Sesion
@@ -18,6 +21,12 @@ class FirebaseAuthRepository(
         Result.success(leerSesion(uid, correo))
     } catch (e: FirebaseNetworkException) {
         Result.failure(IOException(e))
+    } catch (e: FirebaseAuthInvalidCredentialsException) {
+        Result.failure(CredencialesInvalidasException())
+    } catch (e: FirebaseAuthInvalidUserException) {
+        Result.failure(CredencialesInvalidasException())
+    } catch (e: FirebaseTooManyRequestsException) {
+        Result.failure(DemasiadosIntentosException())
     } catch (e: Exception) {
         Result.failure(e)
     }

@@ -7,6 +7,7 @@ import com.salazar.pokemon.data.remote.ApiService
 import com.salazar.pokemon.domain.model.Item
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -30,6 +31,8 @@ class ItemRepositoryImpl(
         Result.failure(e)
     } catch (e: HttpException) {
         Result.failure(e)
+    } catch (e: SerializationException) {
+        Result.failure(e)
     }
 
     override suspend fun obtenerDetalle(id: Int): Result<Item> = try {
@@ -38,6 +41,8 @@ class ItemRepositoryImpl(
     } catch (e: IOException) {
         Result.failure(e)
     } catch (e: HttpException) {
+        Result.failure(e)
+    } catch (e: SerializationException) {
         Result.failure(e)
     }
 
