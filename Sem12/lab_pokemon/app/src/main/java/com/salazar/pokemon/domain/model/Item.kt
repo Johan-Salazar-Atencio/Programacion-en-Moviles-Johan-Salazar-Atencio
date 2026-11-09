@@ -8,5 +8,8 @@ data class Item(
     val esFavorito: Boolean = false,
     val tipos: List<String> = emptyList(),
     val alturaDm: Int? = null,
-    val pesoHg: Int? = null
+    val pesoHg: Int? = null,
+    val estadisticas: List<Estadistica> = emptyList()
 )
+
+data class Estadistica(val nombre: String, val valor: Int)
