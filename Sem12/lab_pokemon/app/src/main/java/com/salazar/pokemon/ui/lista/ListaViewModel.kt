@@ -9,6 +9,7 @@ import com.salazar.pokemon.ui.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -24,17 +25,28 @@ class ListaViewModel(
     private val _aviso = MutableStateFlow<String?>(null)
     val aviso: StateFlow<String?> = _aviso.asStateFlow()
 
+    private val _consulta = MutableStateFlow("")
+    val consulta: StateFlow<String> = _consulta.asStateFlow()
+
     // evita mostrar la lista vacía antes de que termine la primera descarga
     private var refrescoTerminado = false
 
     init {
         viewModelScope.launch {
-            repo.items.collect { lista ->
-                if (lista.isNotEmpty() || refrescoTerminado) _estado.value = UiState.Exito(lista)
-            }
+            combine(repo.items, _consulta) { lista, texto -> filtrar(lista, texto) }
+                .collect { lista ->
+                    if (lista.isNotEmpty() || refrescoTerminado) _estado.value = UiState.Exito(lista)
+                }
         }
         refrescar()
     }
+
+    fun buscar(texto: String) {
+        _consulta.value = texto
+    }
+
+    private fun filtrar(lista: List<Item>, texto: String): List<Item> =
+        if (texto.isBlank()) lista else lista.filter { it.titulo.contains(texto.trim(), ignoreCase = true) }
 
     fun refrescar() {
         viewModelScope.launch {
