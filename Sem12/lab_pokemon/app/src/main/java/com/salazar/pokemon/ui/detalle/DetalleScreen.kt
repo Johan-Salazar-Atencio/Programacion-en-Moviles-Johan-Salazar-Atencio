@@ -2,6 +2,7 @@ package com.salazar.pokemon.ui.detalle
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,9 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,6 +45,21 @@ fun DetalleScreen(viewModel: DetalleViewModel, onVolver: () -> Unit) {
                 navigationIcon = {
                     IconButton(onClick = onVolver) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    (estado as? UiState.Exito)?.datos?.let { item ->
+                        IconButton(onClick = viewModel::alternarFavorito) {
+                            if (item.esFavorito) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = "Quitar de favoritos",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            } else {
+                                Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Marcar como favorito")
+                            }
+                        }
                     }
                 }
             )
@@ -75,5 +94,26 @@ private fun Contenido(item: Item, modifier: Modifier = Modifier) {
         Text("Tipos: ${item.tipos.joinToString(", ")}")
         item.alturaDm?.let { Text("Altura: ${it / 10.0} m") }
         item.pesoHg?.let { Text("Peso: ${it / 10.0} kg") }
+
+        if (item.estadisticas.isNotEmpty()) {
+            Text("Estadísticas base", style = MaterialTheme.typography.titleMedium)
+            item.estadisticas.forEach { Estadistica(it) }
+        }
     }
 }
+
+@Composable
+private fun Estadistica(estadistica: com.salazar.pokemon.domain.model.Estadistica) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(estadistica.nombre)
+            Text(estadistica.valor.toString())
+        }
+        LinearProgressIndicator(
+            progress = { (estadistica.valor / VALOR_MAXIMO).coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+private const val VALOR_MAXIMO = 255f

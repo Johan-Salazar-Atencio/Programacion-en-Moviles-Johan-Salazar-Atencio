@@ -11,13 +11,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -45,6 +48,7 @@ fun ListaScreen(
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val aviso by viewModel.aviso.collectAsStateWithLifecycle()
+    val consulta by viewModel.consulta.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -74,12 +78,22 @@ fun ListaScreen(
             is UiState.Cargando -> Cargando(modifier)
             is UiState.Error -> ErrorView(e.mensaje, onReintentar = viewModel::refrescar, modifier = modifier)
             is UiState.Exito ->
-                if (e.datos.isEmpty()) {
-                    Vacio(modifier)
+                if (e.datos.isEmpty() && consulta.isBlank()) {
+                    Vacio("No hay Pokémon guardados", modifier)
                 } else {
                     Column(modifier = modifier) {
+                        CampoBusqueda(consulta, viewModel::buscar)
                         aviso?.let { Aviso(it) }
-                        ListaItems(e.datos, onItemClick, viewModel::alternarFavorito)
+                        if (e.datos.isEmpty()) {
+                            Vacio("Sin resultados para «${consulta.trim()}»")
+                        } else {
+                            ListaItems(
+                                e.datos,
+                                onItemClick,
+                                viewModel::alternarFavorito,
+                                Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
         }
@@ -122,12 +136,33 @@ private fun Aviso(mensaje: String) {
 }
 
 @Composable
-private fun Vacio(modifier: Modifier = Modifier) {
+private fun CampoBusqueda(consulta: String, onCambio: (String) -> Unit) {
+    OutlinedTextField(
+        value = consulta,
+        onValueChange = onCambio,
+        placeholder = { Text("Buscar por nombre") },
+        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+        trailingIcon = {
+            if (consulta.isNotEmpty()) {
+                IconButton(onClick = { onCambio("") }) {
+                    Icon(Icons.Filled.Close, contentDescription = "Borrar búsqueda")
+                }
+            }
+        },
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+}
+
+@Composable
+private fun Vacio(mensaje: String, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("No hay Pokémon guardados")
+        Text(mensaje)
     }
 }

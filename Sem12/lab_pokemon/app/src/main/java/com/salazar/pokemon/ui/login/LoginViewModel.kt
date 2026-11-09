@@ -3,6 +3,8 @@ package com.salazar.pokemon.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salazar.pokemon.data.auth.AuthRepository
+import com.salazar.pokemon.data.auth.CredencialesInvalidasException
+import com.salazar.pokemon.data.auth.DemasiadosIntentosException
 import com.salazar.pokemon.domain.model.Sesion
 import com.salazar.pokemon.ui.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,8 @@ class LoginViewModel(private val auth: AuthRepository) : ViewModel() {
 
     private fun mensajeDe(e: Throwable) = when (e) {
         is IOException -> "No hay conexión a internet"
-        else -> "Correo o contraseña incorrectos"
+        is CredencialesInvalidasException -> "Correo o contraseña incorrectos"
+        is DemasiadosIntentosException -> "Demasiados intentos, espera unos minutos"
+        else -> "No se pudo iniciar sesión, intenta de nuevo"
     }
 }

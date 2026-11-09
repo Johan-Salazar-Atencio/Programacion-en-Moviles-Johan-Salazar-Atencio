@@ -5,12 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.salazar.pokemon.data.repository.ItemRepository
 import com.salazar.pokemon.notification.Notificador
 import com.salazar.pokemon.ui.UiState
+import com.salazar.pokemon.ui.mensajeDeError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 data class AdminResumen(val guardados: Int, val favoritos: Int)
 
@@ -36,7 +35,7 @@ class AdminViewModel(
                     _mensaje.value = "Se guardaron $it elementos"
                     notificador.mostrar("Datos actualizados", "Se guardaron $it elementos")
                 }
-                .onFailure { _mensaje.value = mensajeDe(it) }
+                .onFailure { _mensaje.value = mensajeDeError(it) }
             actualizarTotales()
         }
     }
@@ -51,11 +50,5 @@ class AdminViewModel(
 
     private suspend fun actualizarTotales() {
         _estado.value = UiState.Exito(AdminResumen(repo.cantidadGuardada(), repo.cantidadFavoritos()))
-    }
-
-    private fun mensajeDe(e: Throwable) = when (e) {
-        is IOException -> "No hay conexión a internet"
-        is HttpException -> "El servidor respondió con error ${e.code()}"
-        else -> "Ocurrió un error inesperado"
     }
 }
