@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,8 +31,7 @@ import com.salazar.pokemon.ui.components.ItemCard
 @Composable
 fun FavoritosScreen(
     viewModel: FavoritosViewModel,
-    onItemClick: (Int) -> Unit,
-    onVolver: () -> Unit
+    onItemClick: (Int) -> Unit
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -47,12 +44,7 @@ fun FavoritosScreen(
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                scrollBehavior = scrollBehavior,
-                navigationIcon = {
-                    IconButton(onClick = onVolver) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                }
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
