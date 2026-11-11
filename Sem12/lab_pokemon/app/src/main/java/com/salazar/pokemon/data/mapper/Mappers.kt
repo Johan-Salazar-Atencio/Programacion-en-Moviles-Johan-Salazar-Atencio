@@ -1,5 +1,6 @@
 package com.salazar.pokemon.data.mapper
 
+import com.salazar.pokemon.data.local.ItemConFavorito
 import com.salazar.pokemon.data.local.ItemEntity
 import com.salazar.pokemon.data.remote.dto.DetalleDto
 import com.salazar.pokemon.data.remote.dto.ItemDto
@@ -18,18 +19,17 @@ private val NOMBRES_ESTADISTICAS = linkedMapOf(
 
 private fun imagenDe(id: Int) = "$IMAGEN_BASE$id.png"
 
-fun ItemDto.aEntity(esFavorito: Boolean = false): ItemEntity {
+fun ItemDto.aEntity(): ItemEntity {
     val id = url.trimEnd('/').substringAfterLast('/').toInt()
     return ItemEntity(
         id = id,
         titulo = name,
         subtitulo = "#$id",
-        imagenUrl = imagenDe(id),
-        esFavorito = esFavorito
+        imagenUrl = imagenDe(id)
     )
 }
 
-fun ItemEntity.aModelo() = Item(
+fun ItemConFavorito.aModelo() = Item(
     id = id,
     titulo = titulo,
     subtitulo = subtitulo,

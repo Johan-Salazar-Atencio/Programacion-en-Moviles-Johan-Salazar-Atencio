@@ -13,7 +13,8 @@ import java.io.IOException
 
 class FirebaseAuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val usuarioActual: UsuarioActual = UsuarioActual()
 ) : AuthRepository {
 
     override suspend fun iniciarSesion(correo: String, clave: String): Result<Sesion> = try {
@@ -36,10 +37,14 @@ class FirebaseAuthRepository(
         return leerSesion(usuario.uid, usuario.email ?: "")
     }
 
-    override fun cerrarSesion() = auth.signOut()
+    override fun cerrarSesion() {
+        auth.signOut()
+        usuarioActual.establecer(null)
+    }
 
     // el rol vive en Firestore: usuarios/{uid}.rol
     private suspend fun leerSesion(uid: String, correo: String): Sesion {
+        usuarioActual.establecer(uid)
         val rol = try {
             val doc = db.collection("usuarios").document(uid).get().await()
             if (doc.getString("rol") == "admin") Rol.ADMIN else Rol.USUARIO
