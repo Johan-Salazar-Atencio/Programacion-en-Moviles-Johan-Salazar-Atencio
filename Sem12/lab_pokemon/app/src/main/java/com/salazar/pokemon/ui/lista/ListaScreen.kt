@@ -21,13 +21,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -54,9 +58,24 @@ fun ListaScreen(
     val aviso by viewModel.aviso.collectAsStateWithLifecycle()
     val consulta by viewModel.consulta.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(aviso) {
+        val mensaje = aviso
+        if (mensaje == null) {
+            snackbarHostState.currentSnackbarData?.dismiss()
+        } else {
+            snackbarHostState.showSnackbar(
+                message = mensaje,
+                withDismissAction = true,
+                duration = SnackbarDuration.Indefinite
+            )
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             LargeTopAppBar(
                 title = { Text("Pokémon de fuego") },
@@ -94,7 +113,6 @@ fun ListaScreen(
                     ListaItems(
                         datos = e.datos,
                         consulta = consulta,
-                        aviso = aviso,
                         onBuscar = viewModel::buscar,
                         onItemClick = onItemClick,
                         onFavorito = viewModel::alternarFavorito,
@@ -109,7 +127,6 @@ fun ListaScreen(
 private fun ListaItems(
     datos: List<Item>,
     consulta: String,
-    aviso: String?,
     onBuscar: (String) -> Unit,
     onItemClick: (Int) -> Unit,
     onFavorito: (Int) -> Unit,
@@ -121,7 +138,6 @@ private fun ListaItems(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item(key = "busqueda") { CampoBusqueda(consulta, onBuscar) }
-        aviso?.let { item(key = "aviso") { Aviso(it) } }
         if (datos.isEmpty()) {
             item(key = "vacio") {
                 EstadoVacio(
@@ -147,22 +163,6 @@ private fun ListaItems(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun Aviso(mensaje: String) {
-    Surface(
-        color = MaterialTheme.colorScheme.errorContainer,
-        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = mensaje,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }
 
