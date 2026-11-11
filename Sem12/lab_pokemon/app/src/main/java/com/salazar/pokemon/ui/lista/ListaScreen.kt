@@ -1,14 +1,13 @@
 package com.salazar.pokemon.ui.lista
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Close
@@ -19,21 +18,26 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.salazar.pokemon.domain.model.Item
 import com.salazar.pokemon.ui.UiState
 import com.salazar.pokemon.ui.components.Cargando
 import com.salazar.pokemon.ui.components.ErrorView
+import com.salazar.pokemon.ui.components.EstadoVacio
 import com.salazar.pokemon.ui.components.ItemCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,11 +53,17 @@ fun ListaScreen(
     val estado by viewModel.estado.collectAsStateWithLifecycle()
     val aviso by viewModel.aviso.collectAsStateWithLifecycle()
     val consulta by viewModel.consulta.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 title = { Text("Pokémon de fuego") },
+                colors = TopAppBarDefaults.largeTopAppBarColors(
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                scrollBehavior = scrollBehavior,
                 actions = {
                     IconButton(onClick = viewModel::refrescar) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Sincronizar")
@@ -79,22 +89,17 @@ fun ListaScreen(
             is UiState.Error -> ErrorView(e.mensaje, onReintentar = viewModel::refrescar, modifier = modifier)
             is UiState.Exito ->
                 if (e.datos.isEmpty() && consulta.isBlank()) {
-                    Vacio("No hay Pokémon guardados", modifier)
+                    EstadoVacio(Icons.Filled.Refresh, "No hay Pokémon guardados", modifier)
                 } else {
-                    Column(modifier = modifier) {
-                        CampoBusqueda(consulta, viewModel::buscar)
-                        aviso?.let { Aviso(it) }
-                        if (e.datos.isEmpty()) {
-                            Vacio("Sin resultados para «${consulta.trim()}»")
-                        } else {
-                            ListaItems(
-                                e.datos,
-                                onItemClick,
-                                viewModel::alternarFavorito,
-                                Modifier.weight(1f)
-                            )
-                        }
-                    }
+                    ListaItems(
+                        datos = e.datos,
+                        consulta = consulta,
+                        aviso = aviso,
+                        onBuscar = viewModel::buscar,
+                        onItemClick = onItemClick,
+                        onFavorito = viewModel::alternarFavorito,
+                        modifier = modifier
+                    )
                 }
         }
     }
@@ -103,41 +108,67 @@ fun ListaScreen(
 @Composable
 private fun ListaItems(
     datos: List<Item>,
+    consulta: String,
+    aviso: String?,
+    onBuscar: (String) -> Unit,
     onItemClick: (Int) -> Unit,
     onFavorito: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(datos, key = { it.id }) { item ->
-            ItemCard(
-                item = item,
-                onClick = { onItemClick(item.id) },
-                onFavorito = { onFavorito(item.id) }
-            )
+        item(key = "busqueda") { CampoBusqueda(consulta, onBuscar) }
+        aviso?.let { item(key = "aviso") { Aviso(it) } }
+        if (datos.isEmpty()) {
+            item(key = "vacio") {
+                EstadoVacio(
+                    Icons.Filled.Search,
+                    "Sin resultados para «${consulta.trim()}»",
+                    Modifier.fillParentMaxHeight(0.6f)
+                )
+            }
+        } else {
+            item(key = "contador") {
+                Text(
+                    text = if (consulta.isBlank()) "${datos.size} Pokémon" else "${datos.size} resultados",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+            items(datos, key = { it.id }) { item ->
+                ItemCard(
+                    item = item,
+                    onClick = { onItemClick(item.id) },
+                    onFavorito = { onFavorito(item.id) }
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun Aviso(mensaje: String) {
-    Text(
-        text = mensaje,
-        color = MaterialTheme.colorScheme.onErrorContainer,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .padding(12.dp)
-    )
+    Surface(
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = mensaje,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Composable
 private fun CampoBusqueda(consulta: String, onCambio: (String) -> Unit) {
-    OutlinedTextField(
+    TextField(
         value = consulta,
         onValueChange = onCambio,
         placeholder = { Text("Buscar por nombre") },
@@ -150,19 +181,13 @@ private fun CampoBusqueda(consulta: String, onCambio: (String) -> Unit) {
             }
         },
         singleLine = true,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        shape = CircleShape,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        modifier = Modifier.fillMaxWidth()
     )
-}
-
-@Composable
-private fun Vacio(mensaje: String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(mensaje)
-    }
 }
