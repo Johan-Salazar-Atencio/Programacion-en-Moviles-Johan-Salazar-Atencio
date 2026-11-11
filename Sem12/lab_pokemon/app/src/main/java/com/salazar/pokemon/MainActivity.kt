@@ -8,6 +8,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.salazar.pokemon.ui.navigation.AppNav
 import com.salazar.pokemon.ui.theme.LabpokemonTheme
@@ -25,7 +28,9 @@ class MainActivity : ComponentActivity() {
         val container = (application as PokemonApp).container
         setContent {
             LabpokemonTheme {
-                AppNav(container)
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    AppNav(container)
+                }
             }
         }
     }
