@@ -1,6 +1,9 @@
 package com.tecsup.campusgps.ui
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -108,7 +111,18 @@ fun PantallaMapa(vm: MapaViewModel) {
             }
             when (val e = estado) {
                 is UbicacionUi.Lista -> Text("Lat: ${e.posicion.latitud}  Lon: ${e.posicion.longitud}")
-                is UbicacionUi.Error -> Text(e.mensaje, color = MaterialTheme.colorScheme.error)
+                is UbicacionUi.Error -> MensajeError(
+                    error = e,
+                    onReintentar = { alPulsar() },
+                    onAbrirAjustes = {
+                        contexto.startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", contexto.packageName, null)
+                            )
+                        )
+                    }
+                )
                 UbicacionUi.Buscando -> Text("Buscando…")
                 UbicacionUi.Inicial -> Unit
             }
