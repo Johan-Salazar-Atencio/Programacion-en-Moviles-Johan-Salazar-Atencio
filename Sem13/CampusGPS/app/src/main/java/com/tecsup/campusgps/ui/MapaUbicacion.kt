@@ -35,6 +35,7 @@ import org.osmdroid.views.overlay.Marker
 
 private const val ATRIBUCION = "© MapTiler © OpenStreetMap contributors"
 private const val ROJO = 0xFFE53935.toInt()
+private const val AZUL = 0xFF1E88E5.toInt()
 
 private class TeselasMapTiler(private val clave: String) : OnlineTileSourceBase(
     "MapTiler", 0, 20, 256, ".png", arrayOf("https://api.maptiler.com/maps/streets-v2/256/"), ATRIBUCION
@@ -110,6 +111,15 @@ fun MapaUbicacion(
             modifier = Modifier.fillMaxSize(),
             update = { vista ->
                 vista.overlays.clear()
+                lugares.forEach { item ->
+                    vista.overlays.add(Marker(vista).apply {
+                        position = GeoPoint(item.lugar.latitud, item.lugar.longitud)
+                        title = item.lugar.nombre
+                        snippet = item.lugar.categoria
+                        icon = pin(contexto, AZUL)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    })
+                }
                 if (estado is UbicacionUi.Lista) {
                     vista.overlays.add(Marker(vista).apply {
                         position = GeoPoint(estado.posicion.latitud, estado.posicion.longitud)
