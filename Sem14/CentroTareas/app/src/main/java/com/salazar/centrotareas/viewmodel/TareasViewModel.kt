@@ -8,12 +8,14 @@ import com.salazar.centrotareas.model.CargaUi
 import com.salazar.centrotareas.model.PrimosUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
 
@@ -84,7 +86,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     // Una tras otra: 2 s + 3 s = 5 s
     fun cargarUnaPorUna() = cargar("Una por una") {
         val perfil = repo.cargarPerfil()
-        val pedidos = repo.cargarPedidos(_simularError.value)
+        val pedidos = repo.cargarPedidos(_simularError.value, _simularLentitud.value)
         Pair(perfil, pedidos)
     }
 
@@ -92,7 +94,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     fun cargarALaVez() = cargar("A la vez") {
         coroutineScope {
             val perfil = async { repo.cargarPerfil() }
-            val pedidos = async { repo.cargarPedidos(_simularError.value) }
+            val pedidos = async { repo.cargarPedidos(_simularError.value, _simularLentitud.value) }
             Pair(perfil.await(), pedidos.await())
         }
     }
@@ -103,10 +105,13 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             _carga.value = CargaUi.Cargando
             val inicio = System.currentTimeMillis()
             try {
-                val (perfil, pedidos) = bloque()
+                val (perfil, pedidos) = withTimeout(LIMITE_MS) { bloque() }
                 _carga.value = CargaUi.Exito(
                     modo, perfil, pedidos.size, System.currentTimeMillis() - inicio
                 )
+            } catch (e: TimeoutCancellationException) {
+                // Va antes que CancellationException: es una subclase suya
+                _carga.value = CargaUi.Error("Tardó demasiado")
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -120,5 +125,17 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
 
     fun cambiarSimularError(valor: Boolean) {
         _simularError.value = valor
+    }
+
+    // Con la lentitud activada, los pedidos tardan 8 s y superan el tiempo máximo
+    private val _simularLentitud = MutableStateFlow(false)
+    val simularLentitud: StateFlow<Boolean> = _simularLentitud.asStateFlow()
+
+    fun cambiarSimularLentitud(valor: Boolean) {
+        _simularLentitud.value = valor
+    }
+
+    private companion object {
+        const val LIMITE_MS = 6000L
     }
 }

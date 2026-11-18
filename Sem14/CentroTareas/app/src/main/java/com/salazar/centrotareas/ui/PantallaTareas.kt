@@ -47,6 +47,7 @@ fun PantallaTareas(vm: TareasViewModel) {
     val progreso by vm.progreso.collectAsState()
     val corriendo by vm.corriendo.collectAsState()
     val simularError by vm.simularError.collectAsState()
+    val simularLentitud by vm.simularLentitud.collectAsState()
     val primos by vm.primos.collectAsState()
     val carga by vm.carga.collectAsState()
 
@@ -130,6 +131,10 @@ fun PantallaTareas(vm: TareasViewModel) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = simularError, onCheckedChange = { vm.cambiarSimularError(it) })
                     Text("Simular error", modifier = Modifier.padding(start = 8.dp))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Switch(checked = simularLentitud, onCheckedChange = { vm.cambiarSimularLentitud(it) })
+                    Text("Simular lentitud", modifier = Modifier.padding(start = 8.dp))
                 }
                 ResultadoCarga(carga, onReintentar = { vm.cargarALaVez() })
             }

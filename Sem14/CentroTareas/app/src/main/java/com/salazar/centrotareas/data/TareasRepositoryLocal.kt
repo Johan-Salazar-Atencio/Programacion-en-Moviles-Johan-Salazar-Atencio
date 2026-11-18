@@ -26,8 +26,8 @@ class TareasRepositoryLocal : TareasRepository {
         return "Johan Salazar (ficticio)"
     }
 
-    override suspend fun cargarPedidos(simularError: Boolean): List<String> {
-        delay(3000)
+    override suspend fun cargarPedidos(simularError: Boolean, lento: Boolean): List<String> {
+        delay(if (lento) 8000 else 3000)
         if (simularError) throw IOException("Sin conexión")
         return listOf("Pedido 101", "Pedido 102", "Pedido 103")
     }
