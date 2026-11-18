@@ -12,6 +12,11 @@ import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -80,22 +85,18 @@ fun PantallaMapa(vm: MapaViewModel) {
             )
         }
     ) { relleno ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(relleno),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        val horizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val mapaUi: @Composable (Modifier) -> Unit = { modificador ->
             MapaUbicacion(
                 estado = estado,
                 lugares = lugares,
                 seleccionado = seleccionado,
                 masCercano = cercano?.id,
                 radio = radio,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+                modifier = modificador
             )
+        }
+        val controlesUi: @Composable () -> Unit = {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,6 +156,40 @@ fun PantallaMapa(vm: MapaViewModel) {
                     .fillMaxWidth()
                     .height(220.dp)
             )
+        }
+        if (horizontal) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(relleno)
+            ) {
+                mapaUi(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) { controlesUi() }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(relleno),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                mapaUi(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+                controlesUi()
+            }
         }
     }
 }
