@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salazar.centrotareas.data.TareasRepository
 import com.salazar.centrotareas.model.CargaUi
+import com.salazar.centrotareas.model.Comparacion
 import com.salazar.centrotareas.model.PrimosUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -15,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.io.IOException
@@ -109,9 +111,9 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             val inicio = System.currentTimeMillis()
             try {
                 val (perfil, pedidos) = conReintentos { withTimeout(LIMITE_MS) { bloque() } }
-                _carga.value = CargaUi.Exito(
-                    modo, perfil, pedidos.size, System.currentTimeMillis() - inicio
-                )
+                val ms = System.currentTimeMillis() - inicio
+                _carga.value = CargaUi.Exito(modo, perfil, pedidos.size, ms)
+                registrarTiempo(modo, ms)
             } catch (e: TimeoutCancellationException) {
                 // Va antes que CancellationException: es una subclase suya
                 _carga.value = CargaUi.Error("Tardó demasiado")
@@ -120,6 +122,17 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             } catch (e: Exception) {
                 _carga.value = CargaUi.Error("No se pudo cargar: " + e.message)
             }
+        }
+    }
+
+    // Tiempos acumulados de cada modo para compararlos en una tabla
+    private val _comparacion = MutableStateFlow(Comparacion())
+    val comparacion: StateFlow<Comparacion> = _comparacion.asStateFlow()
+
+    private fun registrarTiempo(modo: String, ms: Long) {
+        _comparacion.update { c ->
+            if (modo == "Una por una") c.copy(unaPorUna = c.unaPorUna + ms)
+            else c.copy(aLaVez = c.aLaVez + ms)
         }
     }
 

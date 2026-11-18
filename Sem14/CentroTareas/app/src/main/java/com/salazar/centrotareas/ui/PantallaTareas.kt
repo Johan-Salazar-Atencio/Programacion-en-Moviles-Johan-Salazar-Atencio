@@ -49,6 +49,7 @@ fun PantallaTareas(vm: TareasViewModel) {
     val simularError by vm.simularError.collectAsState()
     val simularLentitud by vm.simularLentitud.collectAsState()
     val intento by vm.intento.collectAsState()
+    val comparacion by vm.comparacion.collectAsState()
     val primos by vm.primos.collectAsState()
     val carga by vm.carga.collectAsState()
 
@@ -139,6 +140,9 @@ fun PantallaTareas(vm: TareasViewModel) {
                 }
                 if (cargando && intento.isNotEmpty()) Text(intento)
                 ResultadoCarga(carga, onReintentar = { vm.cargarALaVez() })
+            }
+            TarjetaTarea("Comparación de tiempos") {
+                TablaComparacion(comparacion)
             }
         }
     }
