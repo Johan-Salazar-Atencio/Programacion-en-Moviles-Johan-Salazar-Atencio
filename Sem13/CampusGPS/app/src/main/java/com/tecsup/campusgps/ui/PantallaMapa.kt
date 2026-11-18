@@ -6,7 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.campusgps.model.UbicacionUi
+import com.tecsup.campusgps.util.formatearDistancia
 import com.tecsup.campusgps.viewmodel.MapaViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,6 +38,7 @@ fun PantallaMapa(vm: MapaViewModel) {
     val estado by vm.estado.collectAsState()
     val lugares by vm.lugares.collectAsState()
     val seleccionado by vm.seleccionado.collectAsState()
+    val cercano by vm.masCercano.collectAsState()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -79,16 +84,27 @@ fun PantallaMapa(vm: MapaViewModel) {
                 estado = estado,
                 lugares = lugares,
                 seleccionado = seleccionado,
+                masCercano = cercano?.id,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             )
-            Button(
-                onClick = { alPulsar() },
-                enabled = estado !is UbicacionUi.Buscando,
-                modifier = Modifier.padding(top = 8.dp)
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Obtener mi ubicación")
+                Button(
+                    onClick = { alPulsar() },
+                    enabled = estado !is UbicacionUi.Buscando
+                ) {
+                    Text("Obtener mi ubicación")
+                }
+                OutlinedButton(
+                    onClick = { cercano?.let { vm.seleccionar(it.id) } },
+                    enabled = cercano != null
+                ) {
+                    Text("Ir al más cercano")
+                }
             }
             when (val e = estado) {
                 is UbicacionUi.Lista -> Text("Lat: ${e.posicion.latitud}  Lon: ${e.posicion.longitud}")
@@ -96,10 +112,15 @@ fun PantallaMapa(vm: MapaViewModel) {
                 UbicacionUi.Buscando -> Text("Buscando…")
                 UbicacionUi.Inicial -> Unit
             }
+            cercano?.let { lugar ->
+                val metros = lugares.firstOrNull { it.lugar.id == lugar.id }?.metros
+                if (metros != null) Text("Más cercano: ${lugar.nombre} (${formatearDistancia(metros)})")
+            }
             Spacer(Modifier.height(8.dp))
             ListaLugares(
                 lugares = lugares,
                 seleccionado = seleccionado,
+                masCercano = cercano?.id,
                 onClick = { vm.seleccionar(it) },
                 modifier = Modifier
                     .fillMaxWidth()

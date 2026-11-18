@@ -36,6 +36,7 @@ import org.osmdroid.views.overlay.Marker
 private const val ATRIBUCION = "© MapTiler © OpenStreetMap contributors"
 private const val ROJO = 0xFFE53935.toInt()
 private const val AZUL = 0xFF1E88E5.toInt()
+private const val VERDE = 0xFF43A047.toInt()
 
 private class TeselasMapTiler(private val clave: String) : OnlineTileSourceBase(
     "MapTiler", 0, 20, 256, ".png", arrayOf("https://api.maptiler.com/maps/streets-v2/256/"), ATRIBUCION
@@ -76,6 +77,7 @@ fun MapaUbicacion(
     estado: UbicacionUi,
     lugares: List<LugarConDistancia>,
     seleccionado: Int?,
+    masCercano: Int?,
     modifier: Modifier = Modifier
 ) {
     val contexto = LocalContext.current
@@ -122,7 +124,7 @@ fun MapaUbicacion(
                         position = GeoPoint(item.lugar.latitud, item.lugar.longitud)
                         title = item.lugar.nombre
                         snippet = item.lugar.categoria
-                        icon = pin(contexto, AZUL)
+                        icon = pin(contexto, if (item.lugar.id == masCercano) VERDE else AZUL)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     }
                     vista.overlays.add(marcador)

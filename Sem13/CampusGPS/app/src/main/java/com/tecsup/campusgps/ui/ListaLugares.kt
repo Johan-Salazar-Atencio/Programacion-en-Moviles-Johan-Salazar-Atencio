@@ -1,6 +1,11 @@
 package com.tecsup.campusgps.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
@@ -24,6 +29,7 @@ import com.tecsup.campusgps.util.formatearDistancia
 fun ListaLugares(
     lugares: List<LugarConDistancia>,
     seleccionado: Int?,
+    masCercano: Int?,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -50,7 +56,15 @@ fun ListaLugares(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column {
+                    Box(
+                        Modifier
+                            .size(12.dp)
+                            .background(
+                                if (item.lugar.id == masCercano) Color(0xFF43A047) else Color(0xFF1E88E5),
+                                CircleShape
+                            )
+                    )
+                    Column(Modifier.weight(1f).padding(horizontal = 10.dp)) {
                         Text(item.lugar.nombre, fontWeight = FontWeight.Bold)
                         Text(
                             item.lugar.categoria,
