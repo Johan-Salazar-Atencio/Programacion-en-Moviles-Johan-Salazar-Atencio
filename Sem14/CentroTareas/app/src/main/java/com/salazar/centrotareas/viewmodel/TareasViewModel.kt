@@ -19,8 +19,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
-
-    // ----- Tarea con progreso (pasos 1 a 4)
     private val _mensaje = MutableStateFlow("Listo")
     val mensaje: StateFlow<String> = _mensaje.asStateFlow()
 
@@ -31,7 +29,6 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _corriendo = MutableStateFlow(false)
     val corriendo: StateFlow<Boolean> = _corriendo.asStateFlow()
 
-    // 100 vueltas de 40 ms en segundo plano; el hilo principal solo actualiza el estado
     fun tareaLarga() {
         if (_corriendo.value) return
         trabajo = viewModelScope.launch {
@@ -55,13 +52,11 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         }
     }
 
-    // La barra se queda donde estaba
     fun cancelar() {
         trabajo?.cancel()
         _mensaje.value = "Cancelado"
     }
 
-    // ----- Contar primos (paso 5)
     private val _primos = MutableStateFlow<PrimosUi>(PrimosUi.Inicial)
     val primos: StateFlow<PrimosUi> = _primos.asStateFlow()
 
@@ -86,18 +81,15 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         trabajoPrimos?.cancel()
     }
 
-    // ----- Dos cargas (pasos 6 y 7)
     private val _carga = MutableStateFlow<CargaUi>(CargaUi.Inicial)
     val carga: StateFlow<CargaUi> = _carga.asStateFlow()
 
-    // Una tras otra: 2 s + 3 s = 5 s
     fun cargarUnaPorUna() = cargar("Una por una") {
         val perfil = repo.cargarPerfil()
         val pedidos = repo.cargarPedidos(_simularError.value)
         Pair(perfil, pedidos)
     }
 
-    // Las dos a la vez con async: máximo(2 s, 3 s) = 3 s
     fun cargarALaVez() = cargar("A la vez") {
         coroutineScope {
             val perfil = async { repo.cargarPerfil() }

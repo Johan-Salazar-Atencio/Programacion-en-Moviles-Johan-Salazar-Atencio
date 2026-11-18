@@ -1,6 +1,5 @@
 package com.salazar.centrotareas.model
 
-// Estados de pantalla de los primos y de las cargas
 sealed interface PrimosUi {
     data object Inicial : PrimosUi
     data object Calculando : PrimosUi
