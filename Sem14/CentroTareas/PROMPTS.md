@@ -1,0 +1,13 @@
+# PROMPTS — Fase 2 (rama `mejora-ia`)
+
+Mejoras elegidas: **progreso desde el Repository con Flow**, **tiempo máximo con `withTimeout`**, **reintento automático** y **comparación de tiempos**. Todas respetan MVVM + Repository, sin `GlobalScope`, `runBlocking` ni `Thread.sleep`, y relanzan la `CancellationException`.
+
+| Prompt que escribí | Qué respondió la IA | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| «Mueve la tarea simulada con progreso al Repository y expónla como un Flow con flowOn(Dispatchers.Default), sin romper MVVM» | Agregó `progresoTarea(): Flow<Float>` a la interface, con `flow { emit(i / 100f) }` y `flowOn(Dispatchers.Default)`; el ViewModel hace `collect` y actualiza el `StateFlow` | Quité el `withContext` del ViewModel y sus imports. Dejé el `Log` HILO dentro del flow para seguir viendo el hilo de trabajo | El ViewModel ya no decide en qué hilo se trabaja: eso lo resuelve el Repository con `flowOn`. Cancelar sigue funcionando porque `collect` es cancelable |
+| «Agrega withTimeout de 2 s a las cargas y muestra "Tardó demasiado" si se pasa» | Envolvió cada llamada del Repository con `withTimeout(2000)` | Descarté los 2 s y puse **6 s por intento** sobre todo el bloque de carga, más un interruptor **Simular lentitud** (los pedidos tardan 8 s). Capturé `TimeoutCancellationException` **antes** que `CancellationException` | Las cargas normales ya tardan 2 s y 3 s (5 s una por una): con 2 s siempre fallarían. `TimeoutCancellationException` es subclase de `CancellationException`; si se relanza primero, el aviso nunca aparece |
+| «Reintenta la carga hasta 3 veces con espera creciente antes de mostrar el error» | Propuso un bucle con `delay` creciente que capturaba `Exception` | Cambié a capturar solo `IOException`, con esperas de 0,5 s y 1 s, y agregué el aviso «Reintentando (n de 3)...» en pantalla. El timeout queda dentro de cada intento | Capturar `Exception` también atraparía la `CancellationException` y rompería la cancelación. Con el aviso se ve el reintento al probar con Simular error (unos 10 s hasta el error final) |
+| «Guarda los tiempos de Una por una y A la vez y muéstralos en una tabla para ver la diferencia» | Un `StateFlow<Comparacion>` con dos listas de milisegundos y una tabla en Compose con veces, último y promedio | Agregué la frase «A la vez ahorra N ms en promedio» y solo registro cargas exitosas | Un tiempo de una carga fallida o cancelada falsearía el promedio. La tabla es solo de vista: la lógica vive en el ViewModel |
+
+
+**Nota:** la guía pide un tiempo máximo de 2 s. Usé 6 s por intento porque las cargas normales ya tardan 2 s y 3 s; con 2 s siempre fallarían. Con el interruptor Simular lentitud se prueba el aviso «Tardó demasiado».
