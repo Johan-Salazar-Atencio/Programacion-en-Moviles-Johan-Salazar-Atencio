@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tecsup.campusgps.data.LugaresRepository
 import com.tecsup.campusgps.data.UbicacionNoDisponibleException
 import com.tecsup.campusgps.data.UbicacionRepository
+import com.tecsup.campusgps.data.UltimoLugarRepository
 import com.tecsup.campusgps.model.Lugar
 import com.tecsup.campusgps.model.LugarConDistancia
 import com.tecsup.campusgps.model.Posicion
@@ -22,7 +23,8 @@ import kotlinx.coroutines.launch
 
 class MapaViewModel(
     private val ubicacionRepo: UbicacionRepository,
-    private val lugaresRepo: LugaresRepository
+    private val lugaresRepo: LugaresRepository,
+    private val ultimoRepo: UltimoLugarRepository
 ) : ViewModel() {
 
     private val _estado = MutableStateFlow<UbicacionUi>(UbicacionUi.Inicial)
@@ -63,6 +65,10 @@ class MapaViewModel(
         _radio.value = if (_radio.value == metros) null else metros
     }
 
+    init {
+        viewModelScope.launch { _seleccionado.value = ultimoRepo.leer() }
+    }
+
     fun buscar() {
         if (!ubicacionRepo.playServicesDisponible()) {
             _estado.value = UbicacionUi.Error(
@@ -95,6 +101,7 @@ class MapaViewModel(
 
     fun seleccionar(id: Int?) {
         _seleccionado.value = id
+        if (id != null) viewModelScope.launch { ultimoRepo.guardar(id) }
     }
 
     private fun actualizarDistancias(posicion: Posicion) {

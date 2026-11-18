@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.campusgps.data.LugaresRepositoryLocal
 import com.tecsup.campusgps.data.UbicacionRepositoryGoogle
+import com.tecsup.campusgps.data.UltimoLugarRepositoryDataStore
 
 class CampusViewModelFactory(private val contexto: Context) : ViewModelProvider.Factory {
 
@@ -12,6 +13,7 @@ class CampusViewModelFactory(private val contexto: Context) : ViewModelProvider.
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         MapaViewModel(
             UbicacionRepositoryGoogle(contexto.applicationContext),
-            LugaresRepositoryLocal()
+            LugaresRepositoryLocal(),
+            UltimoLugarRepositoryDataStore(contexto.applicationContext)
         ) as T
 }
