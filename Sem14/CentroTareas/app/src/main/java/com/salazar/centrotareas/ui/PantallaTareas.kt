@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +19,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.salazar.centrotareas.viewmodel.TareasViewModel
@@ -48,7 +52,15 @@ fun PantallaTareas(vm: TareasViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Prueba de vida: si deja de sumar, la pantalla está congelada
+            var toques by rememberSaveable { mutableIntStateOf(0) }
+            Button(
+                onClick = { toques++ },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Tócame: $toques") }
+
             TarjetaTarea("Tarea con progreso") {
+                Button(onClick = { vm.tareaLargaMala() }) { Text("Tarea larga (MAL)") }
                 Text(mensaje)
             }
             TarjetaTarea("Contar números primos") {
