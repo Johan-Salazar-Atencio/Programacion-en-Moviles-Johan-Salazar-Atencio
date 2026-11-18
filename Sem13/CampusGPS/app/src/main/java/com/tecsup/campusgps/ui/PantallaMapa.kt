@@ -97,6 +97,14 @@ fun PantallaMapa(vm: MapaViewModel) {
                 UbicacionUi.Inicial -> Unit
             }
             Spacer(Modifier.height(8.dp))
+            ListaLugares(
+                lugares = lugares,
+                seleccionado = seleccionado,
+                onClick = { vm.seleccionar(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
         }
     }
 }

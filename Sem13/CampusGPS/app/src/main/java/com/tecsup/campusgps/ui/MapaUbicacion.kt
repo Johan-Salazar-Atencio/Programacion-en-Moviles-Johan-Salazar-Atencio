@@ -105,6 +105,12 @@ fun MapaUbicacion(
         }
     }
 
+    LaunchedEffect(seleccionado) {
+        lugares.firstOrNull { it.lugar.id == seleccionado }?.let {
+            mapa.controller.animateTo(GeoPoint(it.lugar.latitud, it.lugar.longitud), 17.0, 1000L)
+        }
+    }
+
     Box(modifier = modifier.clipToBounds()) {
         AndroidView(
             factory = { mapa },
@@ -112,13 +118,15 @@ fun MapaUbicacion(
             update = { vista ->
                 vista.overlays.clear()
                 lugares.forEach { item ->
-                    vista.overlays.add(Marker(vista).apply {
+                    val marcador = Marker(vista).apply {
                         position = GeoPoint(item.lugar.latitud, item.lugar.longitud)
                         title = item.lugar.nombre
                         snippet = item.lugar.categoria
                         icon = pin(contexto, AZUL)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    })
+                    }
+                    vista.overlays.add(marcador)
+                    if (item.lugar.id == seleccionado) marcador.showInfoWindow()
                 }
                 if (estado is UbicacionUi.Lista) {
                     vista.overlays.add(Marker(vista).apply {
