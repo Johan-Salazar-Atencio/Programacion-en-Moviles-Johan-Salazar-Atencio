@@ -1,5 +1,11 @@
 package com.tecsup.campusgps.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +30,29 @@ import com.tecsup.campusgps.viewmodel.MapaViewModel
 @Composable
 fun PantallaMapa(vm: MapaViewModel) {
     val estado by vm.estado.collectAsState()
+    val contexto = LocalContext.current
+    val lanzador = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        if (resultado.values.any { it }) vm.buscar() else vm.permisoDenegado()
+    }
+
+    fun alPulsar() {
+        val concedido = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ).any { ContextCompat.checkSelfPermission(contexto, it) == PackageManager.PERMISSION_GRANTED }
+        if (concedido) {
+            vm.buscar()
+        } else {
+            lanzador.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -45,7 +74,7 @@ fun PantallaMapa(vm: MapaViewModel) {
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
         ) {
             Button(
-                onClick = { vm.buscar() },
+                onClick = { alPulsar() },
                 enabled = estado !is UbicacionUi.Buscando
             ) {
                 Text("Obtener mi ubicación")
