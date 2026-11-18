@@ -42,6 +42,7 @@ fun PantallaMapa(vm: MapaViewModel) {
     val lugares by vm.lugares.collectAsState()
     val seleccionado by vm.seleccionado.collectAsState()
     val cercano by vm.masCercano.collectAsState()
+    val categoria by vm.categoria.collectAsState()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -109,6 +110,11 @@ fun PantallaMapa(vm: MapaViewModel) {
                     Text("Ir al más cercano")
                 }
             }
+            FiltroCategorias(
+                categorias = vm.categorias,
+                elegida = categoria,
+                onElegir = { vm.filtrarCategoria(it) }
+            )
             when (val e = estado) {
                 is UbicacionUi.Lista -> Text("Lat: ${e.posicion.latitud}  Lon: ${e.posicion.longitud}")
                 is UbicacionUi.Error -> MensajeError(
