@@ -49,6 +49,20 @@ class MapaViewModel(
         .map { lista -> lista.firstOrNull { it.metros != null }?.lugar }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    val radios: List<Int> = listOf(100, 200, 500)
+
+    private val _radio = MutableStateFlow<Int?>(null)
+    val radio: StateFlow<Int?> = _radio.asStateFlow()
+
+    val dentroDelRadio: StateFlow<Set<Int>> = combine(lugares, _radio) { lista, radio ->
+        if (radio == null) emptySet()
+        else lista.filter { (it.metros ?: Float.MAX_VALUE) <= radio }.map { it.lugar.id }.toSet()
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+
+    fun elegirRadio(metros: Int) {
+        _radio.value = if (_radio.value == metros) null else metros
+    }
+
     fun buscar() {
         if (!ubicacionRepo.playServicesDisponible()) {
             _estado.value = UbicacionUi.Error(

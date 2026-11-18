@@ -32,6 +32,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polygon
 
 private const val ATRIBUCION = "© MapTiler © OpenStreetMap contributors"
 private const val ROJO = 0xFFE53935.toInt()
@@ -78,6 +79,7 @@ fun MapaUbicacion(
     lugares: List<LugarConDistancia>,
     seleccionado: Int?,
     masCercano: Int?,
+    radio: Int?,
     modifier: Modifier = Modifier
 ) {
     val contexto = LocalContext.current
@@ -119,6 +121,17 @@ fun MapaUbicacion(
             modifier = Modifier.fillMaxSize(),
             update = { vista ->
                 vista.overlays.clear()
+                if (estado is UbicacionUi.Lista && radio != null) {
+                    vista.overlays.add(Polygon(vista).apply {
+                        points = Polygon.pointsAsCircle(
+                            GeoPoint(estado.posicion.latitud, estado.posicion.longitud),
+                            radio.toDouble()
+                        )
+                        fillPaint.color = 0x338B1E3F
+                        outlinePaint.color = 0xFF8B1E3F.toInt()
+                        outlinePaint.strokeWidth = 4f
+                    })
+                }
                 lugares.forEach { item ->
                     val marcador = Marker(vista).apply {
                         position = GeoPoint(item.lugar.latitud, item.lugar.longitud)
