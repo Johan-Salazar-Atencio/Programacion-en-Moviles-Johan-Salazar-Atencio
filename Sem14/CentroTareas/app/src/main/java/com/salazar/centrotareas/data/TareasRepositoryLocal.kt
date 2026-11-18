@@ -1,12 +1,25 @@
 package com.salazar.centrotareas.data
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class TareasRepositoryLocal : TareasRepository {
+
+    // Progreso de la tarea simulada: 100 pasos de 40 ms emitidos en segundo plano
+    override fun progresoTarea(): Flow<Float> = flow {
+        for (i in 1..100) {
+            if (i == 1) Log.d("HILO", "Dentro: ${Thread.currentThread().name}")
+            delay(40)
+            emit(i / 100f)
+        }
+    }.flowOn(Dispatchers.Default)
 
     override suspend fun cargarPerfil(): String {
         delay(2000)

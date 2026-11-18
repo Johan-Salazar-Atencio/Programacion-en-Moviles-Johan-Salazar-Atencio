@@ -7,16 +7,13 @@ import com.salazar.centrotareas.data.TareasRepository
 import com.salazar.centrotareas.model.CargaUi
 import com.salazar.centrotareas.model.PrimosUi
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
 
@@ -31,7 +28,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _corriendo = MutableStateFlow(false)
     val corriendo: StateFlow<Boolean> = _corriendo.asStateFlow()
 
-    // 100 vueltas de 40 ms en segundo plano; el hilo principal solo actualiza el estado
+    // El Repository emite el progreso en segundo plano; el ViewModel solo lo recoge
     fun tareaLarga() {
         if (_corriendo.value) return
         trabajo = viewModelScope.launch {
@@ -40,13 +37,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
                 _progreso.value = 0f
                 _mensaje.value = "Trabajando..."
                 Log.d("HILO", "Antes: ${Thread.currentThread().name}")
-                for (i in 1..100) {
-                    withContext(Dispatchers.Default) {
-                        if (i == 1) Log.d("HILO", "Dentro: ${Thread.currentThread().name}")
-                        delay(40)
-                    }
-                    _progreso.value = i / 100f
-                }
+                repo.progresoTarea().collect { _progreso.value = it }
                 Log.d("HILO", "Despues: ${Thread.currentThread().name}")
                 _mensaje.value = "Terminó"
             } finally {
