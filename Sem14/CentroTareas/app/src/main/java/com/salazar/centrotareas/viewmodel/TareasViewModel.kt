@@ -11,11 +11,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.io.IOException
 
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
 
@@ -103,9 +105,10 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         if (_carga.value == CargaUi.Cargando) return
         viewModelScope.launch {
             _carga.value = CargaUi.Cargando
+            _intento.value = ""
             val inicio = System.currentTimeMillis()
             try {
-                val (perfil, pedidos) = withTimeout(LIMITE_MS) { bloque() }
+                val (perfil, pedidos) = conReintentos { withTimeout(LIMITE_MS) { bloque() } }
                 _carga.value = CargaUi.Exito(
                     modo, perfil, pedidos.size, System.currentTimeMillis() - inicio
                 )
@@ -118,6 +121,25 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
                 _carga.value = CargaUi.Error("No se pudo cargar: " + e.message)
             }
         }
+    }
+
+    // Aviso del reintento automático mientras se carga
+    private val _intento = MutableStateFlow("")
+    val intento: StateFlow<String> = _intento.asStateFlow()
+
+    // Hasta 3 intentos con espera creciente (0,5 s y 1 s); solo reintenta ante IOException
+    private suspend fun <T> conReintentos(bloque: suspend () -> T): T {
+        var espera = 500L
+        for (n in 1 until MAX_INTENTOS) {
+            try {
+                return bloque()
+            } catch (e: IOException) {
+                _intento.value = "Reintentando (${n + 1} de $MAX_INTENTOS)..."
+                delay(espera)
+                espera *= 2
+            }
+        }
+        return bloque()
     }
 
     private val _simularError = MutableStateFlow(false)
@@ -137,5 +159,6 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
 
     private companion object {
         const val LIMITE_MS = 6000L
+        const val MAX_INTENTOS = 3
     }
 }

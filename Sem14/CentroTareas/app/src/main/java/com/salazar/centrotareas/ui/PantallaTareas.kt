@@ -48,6 +48,7 @@ fun PantallaTareas(vm: TareasViewModel) {
     val corriendo by vm.corriendo.collectAsState()
     val simularError by vm.simularError.collectAsState()
     val simularLentitud by vm.simularLentitud.collectAsState()
+    val intento by vm.intento.collectAsState()
     val primos by vm.primos.collectAsState()
     val carga by vm.carga.collectAsState()
 
@@ -136,6 +137,7 @@ fun PantallaTareas(vm: TareasViewModel) {
                     Switch(checked = simularLentitud, onCheckedChange = { vm.cambiarSimularLentitud(it) })
                     Text("Simular lentitud", modifier = Modifier.padding(start = 8.dp))
                 }
+                if (cargando && intento.isNotEmpty()) Text(intento)
                 ResultadoCarga(carga, onReintentar = { vm.cargarALaVez() })
             }
         }
