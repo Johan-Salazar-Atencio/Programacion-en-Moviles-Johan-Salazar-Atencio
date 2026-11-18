@@ -22,8 +22,6 @@ import kotlinx.coroutines.withTimeout
 import java.io.IOException
 
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
-
-    // ----- Tarea con progreso (pasos 1 a 4)
     private val _mensaje = MutableStateFlow("Listo")
     val mensaje: StateFlow<String> = _mensaje.asStateFlow()
 
@@ -34,7 +32,6 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _corriendo = MutableStateFlow(false)
     val corriendo: StateFlow<Boolean> = _corriendo.asStateFlow()
 
-    // El Repository emite el progreso en segundo plano; el ViewModel solo lo recoge
     fun tareaLarga() {
         if (_corriendo.value) return
         trabajo = viewModelScope.launch {
@@ -52,13 +49,11 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         }
     }
 
-    // La barra se queda donde estaba
     fun cancelar() {
         trabajo?.cancel()
         _mensaje.value = "Cancelado"
     }
 
-    // ----- Contar primos (paso 5)
     private val _primos = MutableStateFlow<PrimosUi>(PrimosUi.Inicial)
     val primos: StateFlow<PrimosUi> = _primos.asStateFlow()
 
@@ -83,18 +78,15 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         trabajoPrimos?.cancel()
     }
 
-    // ----- Dos cargas (pasos 6 y 7)
     private val _carga = MutableStateFlow<CargaUi>(CargaUi.Inicial)
     val carga: StateFlow<CargaUi> = _carga.asStateFlow()
 
-    // Una tras otra: 2 s + 3 s = 5 s
     fun cargarUnaPorUna() = cargar("Una por una") {
         val perfil = repo.cargarPerfil()
         val pedidos = repo.cargarPedidos(_simularError.value, _simularLentitud.value)
         Pair(perfil, pedidos)
     }
 
-    // Las dos a la vez con async: máximo(2 s, 3 s) = 3 s
     fun cargarALaVez() = cargar("A la vez") {
         coroutineScope {
             val perfil = async { repo.cargarPerfil() }
@@ -125,7 +117,6 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         }
     }
 
-    // Tiempos acumulados de cada modo para compararlos en una tabla
     private val _comparacion = MutableStateFlow(Comparacion())
     val comparacion: StateFlow<Comparacion> = _comparacion.asStateFlow()
 
@@ -136,11 +127,10 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         }
     }
 
-    // Aviso del reintento automático mientras se carga
     private val _intento = MutableStateFlow("")
     val intento: StateFlow<String> = _intento.asStateFlow()
 
-    // Hasta 3 intentos con espera creciente (0,5 s y 1 s); solo reintenta ante IOException
+    // Solo reintenta ante IOException para no atrapar la cancelación
     private suspend fun <T> conReintentos(bloque: suspend () -> T): T {
         var espera = 500L
         for (n in 1 until MAX_INTENTOS) {
@@ -162,7 +152,6 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         _simularError.value = valor
     }
 
-    // Con la lentitud activada, los pedidos tardan 8 s y superan el tiempo máximo
     private val _simularLentitud = MutableStateFlow(false)
     val simularLentitud: StateFlow<Boolean> = _simularLentitud.asStateFlow()
 

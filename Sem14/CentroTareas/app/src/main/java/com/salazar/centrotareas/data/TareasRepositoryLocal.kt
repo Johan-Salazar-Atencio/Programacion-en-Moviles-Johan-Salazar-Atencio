@@ -11,8 +11,6 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class TareasRepositoryLocal : TareasRepository {
-
-    // Progreso de la tarea simulada: 100 pasos de 40 ms emitidos en segundo plano
     override fun progresoTarea(): Flow<Float> = flow {
         for (i in 1..100) {
             if (i == 1) Log.d("HILO", "Dentro: ${Thread.currentThread().name}")
@@ -32,7 +30,6 @@ class TareasRepositoryLocal : TareasRepository {
         return listOf("Pedido 101", "Pedido 102", "Pedido 103")
     }
 
-    // Cálculo pesado en Default; ensureActive() permite cancelar a mitad del ciclo
     override suspend fun contarPrimos(hasta: Int): Int = withContext(Dispatchers.Default) {
         var cantidad = 0
         for (n in 2..hasta) {

@@ -72,7 +72,6 @@ fun PantallaTareas(vm: TareasViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Prueba de vida: si deja de sumar, la pantalla está congelada
             var toques by rememberSaveable { mutableIntStateOf(0) }
             Button(
                 onClick = { toques++ },
