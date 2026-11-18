@@ -93,7 +93,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     // Una tras otra: 2 s + 3 s = 5 s
     fun cargarUnaPorUna() = cargar("Una por una") {
         val perfil = repo.cargarPerfil()
-        val pedidos = repo.cargarPedidos(false)
+        val pedidos = repo.cargarPedidos(_simularError.value)
         Pair(perfil, pedidos)
     }
 
@@ -101,7 +101,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     fun cargarALaVez() = cargar("A la vez") {
         coroutineScope {
             val perfil = async { repo.cargarPerfil() }
-            val pedidos = async { repo.cargarPedidos(false) }
+            val pedidos = async { repo.cargarPedidos(_simularError.value) }
             Pair(perfil.await(), pedidos.await())
         }
     }
@@ -111,11 +111,23 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         viewModelScope.launch {
             _carga.value = CargaUi.Cargando
             val inicio = System.currentTimeMillis()
-            val (perfil, pedidos) = bloque()
-            _carga.value = CargaUi.Exito(
-                modo, perfil, pedidos.size, System.currentTimeMillis() - inicio
-            )
+            try {
+                val (perfil, pedidos) = bloque()
+                _carga.value = CargaUi.Exito(
+                    modo, perfil, pedidos.size, System.currentTimeMillis() - inicio
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _carga.value = CargaUi.Error("No se pudo cargar: " + e.message)
+            }
         }
     }
-    // TODO Paso 7: simularError y manejo de errores
+
+    private val _simularError = MutableStateFlow(false)
+    val simularError: StateFlow<Boolean> = _simularError.asStateFlow()
+
+    fun cambiarSimularError(valor: Boolean) {
+        _simularError.value = valor
+    }
 }

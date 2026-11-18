@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,6 +46,7 @@ fun PantallaTareas(vm: TareasViewModel) {
     val mensaje by vm.mensaje.collectAsState()
     val progreso by vm.progreso.collectAsState()
     val corriendo by vm.corriendo.collectAsState()
+    val simularError by vm.simularError.collectAsState()
     val primos by vm.primos.collectAsState()
     val carga by vm.carga.collectAsState()
 
@@ -125,7 +127,11 @@ fun PantallaTareas(vm: TareasViewModel) {
                     }
                     if (cargando) CircularProgressIndicator(modifier = Modifier.size(28.dp))
                 }
-                ResultadoCarga(carga, onReintentar = { })
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Switch(checked = simularError, onCheckedChange = { vm.cambiarSimularError(it) })
+                    Text("Simular error", modifier = Modifier.padding(start = 8.dp))
+                }
+                ResultadoCarga(carga, onReintentar = { vm.cargarALaVez() })
             }
         }
     }
