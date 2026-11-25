@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -16,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +33,42 @@ import com.salazar.murocampus.viewmodel.UiState
 fun PantallaDetalle(vm: PostsViewModel, id: Int, onVolver: () -> Unit) {
     val estado by vm.detalle.collectAsStateWithLifecycle()
     val borrado by vm.borrado.collectAsStateWithLifecycle()
+    val edicion by vm.edicion.collectAsStateWithLifecycle()
+    var editando by rememberSaveable { mutableStateOf(false) }
+    var nuevoTitulo by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(edicion) {
+        if (edicion is UiState.Exito) editando = false
+    }
+
+    if (editando) {
+        AlertDialog(
+            onDismissRequest = { editando = false; vm.limpiarEdicion() },
+            title = { Text("Editar título") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = nuevoTitulo,
+                        onValueChange = { nuevoTitulo = it },
+                        label = { Text("Nuevo título") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    (edicion as? UiState.Error)?.let {
+                        Text(it.mensaje, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { vm.editarTitulo(id, nuevoTitulo.trim()) },
+                    enabled = nuevoTitulo.isNotBlank() && edicion !is UiState.Cargando
+                ) { Text("Guardar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { editando = false; vm.limpiarEdicion() }) { Text("Cancelar") }
+            }
+        )
+    }
 
     LaunchedEffect(borrado) {
         if (borrado is UiState.Exito) {
@@ -58,6 +100,18 @@ fun PantallaDetalle(vm: PostsViewModel, id: Int, onVolver: () -> Unit) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(e.datos.post.body, style = MaterialTheme.typography.bodyLarge)
+                        (edicion as? UiState.Exito)?.let {
+                            Text(
+                                "Título actualizado con PATCH (id ${it.datos.id})",
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                        OutlinedButton(onClick = {
+                            nuevoTitulo = e.datos.post.title
+                            vm.limpiarEdicion()
+                            editando = true
+                        }) { Text("Editar título") }
                         OutlinedButton(
                             onClick = { vm.borrar(id) },
                             enabled = borrado !is UiState.Cargando

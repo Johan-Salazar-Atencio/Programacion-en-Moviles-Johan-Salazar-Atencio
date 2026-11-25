@@ -27,6 +27,11 @@ data class NuevoPost(
 )
 
 @Serializable
+data class CambioTitulo(
+    val title: String
+)
+
+@Serializable
 data class Usuario(
     val id: Int,
     val name: String,
