@@ -1,10 +1,11 @@
 package com.salazar.avisoscampus
 
 import android.app.Application
+import com.salazar.avisoscampus.notificacion.Notificador
 
 class AvisosApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        // TODO Paso 1: Notificador.crearCanal(this)
+        Notificador.crearCanal(this)
     }
 }
