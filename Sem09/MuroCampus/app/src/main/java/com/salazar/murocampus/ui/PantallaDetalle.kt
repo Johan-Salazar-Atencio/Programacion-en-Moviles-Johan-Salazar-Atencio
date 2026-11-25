@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +26,14 @@ import com.salazar.murocampus.viewmodel.UiState
 @Composable
 fun PantallaDetalle(vm: PostsViewModel, id: Int, onVolver: () -> Unit) {
     val estado by vm.detalle.collectAsStateWithLifecycle()
+    val borrado by vm.borrado.collectAsStateWithLifecycle()
+
+    LaunchedEffect(borrado) {
+        if (borrado is UiState.Exito) {
+            vm.limpiarBorrado()
+            onVolver()
+        }
+    }
 
     Scaffold(topBar = { BarraMuro("Publicación", onAtras = onVolver) }) { relleno ->
         val modificador = Modifier.padding(relleno)
@@ -48,6 +58,18 @@ fun PantallaDetalle(vm: PostsViewModel, id: Int, onVolver: () -> Unit) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(e.datos.post.body, style = MaterialTheme.typography.bodyLarge)
+                        OutlinedButton(
+                            onClick = { vm.borrar(id) },
+                            enabled = borrado !is UiState.Cargando
+                        ) {
+                            Text(
+                                if (borrado is UiState.Cargando) "Eliminando…" else "Eliminar",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        (borrado as? UiState.Error)?.let {
+                            Text(it.mensaje, color = MaterialTheme.colorScheme.error)
+                        }
                         Text(
                             "Comentarios (${e.datos.comentarios.size})",
                             Modifier.padding(top = 12.dp),
