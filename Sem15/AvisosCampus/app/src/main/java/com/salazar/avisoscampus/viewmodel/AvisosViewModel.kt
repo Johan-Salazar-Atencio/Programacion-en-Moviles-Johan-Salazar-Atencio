@@ -6,6 +6,8 @@ import com.salazar.avisoscampus.data.AvisosRepository
 import com.salazar.avisoscampus.model.Aviso
 import com.salazar.avisoscampus.model.Origen
 import com.salazar.avisoscampus.model.PermisoUi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -40,7 +42,37 @@ class AvisosViewModel(private val repo: AvisosRepository) : ViewModel() {
         }
     }
 
-    // TODO Paso 5: faltan, recordarEn(segundos) y cancelarRecordatorio()
+    private var trabajo: Job? = null
+
+    // Segundos que faltan, o null si no hay recordatorio activo
+    private val _faltan = MutableStateFlow<Int?>(null)
+    val faltan: StateFlow<Int?> = _faltan.asStateFlow()
+
+    fun recordarEn(segundos: Int = 10) {
+        if (trabajo?.isActive == true) return
+        trabajo = viewModelScope.launch {
+            try {
+                for (restante in segundos downTo 1) {
+                    _faltan.value = restante
+                    delay(1000)
+                }
+                val aviso = repo.registrar(
+                    "Recordatorio",
+                    "Revisa tu laboratorio pendiente",
+                    Origen.RECORDATORIO
+                )
+                _eventos.emit(aviso)
+            } finally {
+                // Se ejecuta al terminar y también al cancelar
+                _faltan.value = null
+            }
+        }
+    }
+
+    fun cancelarRecordatorio() {
+        trabajo?.cancel()
+    }
+
     // TODO Paso 6: escuchandoAvion, cambiarEscucha(valor) y alCambiarModoAvion(activo)
     // TODO Paso 8: fun noSePudoMostrar()
 }
