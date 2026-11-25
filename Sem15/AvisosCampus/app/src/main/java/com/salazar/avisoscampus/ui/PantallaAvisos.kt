@@ -1,6 +1,8 @@
 package com.salazar.avisoscampus.ui
 
 import android.Manifest
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,10 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.salazar.avisoscampus.model.PermisoUi
 import com.salazar.avisoscampus.notificacion.Notificador
+import com.salazar.avisoscampus.receiver.ModoAvionReceiver
 import com.salazar.avisoscampus.viewmodel.AvisosViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +50,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     val contexto = LocalContext.current
     val permiso by vm.permiso.collectAsState()
     val faltan by vm.faltan.collectAsState()
+    val escuchando by vm.escuchandoAvion.collectAsState()
 
     val lanzador = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -54,6 +61,22 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     // Si el permiso ya estaba concedido, se avisa al ViewModel al iniciar
     LaunchedEffect(Unit) {
         if (Notificador.tienePermiso(contexto)) vm.permisoRespondido(true)
+    }
+
+    // El receptor solo está registrado mientras el switch esté activo y se quita al salir
+    DisposableEffect(escuchando) {
+        if (escuchando) {
+            val receptor = ModoAvionReceiver { activo -> vm.alCambiarModoAvion(activo) }
+            ContextCompat.registerReceiver(
+                contexto,
+                receptor,
+                IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+            onDispose { contexto.unregisterReceiver(receptor) }
+        } else {
+            onDispose { }
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -127,7 +150,13 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                 faltan?.let { Text("Faltan $it s") }
             }
             Tarjeta("Receptor de anuncios") {
-                // TODO Paso 6: Switch "Escuchar el modo avión"
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Switch(checked = escuchando, onCheckedChange = { vm.cambiarEscucha(it) })
+                    Text("Escuchar el modo avión")
+                }
             }
             Tarjeta("Historial") {
                 // TODO Paso 7: reemplazar por HistorialAvisos(avisos)
