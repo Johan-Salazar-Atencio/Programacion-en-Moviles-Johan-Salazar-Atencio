@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -108,7 +109,7 @@ fun ErrorConReintento(mensaje: String, onReintentar: () -> Unit, modifier: Modif
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(mensaje, style = MaterialTheme.typography.bodyLarge)
+                Text(mensaje, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
                 Row { Button(onClick = onReintentar) { Text("Reintentar") } }
             }
         }
