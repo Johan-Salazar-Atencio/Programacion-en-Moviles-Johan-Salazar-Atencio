@@ -1,0 +1,12 @@
+# PROMPTS — Fase 2 (rama `mejora-ia`)
+
+Herramienta: Claude.
+
+Mejoras elegidas: **interceptor con encabezado `Accept`**, **borrar con `@DELETE`**, **búsqueda por título** y **editar el título con `@PATCH`**. Todas respetan MVVM + Repository: la pantalla solo habla con el ViewModel, el ViewModel solo con la interface `PostRepository`, y en `viewmodel/` no hay Retrofit, `PostApi` ni `HttpException`.
+
+| Prompt que escribí | Qué respondió | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| «Agrega un Interceptor de OkHttp que ponga el encabezado Accept: application/json en todas las peticiones» | Un `addInterceptor` con `request().newBuilder().header("Accept", "application/json")` dentro de `RetrofitClient` | Usé `header` y no `addHeader`, y lo puse **antes** del `HttpLoggingInterceptor` | `header` reemplaza el valor y evita duplicados. Si el registro va después, Logcat muestra el encabezado ya agregado y así se comprueba |
+| «Agrega Borrar publicación con @DELETE("posts/{id}") y que revise el código de respuesta con Response<Unit>» | `suspend fun borrar(@Path id): Response<Unit>` en `PostApi` y un botón Eliminar en el detalle | Con `Response` Retrofit **no lanza excepción** en un 404 o 500: el Repository convierte `!isSuccessful` en `HttpException` dentro del `llamar { }` para devolver `Result.failure`. Además el ViewModel quita la publicación de la lista local | Así el ViewModel sigue recibiendo solo `Result` y no mira códigos HTTP. JSONPlaceholder responde 200 pero no borra de verdad, por eso la lista se actualiza en memoria |
+| «Agrega un campo de búsqueda que filtre por título las publicaciones ya descargadas» | Un `remember` con el texto dentro del Composable y un `filter` sobre la lista | Descarté el filtro dentro del Composable. El ViewModel expone `listaVisible` con `combine(lista, busqueda)` y `stateIn` | La pantalla solo dibuja estados; la lógica de filtrar vive en el ViewModel y no vuelve a llamar a la red |
+| «Agrega editar el título de una publicación con @PATCH y muestra la respuesta» | `@PATCH("posts/{id}")` con un `Map<String, String>` como cuerpo | Cambié el `Map` por `@Serializable data class CambioTitulo(title)` y usé un cuadro de diálogo con el título actual. Tras el PATCH actualizo el detalle y la lista en memoria | El `data class` mantiene el contrato tipado, igual que `NuevoPost`. El servicio no guarda el cambio, así que se actualiza lo que ya se ve y se muestra «Título actualizado con PATCH» |
