@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.salazar.murocampus.data.PostRepositoryRemote
 import com.salazar.murocampus.data.remote.RetrofitClient
+import com.salazar.murocampus.ui.PantallaCrear
 import com.salazar.murocampus.ui.PantallaDetalle
 import com.salazar.murocampus.ui.PantallaLista
 import com.salazar.murocampus.ui.theme.MuroCampusTheme
@@ -27,16 +28,27 @@ class MainActivity : ComponentActivity() {
                 )
                 var idSeleccionado by rememberSaveable { mutableStateOf<Int?>(null) }
 
-                BackHandler(enabled = idSeleccionado != null) { idSeleccionado = null }
+                var creando by rememberSaveable { mutableStateOf(false) }
+
+                val volver = {
+                    if (creando) vm.limpiarPublicado()
+                    idSeleccionado = null
+                    creando = false
+                }
+                BackHandler(enabled = idSeleccionado != null || creando) { volver() }
 
                 val id = idSeleccionado
-                if (id == null) {
-                    PantallaLista(vm, onAbrir = {
-                        idSeleccionado = it
-                        vm.abrir(it)
-                    })
-                } else {
-                    PantallaDetalle(vm, id, onVolver = { idSeleccionado = null })
+                when {
+                    creando -> PantallaCrear(vm, onVolver = volver)
+                    id != null -> PantallaDetalle(vm, id, onVolver = volver)
+                    else -> PantallaLista(
+                        vm,
+                        onAbrir = {
+                            idSeleccionado = it
+                            vm.abrir(it)
+                        },
+                        onCrear = { creando = true }
+                    )
                 }
             }
         }

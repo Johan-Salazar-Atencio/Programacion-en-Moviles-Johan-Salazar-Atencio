@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.salazar.murocampus.data.PostRepository
 import com.salazar.murocampus.data.mensajeDe
 import com.salazar.murocampus.model.Comentario
+import com.salazar.murocampus.model.NuevoPost
 import com.salazar.murocampus.model.Post
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -28,6 +29,22 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
 
     init {
         cargar()
+    }
+
+    private val _publicado = MutableStateFlow<UiState<Post>?>(null)
+    val publicado: StateFlow<UiState<Post>?> = _publicado.asStateFlow()
+
+    fun publicar(titulo: String, texto: String) {
+        viewModelScope.launch {
+            _publicado.value = UiState.Cargando
+            repo.crear(NuevoPost(userId = 1, title = titulo, body = texto))
+                .onSuccess { _publicado.value = UiState.Exito(it) }
+                .onFailure { _publicado.value = UiState.Error(mensajeDe(it)) }
+        }
+    }
+
+    fun limpiarPublicado() {
+        _publicado.value = null
     }
 
     fun filtrar(userId: Int?) {

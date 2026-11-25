@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,11 +24,18 @@ import com.salazar.murocampus.viewmodel.PostsViewModel
 import com.salazar.murocampus.viewmodel.UiState
 
 @Composable
-fun PantallaLista(vm: PostsViewModel, onAbrir: (Int) -> Unit) {
+fun PantallaLista(vm: PostsViewModel, onAbrir: (Int) -> Unit, onCrear: () -> Unit) {
     val estado by vm.lista.collectAsStateWithLifecycle()
     val filtro by vm.usuarioFiltro.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = { BarraMuro("MuroCampus") }) { relleno ->
+    Scaffold(
+        topBar = { BarraMuro("MuroCampus") },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onCrear) {
+                Text("+", style = MaterialTheme.typography.headlineMedium)
+            }
+        }
+    ) { relleno ->
         Column(Modifier.padding(relleno)) {
             FilaDeFiltros(filtro, vm::filtrar)
             when (val e = estado) {
