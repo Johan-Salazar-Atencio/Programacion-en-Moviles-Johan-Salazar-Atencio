@@ -51,6 +51,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     val permiso by vm.permiso.collectAsState()
     val faltan by vm.faltan.collectAsState()
     val escuchando by vm.escuchandoAvion.collectAsState()
+    val avisos by vm.avisos.collectAsState()
 
     val lanzador = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -158,9 +159,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                     Text("Escuchar el modo avión")
                 }
             }
-            Tarjeta("Historial") {
-                // TODO Paso 7: reemplazar por HistorialAvisos(avisos)
-            }
+            HistorialAvisos(avisos)
         }
     }
 }
@@ -178,7 +177,7 @@ private fun Etiqueta(texto: String, color: Color) {
 }
 
 @Composable
-private fun Tarjeta(titulo: String, contenido: @Composable ColumnScope.() -> Unit) {
+internal fun Tarjeta(titulo: String, contenido: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
